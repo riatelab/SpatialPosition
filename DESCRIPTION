@@ -1,0 +1,13 @@
+Package: Potentials
+Title: Potentials Computation
+Version: 0.9
+Authors@R: c(
+      person("Timothee", "Giraud", email = "timothee.giraud@ums-riate.fr", role = c("cre","aut")),
+      person("Hadrien", "Commenges", email = "hcommenges@parisgeo.cnrs.fr", role = "aut"))
+Description: The package computes potentials of population.
+Depends: R (>= 3.0.0), 
+    raster
+License: GPL-3
+LazyData: true
+Imports: sp
+Suggests: rgeos
