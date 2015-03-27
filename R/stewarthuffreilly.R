@@ -1,6 +1,7 @@
-#' @title Potentials Package
-#' @name Potentials
-#' @description This package contains various functions.
+#' @title Spatial Position Package
+#' @name SpatialPosition
+#' @description Computes spatial position models: Stewart 
+#' potentials, Reilly catchment areas, Huff catchment areas.
 #' @docType package
 NULL
 
@@ -116,7 +117,7 @@ CreateDistMatrix  <- function(knownpts, unknownpts, longlat = FALSE)
         stop("Computation aborted.", call. = F)
       }
     } else {
-      stop("Computation aborted. Matrix would be too big", call. = F)
+      stop("Computation aborted. Matrix would probably be too big", call. = F)
     }
   }
   
@@ -126,7 +127,7 @@ CreateDistMatrix  <- function(knownpts, unknownpts, longlat = FALSE)
 }
 
 
-#' @title Calculate Stewart's Potentials
+#' @title Stewart Potentials
 #' @name stewart
 #' @description This function compute the potentials of spatial interaction as 
 #' defined by J.Q. Stewart (1950).
@@ -214,7 +215,7 @@ stewart <- function(knownpts,
 }
 
 
-#' @title Calculate Huff
+#' @title Huff Catchment Areas
 #' @name huff
 #' @description This function compute the potentials of spatial interaction as 
 #' defined by J.Q. Stewart (1950).
@@ -301,7 +302,7 @@ huff <- function(knownpts,
 }
 
 
-#' @title Calculate reilly
+#' @title Reilly Catchment Areas
 #' @name reilly
 #' @description This function compute the potentials of spatial interaction as 
 #' defined by J.Q. Stewart (1950).
@@ -333,7 +334,8 @@ huff <- function(knownpts,
 #' @param mask object of class sp (SpatialPolygonsDataFrame) to clip the map of 
 #' potentials.
 #' @details The ouput value returned by the function is a SpatialPointsDataFrame 
-#' of points with the computed potential in the "POTENTIALS" variable
+#' of points with the computed reilly areas in the "OUTPUT" variable (row.names 
+#' of the input Spatial*DataFrame).
 #' @examples 
 #' # Calculate potentials
 #' data(spatData)
@@ -391,22 +393,22 @@ reilly <- function(knownpts,
 
 
 
-#' @title Create a Raster from a SpatialPointsDataFrame Potential Layer
-#' @name CreateRaster
-#' @description This function create a raster layer from SpatialPointsDataFrame 
-#' potential layer outputed by the \code{\link{stewart}} function. 
+#' @title Create a Raster from a Stewart SpatialPointsDataFrame Layer
+#' @name rasterStewart
+#' @description This function create a raster layer from gridded 
+#' SpatialPointsDataFrame layer outputed by the \code{\link{stewart}}. 
 #' @param x object of class sp (SpatialPointsDataFrame) outputed by the
-#'  stewart, huff or reilly function.
+#'  stewart function.
 #' @param mask object of class sp (SpatialPolygonsDataFrame) to clip the map of 
 #' potentials.
-#' @details The ouput of the function is a raster of the potentials
+#' @details The ouput of the function is a raster of the Stewart potentials
 #' @examples 
 #' # Calculate potentials
 #' data(spatData)
 #' @import sp
 #' @import raster
 #' @export
-CreateRaster <- function(x, mask = NULL){
+rasterStewart <- function(x, mask = NULL){
   gridded(x) <- TRUE
   r <- raster(x)
   rasterx <- rasterize(x, r, field = 'OUTPUT')
@@ -418,22 +420,86 @@ CreateRaster <- function(x, mask = NULL){
 }
 
 
+#' @title Create a Raster from a Huff SpatialPointsDataFrame Layer
+#' @name rasterHuff
+#' @description This function create a raster layer from gridded 
+#' SpatialPointsDataFrame layer outputed by the \code{\link{huff}}. 
+#' @param x object of class sp (SpatialPointsDataFrame) outputed by the
+#'  huff function.
+#' @param mask object of class sp (SpatialPolygonsDataFrame) to clip the map of 
+#' huff catchement areas.
+#' @details The ouput of the function is a raster of the Huff values.
+#' @examples 
+#' # Calculate potentials
+#' data(spatData)
+#' @import sp
+#' @import raster
+#' @export
+rasterHuff <- function(x, mask = NULL){
+  gridded(x) <- TRUE
+  r <- raster(x)
+  rasterx <- rasterize(x, r, field = 'OUTPUT')
+  if(!is.null(mask)){
+    TestSp(mask)
+    rasterx <- mask(rasterx, mask = mask)
+  }
+  return(rasterx)
+}
 
-#' @title Plot a Potentials Raster
-#' @name PlotPotentialsRaster 
+#' @title Create a Raster from a Reilly SpatialPointsDataFrame Layer
+#' @name rasterReilly
+#' @description This function create a raster layer from gridded 
+#' SpatialPointsDataFrame layer outputed by the \code{\link{reilly}} function. 
+#' @param x object of class sp (SpatialPointsDataFrame) outputed by the
+#'  huff function.
+#' @param mask object of class sp (SpatialPolygonsDataFrame) to clip the map of 
+#' reilly catchement areas.
+#' @details The ouput of the function is a raster of the Reilly values. 
+#' The raster uses a RAT (\code{\link{ratify}}) that contains the 
+#' correspondance between raster values and catchement areas values. Use \code{
+#' unique(levels(rasterName)[[1]])} to see the correpondance table.
+#' @examples 
+#' # Calculate potentials
+#' data(spatData)
+#' @import sp
+#' @import raster
+#' @export
+rasterReilly <- function(x ,mask = NULL){
+  gridded(x) <- TRUE
+  r <- raster(x)
+  x$OUTPUT2 <- as.factor(x$OUTPUT)
+  levels(x$OUTPUT2) <- 1:length(levels(x$OUTPUT2) )
+  x$OUTPUT2 <- as.numeric(x$OUTPUT2)
+  rasterx <- rasterize(x, r, field = 'OUTPUT2')
+  if(!is.null(mask)){
+    TestSp(mask)
+    rasterx <- mask(rasterx, mask = mask)
+  }
+  ratify(rasterx)
+  levels(rasterx) <- data.frame(ID = x$OUTPUT2, idarea = x$OUTPUT)
+  return(rasterx)
+}
+
+
+
+
+
+
+#' @title Plot a Stewart Raster
+#' @name plotStewart
 #' @description This function plot a potential raster outputed by the 
-#' \code{\link{CreateRaster}} function.
-#' @param potentials.raster object of class raster outputed by the 
-#' \code{\link{CreateRaster}} function.
+#' \code{\link{rasterStewart}} function.
+#' @param x object of class raster outputed by the 
+#' \code{\link{rasterStewart}} function.
 #' @param add BOOLEAN, classic add parameter 
-#' @param potentials.breaks NUMERIC, a vector of break values to map. If used, 
+#' @param breaks NUMERIC, a vector of break values to map. If used, 
 #' this parameter override \code{typec} and \code{nclass} params 
 #' @param typec CHARACTER, either "equal" or "quantile", how to discretize the 
 #' map.
 #' @param nclass NUMERIC, number of class to map.
 #' @param legend.rnd NUMERIC, number of digits used to round the figures 
 #' displayed in the legend  
-#' @param col.raster FUNCTION, colors to display the map like 
+#' @param col FUNCTION, colors to display the map like 
 #' \code{\link{colorRampPalette}}. 
 #' @details The ouput of the function is a plotted raster and the (invisible) 
 #' list of break values
@@ -444,136 +510,179 @@ CreateRaster <- function(x, mask = NULL){
 #' @import sp
 #' @import raster
 #' @export
-PlotPotentialsRaster <- function(potentials.raster, add = TRUE, 
-                                 potentials.breaks = NULL, typec = "equal", 
-                                 nclass = 5, legend.rnd = 0, 
-                                 col.raster =  colorRampPalette(c("#FEA3A3", 
-                                                                  "#980000"))){
-  if (!is.null(potentials.breaks)){
-    bks <- unique(potentials.breaks[order(potentials.breaks)])
+plotStewart <- function(x, add = TRUE, 
+                        breaks = NULL, typec = "equal", 
+                        nclass = 5, legend.rnd = 0, 
+                        col =  colorRampPalette(c("#FEA3A3","#980000"))){
+  if (!is.null(breaks)){
+    bks <- unique(breaks[order(breaks)])
   } else if (typec == "equal"){
-    bks <- seq(from = cellStats(potentials.raster, min), 
-               to = cellStats(potentials.raster, max), length.out = nclass+1)
+    bks <- seq(from = cellStats(x, min), 
+               to = cellStats(x, max), length.out = nclass+1)
   } else if (typec == "quantile"){
-    bks <- quantile (potentials.raster, probs = seq(0,1, by = 1/nclass))
+    bks <- quantile (x, probs = seq(0,1, by = 1/nclass))
   } else {
     stop('Enter a proper discretisation type: "equal" or "quantile"')
   }
   bks <- unique(bks)
-  col.raster <- col.raster(length(bks)-1)
-  plot(potentials.raster, breaks = bks, legend = FALSE, axes = FALSE,
-       box = FALSE, col = col.raster,  add = add)
-  plot(potentials.raster, legend.only=TRUE, col = col.raster, 
+  col <- col(length(bks)-1)
+  plot(x, breaks = bks, legend = FALSE, axes = FALSE,
+       box = FALSE, col = col,  add = add)
+  plot(x, legend.only=TRUE, col = col, 
        breaks=round(bks,legend.rnd))
-  potentials.breaks <- bks
-  return(invisible(potentials.breaks))
+  breaks <- bks
+  return(invisible(breaks))
 }
 
-#' @title Plot Potentials Contour
-#' @name PlotPotentialsContour
-#' @description This function plot a contour from from SpatialPointsDataFrame 
-#' potential layer outputed by the \code{\link{stewart}} function. 
-#' @param potentials object of class sp (SpatialPointsDataFrame or 
-#' SpatialPolygonsDataFrame) outputed by the potentials function.
-#' @param potentials.breaks NUMERIC, a vector of break values to map. If used, 
+
+#' @title Plot a Huff Raster
+#' @name plotHuff
+#' @description This function plot a potential raster outputed by the 
+#' \code{\link{rasterHuff}} function.
+#' @param x object of class raster outputed by the 
+#' \code{\link{rasterHuff}} function.
+#' @param add BOOLEAN, classic add parameter 
+#' @param breaks NUMERIC, a vector of break values to map. If used, 
 #' this parameter override \code{typec} and \code{nclass} params 
+#' @param typec CHARACTER, either "equal" or "quantile", how to discretize the 
+#' map.
+#' @param nclass NUMERIC, number of class to map.
 #' @param legend.rnd NUMERIC, number of digits used to round the figures 
 #' displayed in the legend  
-#' @param col.contour CHARACTER, a color
-#' @details This function returns only a contour on the current plot
+#' @param col FUNCTION, colors to display the map like 
+#' \code{\link{colorRampPalette}}. 
+#' @details The ouput of the function is a plotted raster and the (invisible) 
+#' list of break values
 #' @examples 
 #' # Calculate potentials
 #' data(spatData)
+#' 
 #' @import sp
 #' @import raster
 #' @export
-PlotPotentialsContour <- function(potentials, potentials.breaks, 
-                                  legend.rnd = 0, col.contour = "black"){
-  contour.mat <- xtabs(POTENTIALS ~ COORDX + COORDY, data = potentials@data)
-  x <- row.names(contour.mat)
-  y <- colnames(contour.mat)
-  contour(as.numeric(x), as.numeric(y), contour.mat, add=T, col = col.contour,
-          levels = potentials.breaks[-1], 
-          labels = round(potentials.breaks[-1], legend.rnd))
-}
-
-#' @title Create a SpatialLinesDataFrame of the Potential Raster Contour Lines
-#' @name CreatePotentialsContourLines 
-#' @description This function creates a SpatialLinesDataFrame from the potential 
-#' raster outputed by the \code{\link{CreateRaster}} function.
-#' @param potentials.raster object of class raster outputed by the 
-#' \code{\link{CreateRaster}} function.
-#' @param potentials.breaks NUMERIC, a vector of break values to map. 
-#' @details The ouput of the function is a SpatialLinesDataFrame
-#' @examples 
-#' # Calculate potentials
-#' data(spatData)
-#' @import raster
-#' @export
-CreatePotentialsContourLines <- function(potentials.raster, potentials.breaks){
-  rasterToContour(potentials.raster, levels = potentials.breaks)
-}
-
-#' @title Create a SpatialPolygonsDataFrame of the Potential Raster Contour Lines
-#' @name CreatePotentialsContourPoly 
-#' @description This function creates a SpatialPolygonsDataFrame from the 
-#' potential raster outputed by the \code{\link{CreateRaster}} 
-#' function.
-#' @param potentials.raster object of class raster outputed by the 
-#' \code{\link{CreateRaster}} function.
-#' @param potentials.breaks NUMERIC, a vector of break values to map. 
-#' @details The ouput of the function is a SpatialPolygonsDataFrame
-#' @examples 
-#' # Calculate potentials
-#' data(spatData)
-#' @import sp
-#' @import raster
-#' @export
-CreatePotentialsContourPoly <- function(potentials.raster, potentials.breaks){
-  if (!requireNamespace("rgeos", quietly = T)) {
-    stop("'rgeos' package needed for this function to work. Please install it.",
-         call. = FALSE)
+plotHuff <- function(x, add = TRUE, 
+                     breaks = NULL, typec = "equal", 
+                     nclass = 5, legend.rnd = 0, 
+                     col =  colorRampPalette(c("#E8F6A4","#445200"))){
+  
+  if (!is.null(breaks)){
+    bks <- unique(breaks[order(breaks)])
+  } else if (typec == "equal"){
+    bks <- seq(from = cellStats(x, min), 
+               to = cellStats(x, max), length.out = nclass+1)
+  } else if (typec == "quantile"){
+    bks <- quantile (x, probs = seq(0,1, by = 1/nclass))
+  } else {
+    stop('Enter a proper discretisation type: "equal" or "quantile"')
   }
-  require(rgeos)
-  cl <- rasterToContour(potentials.raster, levels = potentials.breaks)
-  cl$level <- as.numeric (as.character(cl$level))
-  SPlist <- NULL
-  SPlist <- list()
-  SPlevels <- character()
-  for (i in cl$level){ 
-    linex <- cl[cl@data$level == i,]
-    linex <- linex@lines
-    linex <- linex[[1]]
-    linex <- linex@Lines
-    Plist <- NULL
-    Plist <- list()
-    for (j in 1:length(linex)){
-      x <- linex[[j]]@coords
-      x <- Polygon(coords =  x, hole = F)
-      x <- Polygons(srl = list(x), ID = j)
-      Plist[j] <- x
-    }  
-    x <- SpatialPolygons(Srl = Plist)
-    x <- rgeos::union(x = x)
-    if (class(x) != "SpatialPolygonsDataFrame"){
-      x <- SpatialPolygonsDataFrame(Sr = x, 
-                                    data = data.frame(
-                                      level = rep(i, length(x))))
-    } else {
-      x <- x[x@data$count < 2,]
-      x@data <- data.frame(level = rep(i, dim(x)[1]))
+  bks <- unique(bks)
+  col <- col(length(bks)-1)
+  plot(x, breaks = bks, legend = FALSE, axes = FALSE,
+       box = FALSE, col = col,  add = add)
+  plot(x, legend.only=TRUE, col = col, 
+       breaks=round(bks,legend.rnd))
+  breaks <- bks
+  return(invisible(breaks))
+}
+
+
+
+#' @title Plot a Reilly Raster
+#' @name plotReilly
+#' @description This function plot a potential raster outputed by the 
+#' \code{\link{rasterReilly}} function.
+#' @param x object of class raster outputed by the 
+#' \code{\link{rasterReilly}} function.
+#' @param add BOOLEAN, classic add parameter 
+#' @param col FUNCTION, colors to display the map, like \code{\link{rainbow}}. 
+#' @details The ouput of the function is a plotted raster. 
+#' @examples 
+#' # Calculate potentials
+#' data(spatData)
+#' 
+#' @import sp
+#' @import raster
+#' @export
+plotReilly <- function(x, add = TRUE, 
+                       col =  rainbow){
+  nclass <- nrow(unique(levels(x)[[1]]))
+  colorReilly <- col(n = nclass)
+  plot(x, legend = FALSE, axes = FALSE,
+       box = FALSE, col = colorReilly,  add = add)
+}
+
+#' @title Create a SpatialPolygonsDataFrame or a SpatialLinesDataFrame from the 
+#' Stewart Raster
+#' @name contourStewart 
+#' @description This function create a SpatialPolygonsDataFrame or a 
+#' SpatialLinesDataFrame from the stewart raster
+#' @param x object of class raster outputed by the rasterStewart function
+#' @param breaks NUMERIC, a vector of break values. 
+#' @param type 'poly' or 'line'. WARNING: the poly option is experimental and 
+#' can output errors
+#' @details The ouput of the function is a SpatialPolygonsDataFrame or a 
+#' SpatialLinesDataFrame
+#' @examples 
+#' # Calculate potentials
+#' data(spatData)
+#' @import sp
+#' @import raster
+#' @export
+contourStewart <- function(x, breaks, type = "line"){
+  if (type=="line"){
+    return(rasterToContour(x = x, levels = breaks))
+  } 
+  if (type=="poly"){
+    if (!requireNamespace("rgeos", quietly = T)) {
+      stop("'rgeos' package needed for this function to work. Please install it.",
+           call. = FALSE)
     }
-    SPlist <- c(SPlist , x@polygons  )
-    SPlevels <- c(SPlevels,x@data$level)
+    loadNamespace("rgeos")
+    cl <- rasterToContour(x, levels = breaks)
+    cl$level <- as.numeric (as.character(cl$level))
+    SPlist <- list()
+    SPlevels <- character()
+    for (i in cl$level){ 
+      linex <- cl[cl@data$level == i,]
+      linex <- linex@lines
+      linex <- linex[[1]]
+      linex <- linex@Lines
+      Plist <- NULL
+      Plist <- list()
+      for (j in 1:length(linex)){
+        x <- linex[[j]]@coords
+        x <- Polygon(coords =  x, hole = F)
+        x <- Polygons(srl = list(x), ID = j)
+        Plist[j] <- x
+      }  
+      x <- SpatialPolygons(Srl = Plist)
+      x <- rgeos::union(x = x)
+      if (class(x) != "SpatialPolygonsDataFrame"){
+        x <- SpatialPolygonsDataFrame(Sr = x, 
+                                      data = data.frame(
+                                        level = rep(i, length(x))))
+      } else {
+        x <- x[x@data$count < 2,]
+        x@data <- data.frame(level = rep(i, dim(x)[1]))
+      }
+      SPlist <- c(SPlist , x@polygons  )
+      SPlevels <- c(SPlevels,x@data$level)
+    }
+    
+    for (i in 1:length(SPlist)){
+      SPlist[[i]]@ID <- as.character(i)
+    }
+    
+    x <- SpatialPolygons(Srl = SPlist)
+    x <- SpatialPolygonsDataFrame(Sr = x, data = data.frame(levels = SPlevels))
+    return (x)
+    
+    
+    
+  } else {
+    stop(paste("type must be either 'SpatialLinesDataFrame' or", 
+               "'SpatialPolygonsDataFrame'", sep =""), call. = FALSE)
   }
-  
-  for (i in 1:length(SPlist)){
-    SPlist[[i]]@ID <- as.character(i)
-  }
-  
-  x <- SpatialPolygons(Srl = SPlist)
-  x <- SpatialPolygonsDataFrame(Sr = x, data = data.frame(levels = SPlevels))
-  return (x)
 }
 
 
