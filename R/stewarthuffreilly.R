@@ -39,10 +39,10 @@ NULL
 #' @name CreateGrid
 #' @description This function creates a regular grid of SpatialPointDataFrame 
 #' from the extent of a given Spatial*DataFrame and a given resolution.
-#' @param w object of class sp (SpatialPointsDataFrame or 
+#' @param w, SP OBJECT, (SpatialPointsDataFrame or 
 #' SpatialPolygonsDataFrame). The spatial extent of this object is used to 
 #' create the regular SpatialPointsDataFrame
-#' @param resolution INTEGER, resolution of the output grid (in map units). 
+#' @param resolution, INTEGER, resolution of the output grid (in map units). 
 #' @details The output of the function is a SpatialPointsDataFrame of regularly
 #' spaced points with the same extent as \code{w}. 
 #' @examples 
@@ -79,12 +79,12 @@ CreateGrid <- function (w, resolution)
 #' @name CreateDistMatrix
 #' @description This function creates a distace matrix between two 
 #' SpatialPointsDataFrame Objects
-#' @param knownpts object of class SpatialPointsDataFrame. 
-#' @param unknownpts object of class SpatialPointsDataFrame. 
-#' @param longlat if FALSE, Euclidean distance, if TRUE Great Circle distance 
+#' @param knownpts, SP OBJECT (SpatialPointsDataFrame). 
+#' @param unknownpts, SP OBJECT (SpatialPointsDataFrame). 
+#' @param longlat, LOGICAL, Euclidean distance (FALSE, default) or Great Circle distance (TRUE)
 #' @details The function returns a full matrix of distances in the metric of the
 #'  points if longlat=FALSE, or in kilometers if longlat=TRUE. This is a wrapper
-#'   around the \code{\link{spDists}} function.
+#'   for the \code{\link{spDists}} function.
 #' @examples 
 #' # Calculate potentials
 #' data(spatData)
@@ -129,42 +129,39 @@ CreateDistMatrix  <- function(knownpts, unknownpts, longlat = FALSE)
 
 #' @title Stewart Potentials
 #' @name stewart
-#' @description This function compute the potentials of spatial interaction as 
-#' defined by J.Q. Stewart (1950).
-#' @param knownpts object of class sp (SpatialPointsDataFrame or 
-#' SpatialPolygonsDataFrame). It contains the known points to calculate 
-#' potentials from.
-#' @param unknownpts object of class sp (SpatialPointsDataFrame or 
-#' SpatialPolygonsDataFrame). It contains points to calculate the potentials on. 
-#' When used \code{resolution} is not used.
-#' @param matdist NUMERIC MATRIX, a distance matrix. Row names match the first 
+#' @description This function compute the potentials as defined by J.Q. Stewart.
+#' @param knownpts, SP OBJECT (SpatialPoints- or SpatialPolygonsDataFrame). 
+#' This is the set of known points (observed variable) to estimate the potentials from.
+#' @param unknownpts, SP OBJECT, (SpatialPoints- or SpatialPolygonsDataFrame). 
+#' This is the set of unknown points for which the function computes the estimates. 
+#' Not used when \code{resolution} is set up.
+#' @param matdist, NUMERIC MATRIX, a distance matrix. Row names match the first 
 #' column of the knownpts object dataframe. Column names match the first column 
-#' of the knownpts object dataframe. if used \code{longlat} is not used
-#' @param varname CHARACTER, name of the variable (in the dataframe of the 
-#' Spatial*DataFrame) from which potentials are computed.
+#' of the knownpts object dataframe. 
+#' @param varname, CHARACTER, name of the variable in the dataframe of the 
+#' Spatial*DataFrame from which potentials are computed.
 #' Quantitative variable with no negative values. 
-#' @param typefct CHARACTER, spatial interaction function. Options are "pareto" 
-#' (default) or "exponential".
+#' @param typefct, CHARACTER, spatial interaction function. Options are "pareto" 
+#' (default, means power law) or "exponential".
 #' If "pareto" the interaction is defined as: (1 + alpha * mDistance) ^ (-beta).
 #' If "exponential" the interaction is defined as: 
 #' exp(- alpha * mDistance ^ beta).
 #' The alpha parameter is computed from parameters given by the user 
-#' (beta and reach).
-#' @param span NUMERIC, distance where the density of probability of the spatial 
+#' (beta and span).
+#' @param span, NUMERIC, distance where the density of probability of the spatial 
 #' interaction function equals 0.5.
-#' @param beta NUMERIC, impedance factor for the spatial interaction function.  
-#' @param resolution INTEGER, resolution of the output SpatialPointsDataFrame
+#' @param beta, NUMERIC, impedance factor for the spatial interaction function.  
+#' @param resolution, INTEGER, resolution of the output SpatialPointsDataFrame
 #'  (in map units). 
-#' @param longlat BOOLEAN, type of distance. If TRUE longitudz and latitude are 
-#' expected in decimal degrees, in WGS84 reference system.
-#' @param mask object of class sp (SpatialPolygonsDataFrame) to clip the map of 
-#' potentials.
-#' @details The ouput value returned by the function is a SpatialPointsDataFrame 
-#' of points with the computed potential in the "POTENTIALS" variable
+#' @param longlat, LOGICAL, Euclidean distance (FALSE, default) or Great Circle distance (TRUE). 
+#' If TRUE longitude and latitude are expected in decimal degrees, in WGS84 reference system.
+#' @param mask, SP OBJECT (SpatialPolygonsDataFrame), border of the studied region
+#' to clip the map of potentials with.
+#' @details SpatialPointsDataFrame with the computed potentials in a new field called \code{OUTPUT}
 #' @examples 
 #' # Calculate potentials
 #' data(spatData)
-#' @references Stewart J. Q., Demographic gravitation: evidence and applications
+#' @references Stewart J. Q. (1948) Demographic gravitation: evidence and applications
 #' , Sociometry, 11(1-2), 31-58.
 #' @import sp
 #' @import raster
@@ -217,42 +214,39 @@ stewart <- function(knownpts,
 
 #' @title Huff Catchment Areas
 #' @name huff
-#' @description This function compute the potentials of spatial interaction as 
-#' defined by J.Q. Stewart (1950).
-#' @param knownpts object of class sp (SpatialPointsDataFrame or 
-#' SpatialPolygonsDataFrame). It contains the known points to calculate 
-#' potentials from.
-#' @param unknownpts object of class sp (SpatialPointsDataFrame or 
-#' SpatialPolygonsDataFrame). It contains points to calculate the potentials on. 
-#' When used \code{resolution} is not used.
-#' @param matdist NUMERIC MATRIX, a distance matrix. Row names match the first 
+#' @description This function computes the cathcment areas as defined by D. Huff (1964).
+#' @param knownpts, SP OBJECT (SpatialPoints- or SpatialPolygonsDataFrame). 
+#' This is the set of known points (observed variable) to draw the catchment areas from.
+#' @param unknownpts, SP OBJECT, (SpatialPoints- or SpatialPolygonsDataFrame). 
+#' This is the set of unknown points for which the function computes the estimates. 
+#' Not used when \code{resolution} is set up.
+#' @param matdist, NUMERIC MATRIX, a distance matrix. Row names match the first 
 #' column of the knownpts object dataframe. Column names match the first column 
-#' of the knownpts object dataframe. if used \code{typedist} is not used
-#' @param varname CHARACTER, name of the variable (in the dataframe of the 
-#' Spatial*DataFrame) from which potentials are computed.
+#' of the knownpts object dataframe. 
+#' @param varname, CHARACTER, name of the variable in the dataframe of the 
+#' Spatial*DataFrame from which potentials are computed.
 #' Quantitative variable with no negative values. 
-#' @param typefct CHARACTER, spatial interaction function. Options are "pareto" 
-#' (default) or "exponential".
+#' @param typefct, CHARACTER, spatial interaction function. Options are "pareto" 
+#' (default, means power law) or "exponential".
 #' If "pareto" the interaction is defined as: (1 + alpha * mDistance) ^ (-beta).
 #' If "exponential" the interaction is defined as: 
 #' exp(- alpha * mDistance ^ beta).
 #' The alpha parameter is computed from parameters given by the user 
-#' (beta and reach).
-#' @param span NUMERIC, distance where the density of probability of the spatial 
+#' (beta and span).
+#' @param span, NUMERIC, distance where the density of probability of the spatial 
 #' interaction function equals 0.5.
-#' @param beta NUMERIC, impedance factor for the spatial interaction function.  
-#' @param resolution INTEGER, resolution of the output grid (in map units). 
-#' @param longlat BOOLEAN, type of distance. If TRUE longitudz and latitude are 
-#' expected in decimal degrees, in WGS84 reference system.
-#' @param mask object of class sp (SpatialPolygonsDataFrame) to clip the map of 
-#' potentials.
-#' @details The ouput value returned by the function is a SpatialPointsDataFrame 
-#' of points with the computed potential in the "POTENTIALS" variable
+#' @param beta, NUMERIC, impedance factor for the spatial interaction function.  
+#' @param resolution, INTEGER, resolution of the output SpatialPointsDataFrame
+#'  (in map units). 
+#' @param longlat, LOGICAL, Euclidean distance (FALSE, default) or Great Circle distance (TRUE). 
+#' If TRUE longitude and latitude are expected in decimal degrees, in WGS84 reference system.
+#' @param mask, SP OBJECT (SpatialPolygonsDataFrame), border of the studied region
+#' to clip the map of potentials with.
+#' @details SpatialPointsDataFrame with the computed catchment areas in a new field called \code{OUTPUT}
 #' @examples 
 #' # Calculate potentials
 #' data(spatData)
-#' @references Stewart J. Q., Demographic gravitation: evidence and applications
-#' , Sociometry, 11(1-2), 31-58.
+#' @references Huff D. (1964) Defining and Estimating a Trading Area. Journal of Marketing, 28: 34-38.
 #' @import sp
 #' @import raster
 #' @export
@@ -304,43 +298,39 @@ huff <- function(knownpts,
 
 #' @title Reilly Catchment Areas
 #' @name reilly
-#' @description This function compute the potentials of spatial interaction as 
-#' defined by J.Q. Stewart (1950).
-#' @param knownpts object of class sp (SpatialPointsDataFrame or 
-#' SpatialPolygonsDataFrame). It contains the known points to calculate 
-#' potentials from.
-#' @param unknownpts object of class sp (SpatialPointsDataFrame or 
-#' SpatialPolygonsDataFrame). It contains points to calculate the potentials on. 
-#' When used \code{resolution} is not used.
-#' @param matdist NUMERIC MATRIX, a distance matrix. Row names match the first 
+#' @description This function compute the cathcment areas as defined by W.J. Reilly (1931).
+#' @param knownpts, SP OBJECT (SpatialPoints- or SpatialPolygonsDataFrame). 
+#' This is the set of known points (observed variable) to draw the catchment areas from.
+#' @param unknownpts, SP OBJECT, (SpatialPoints- or SpatialPolygonsDataFrame). 
+#' This is the set of unknown points for which the function computes the estimates. 
+#' Not used when \code{resolution} is set up.
+#' @param matdist, NUMERIC MATRIX, a distance matrix. Row names match the first 
 #' column of the knownpts object dataframe. Column names match the first column 
-#' of the knownpts object dataframe. if used \code{typedist} is not used
-#' @param varname CHARACTER, name of the variable (in the dataframe of the 
-#' Spatial*DataFrame) from which potentials are computed.
+#' of the knownpts object dataframe. 
+#' @param varname, CHARACTER, name of the variable in the dataframe of the 
+#' Spatial*DataFrame from which potentials are computed.
 #' Quantitative variable with no negative values. 
-#' @param typefct CHARACTER, spatial interaction function. Options are "pareto" 
-#' (default) or "exponential".
+#' @param typefct, CHARACTER, spatial interaction function. Options are "pareto" 
+#' (default, means power law) or "exponential".
 #' If "pareto" the interaction is defined as: (1 + alpha * mDistance) ^ (-beta).
 #' If "exponential" the interaction is defined as: 
 #' exp(- alpha * mDistance ^ beta).
 #' The alpha parameter is computed from parameters given by the user 
-#' (beta and reach).
-#' @param span NUMERIC, distance where the density of probability of the spatial 
+#' (beta and span).
+#' @param span, NUMERIC, distance where the density of probability of the spatial 
 #' interaction function equals 0.5.
-#' @param beta NUMERIC, impedance factor for the spatial interaction function.  
-#' @param resolution INTEGER, resolution of the output grid (in map units). 
-#' @param longlat BOOLEAN, type of distance. If TRUE longitudz and latitude are 
-#' expected in decimal degrees, in WGS84 reference system.
-#' @param mask object of class sp (SpatialPolygonsDataFrame) to clip the map of 
-#' potentials.
-#' @details The ouput value returned by the function is a SpatialPointsDataFrame 
-#' of points with the computed reilly areas in the "OUTPUT" variable (row.names 
-#' of the input Spatial*DataFrame).
+#' @param beta, NUMERIC, impedance factor for the spatial interaction function.  
+#' @param resolution, INTEGER, resolution of the output SpatialPointsDataFrame
+#'  (in map units). 
+#' @param longlat, LOGICAL, Euclidean distance (FALSE, default) or Great Circle distance (TRUE). 
+#' If TRUE longitude and latitude are expected in decimal degrees, in WGS84 reference system.
+#' @param mask, SP OBJECT (SpatialPolygonsDataFrame), border of the studied region
+#' to clip the map of potentials with.
+#' @details SpatialPointsDataFrame with the computed catchment areas in a new field called \code{OUTPUT}
 #' @examples 
 #' # Calculate potentials
 #' data(spatData)
-#' @references Stewart J. Q., Demographic gravitation: evidence and applications
-#' , Sociometry, 11(1-2), 31-58.
+#' @references Reilly, W. J. (1931) The law of retail gravitation, W. J. Reilly, New York.
 #' @import sp
 #' @import raster
 #' @export
@@ -395,13 +385,11 @@ reilly <- function(knownpts,
 
 #' @title Create a Raster from a Stewart SpatialPointsDataFrame Layer
 #' @name rasterStewart
-#' @description This function create a raster layer from gridded 
-#' SpatialPointsDataFrame layer outputed by the \code{\link{stewart}}. 
-#' @param x object of class sp (SpatialPointsDataFrame) outputed by the
-#'  stewart function.
-#' @param mask object of class sp (SpatialPolygonsDataFrame) to clip the map of 
-#' potentials.
-#' @details The ouput of the function is a raster of the Stewart potentials
+#' @description This function creates a raster layer from SpatialPointsDataFrame 
+#' potential layer, output of the \code{\link{stewart}} function. 
+#' @param x, SP OBJECT (SpatialPointsDataFrame), output of the \code{stewart} function.
+#' @param mask, SP OBJECT (SpatialPolygonsDataFrame) to clip the raster with.
+#' @details Raster layer with output values (potentials).
 #' @examples 
 #' # Calculate potentials
 #' data(spatData)
@@ -422,13 +410,11 @@ rasterStewart <- function(x, mask = NULL){
 
 #' @title Create a Raster from a Huff SpatialPointsDataFrame Layer
 #' @name rasterHuff
-#' @description This function create a raster layer from gridded 
-#' SpatialPointsDataFrame layer outputed by the \code{\link{huff}}. 
-#' @param x object of class sp (SpatialPointsDataFrame) outputed by the
-#'  huff function.
-#' @param mask object of class sp (SpatialPolygonsDataFrame) to clip the map of 
-#' huff catchement areas.
-#' @details The ouput of the function is a raster of the Huff values.
+#' @description This function creates a raster layer from SpatialPointsDataFrame 
+#' potential layer, output of the \code{\link{huff}} function. 
+#' @param x, SP OBJECT (SpatialPointsDataFrame), output of the \code{huff} function.
+#' @param mask, SP OBJECT (SpatialPolygonsDataFrame) to clip the raster with.
+#' @details Raster layer with output values (catchment areas).
 #' @examples 
 #' # Calculate potentials
 #' data(spatData)
@@ -448,13 +434,11 @@ rasterHuff <- function(x, mask = NULL){
 
 #' @title Create a Raster from a Reilly SpatialPointsDataFrame Layer
 #' @name rasterReilly
-#' @description This function create a raster layer from gridded 
-#' SpatialPointsDataFrame layer outputed by the \code{\link{reilly}} function. 
-#' @param x object of class sp (SpatialPointsDataFrame) outputed by the
-#'  huff function.
-#' @param mask object of class sp (SpatialPolygonsDataFrame) to clip the map of 
-#' reilly catchement areas.
-#' @details The ouput of the function is a raster of the Reilly values. 
+#' @description This function creates a raster layer from SpatialPointsDataFrame 
+#' potential layer, output of the \code{\link{reilly}} function. 
+#' @param x, SP OBJECT (SpatialPointsDataFrame), output of the \code{reilly} function.
+#' @param mask, SP OBJECT (SpatialPolygonsDataFrame) to clip the raster with.
+#' @details Raster layer with output values (catchment areas).
 #' The raster uses a RAT (\code{\link{ratify}}) that contains the 
 #' correspondance between raster values and catchement areas values. Use \code{
 #' unique(levels(rasterName)[[1]])} to see the correpondance table.
@@ -482,27 +466,18 @@ rasterReilly <- function(x ,mask = NULL){
 
 
 
-
-
-
 #' @title Plot a Stewart Raster
 #' @name plotStewart
-#' @description This function plot a potential raster outputed by the 
-#' \code{\link{rasterStewart}} function.
-#' @param x object of class raster outputed by the 
-#' \code{\link{rasterStewart}} function.
-#' @param add BOOLEAN, classic add parameter 
-#' @param breaks NUMERIC, a vector of break values to map. If used, 
-#' this parameter override \code{typec} and \code{nclass} params 
-#' @param typec CHARACTER, either "equal" or "quantile", how to discretize the 
-#' map.
-#' @param nclass NUMERIC, number of class to map.
-#' @param legend.rnd NUMERIC, number of digits used to round the figures 
-#' displayed in the legend  
-#' @param col FUNCTION, colors to display the map like 
-#' \code{\link{colorRampPalette}}. 
-#' @details The ouput of the function is a plotted raster and the (invisible) 
-#' list of break values
+#' @description This function plots the raster produced by the \code{\link{rasterStewart}} function.
+#' @param x, RASTER OBJECT, output of the \code{\link{rasterStewart}} function.
+#' @param add, LOGICAL, add parameter for the \code{plot} function.
+#' @param breaks, NUMERIC, vector of break values to map. If used, 
+#' this parameter override \code{typec} and \code{nclass} parameters 
+#' @param typec, CHARACTER, either "equal" or "quantile", how to discretize the values.
+#' @param nclass, INTEGER, number of classes to map.
+#' @param legend.rnd, INTEGER, number of digits used to round the figures displayed in the legend.
+#' @param col.raster, FUNCTION, color ramp produced by functions such as \code{\link{colorRampPalette}}.
+#' @details Print the raster and return invisible list of break values.
 #' @examples 
 #' # Calculate potentials
 #' data(spatData)
@@ -537,22 +512,16 @@ plotStewart <- function(x, add = TRUE,
 
 #' @title Plot a Huff Raster
 #' @name plotHuff
-#' @description This function plot a potential raster outputed by the 
-#' \code{\link{rasterHuff}} function.
-#' @param x object of class raster outputed by the 
-#' \code{\link{rasterHuff}} function.
-#' @param add BOOLEAN, classic add parameter 
-#' @param breaks NUMERIC, a vector of break values to map. If used, 
-#' this parameter override \code{typec} and \code{nclass} params 
-#' @param typec CHARACTER, either "equal" or "quantile", how to discretize the 
-#' map.
-#' @param nclass NUMERIC, number of class to map.
-#' @param legend.rnd NUMERIC, number of digits used to round the figures 
-#' displayed in the legend  
-#' @param col FUNCTION, colors to display the map like 
-#' \code{\link{colorRampPalette}}. 
-#' @details The ouput of the function is a plotted raster and the (invisible) 
-#' list of break values
+#' @description This function plots the raster produced by the \code{\link{rasterHuff}} function.
+#' @param x, RASTER OBJECT, output of the \code{\link{rasterHuff}} function.
+#' @param add, LOGICAL, add parameter for the \code{plot} function.
+#' @param breaks, NUMERIC, vector of break values to map. If used, 
+#' this parameter override \code{typec} and \code{nclass} parameters 
+#' @param typec, CHARACTER, either "equal" or "quantile", how to discretize the values.
+#' @param nclass, INTEGER, number of classes to map.
+#' @param legend.rnd, INTEGER, number of digits used to round the figures displayed in the legend.
+#' @param col, FUNCTION, color ramp produced by functions such as \code{\link{colorRampPalette}}.
+#' @details Print the raster and return invisible list of break values.
 #' @examples 
 #' # Calculate potentials
 #' data(spatData)
@@ -589,13 +558,11 @@ plotHuff <- function(x, add = TRUE,
 
 #' @title Plot a Reilly Raster
 #' @name plotReilly
-#' @description This function plot a potential raster outputed by the 
-#' \code{\link{rasterReilly}} function.
-#' @param x object of class raster outputed by the 
-#' \code{\link{rasterReilly}} function.
-#' @param add BOOLEAN, classic add parameter 
-#' @param col FUNCTION, colors to display the map, like \code{\link{rainbow}}. 
-#' @details The ouput of the function is a plotted raster. 
+#' @description This function plots the raster produced by the \code{\link{rasterReilly}} function.
+#' @param x, RASTER OBJECT, output of the \code{\link{rasterStewart}} function.
+#' @param add, LOGICAL, add parameter for the \code{plot} function.
+#' @param col, FUNCTION, color ramp produced by functions such as \code{\link{colorRampPalette}}.
+#' @details Print the raster.
 #' @examples 
 #' # Calculate potentials
 #' data(spatData)
@@ -611,17 +578,16 @@ plotReilly <- function(x, add = TRUE,
        box = FALSE, col = colorReilly,  add = add)
 }
 
+
 #' @title Create a SpatialPolygonsDataFrame or a SpatialLinesDataFrame from the 
 #' Stewart Raster
 #' @name contourStewart 
-#' @description This function create a SpatialPolygonsDataFrame or a 
-#' SpatialLinesDataFrame from the stewart raster
-#' @param x object of class raster outputed by the rasterStewart function
-#' @param breaks NUMERIC, a vector of break values. 
-#' @param type 'poly' or 'line'. WARNING: the poly option is experimental and 
-#' can output errors
-#' @details The ouput of the function is a SpatialPolygonsDataFrame or a 
-#' SpatialLinesDataFrame
+#' @description This function create a SpatialPolygonsDataFrame or a SpatialLinesDataFrame from the Stewart raster
+#' @param x, SP OBJECT (SpatialPoints- or SpatialPolygonsDataFrame), output of the 
+#' \code{stewart}, \code{huff} or \code{reilly} function.
+#' @param breaks, NUMERIC, a vector of break values. 
+#' @param type, CHARACTER, "poly" or "line". WARNING: the poly option is experimental.
+#' @details The ouput of the function is a SpatialPolygonsDataFrame or a SpatialLinesDataFrame
 #' @examples 
 #' # Calculate potentials
 #' data(spatData)
