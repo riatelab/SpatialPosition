@@ -27,7 +27,6 @@ The function returns a full matrix of distances in the metric of the
 # resolution
 data(spatData)
 mygrid <- CreateGrid(w = spatMask, resolution = 200)
-
 # Create a distance matrix between known points (spatPts) and mygrid
 mymat <- CreateDistMatrix(knownpts = spatPts, unknownpts = mygrid,
                           longlat = FALSE)

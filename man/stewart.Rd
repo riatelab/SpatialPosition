@@ -57,27 +57,22 @@ SpatialPointsDataFrame with the computed potentials in a new field called \code{
 # resolution
 data(spatData)
 mygrid <- CreateGrid(w = spatMask, resolution = 200)
-
 # Create a distance matrix between known points (spatPts) and mygrid
 mymat <- CreateDistMatrix(knownpts = spatPts, unknownpts = mygrid,
                           longlat = FALSE)
-
 # Compute Stewart potentials from known points (spatPts) on a given
 # grid (mygrid) using a given distance matrix (mymat)
 mystewart <- stewart(knownpts = spatPts, unknownpts = mygrid,
                      matdist = mymat, varname = "POPULATION",
                      typefct = "exponential", span = 1250,
                      beta = 3, longlat = FALSE, mask = spatMask)
-
 # Compute Stewart potentials from known points (spatPts) on a
 # grid defined by its resolution
 mystewart2 <- stewart(knownpts = spatPts, varname = "POPULATION",
                       typefct = "exponential", span = 1250, beta = 3,
                       resolution = 200, longlat = FALSE, mask = spatMask)
-
 # The two methods have the same result
 identical(mystewart, mystewart2)
-
 # the function output a SpatialPointsDataFrame
 class(mystewart)
 }

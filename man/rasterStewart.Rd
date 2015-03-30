@@ -19,6 +19,7 @@ potential layer, output of the \code{\link{stewart}} function.
 Raster layer with output values (potentials).
 }
 \examples{
+data(spatData)
 # Compute Stewart potentials from known points (spatPts) on a
 # grid defined by its resolution
 mystewart <- stewart(knownpts = spatPts, varname = "POPULATION",

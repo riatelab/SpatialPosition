@@ -8,29 +8,40 @@ plotStewart(x, add = TRUE, breaks = NULL, typec = "equal", nclass = 5,
   legend.rnd = 0, col = colorRampPalette(c("#FEA3A3", "#980000")))
 }
 \arguments{
-\item{x,}{RASTER OBJECT, output of the \code{\link{rasterStewart}} function.}
+\item{x}{RASTER OBJECT, output of the \code{\link{rasterStewart}} function.}
 
-\item{add,}{LOGICAL, add parameter for the \code{plot} function.}
+\item{add}{LOGICAL, add parameter for the \code{plot} function.}
 
-\item{breaks,}{NUMERIC, vector of break values to map. If used,
-this parameter override \code{typec} and \code{nclass} parameters}
+\item{breaks}{NUMERIC, vector of break values to map. If used,
+this parameter overrides \code{typec} and \code{nclass} parameters}
 
-\item{typec,}{CHARACTER, either "equal" or "quantile", how to discretize the values.}
+\item{typec}{CHARACTER, either "equal" or "quantile", how to discretize the values.}
 
-\item{nclass,}{INTEGER, number of classes to map.}
+\item{nclass}{INTEGER, number of classes to map.}
 
-\item{legend.rnd,}{INTEGER, number of digits used to round the figures displayed in the legend.}
+\item{legend.rnd}{INTEGER, number of digits used to round the figures displayed in the legend.}
 
-\item{col,}{FUNCTION, color ramp produced by functions such as \code{\link{colorRampPalette}}.}
+\item{col}{FUNCTION, color ramp produced by functions such as \code{\link{colorRampPalette}}.}
 }
 \description{
 This function plots the raster produced by the \code{\link{rasterStewart}} function.
 }
 \details{
-Print the raster and return invisible list of break values.
+Display the raster nicely and return invisible list of break values.
 }
 \examples{
-# Calculate potentials
 data(spatData)
+# Compute Stewart potentials from known points (spatPts) on a
+# grid defined by its resolution
+mystewart <- stewart(knownpts = spatPts, varname = "POPULATION",
+                     typefct = "exponential", span = 1250, beta = 3,
+                     resolution = 200, longlat = FALSE, mask = spatMask)
+# Create a raster of potentials values
+mystewartraster <- rasterStewart(x = mystewart, mask = spatMask)
+# Plot stewart potentials nicely
+plotStewart(x = mystewartraster, add = FALSE, nclass = 5)
+# Can be used to obtain break values
+break.values <- plotStewart(x = mystewartraster, add = FALSE, nclass = 5)
+break.values
 }
 

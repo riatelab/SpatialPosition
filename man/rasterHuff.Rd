@@ -7,9 +7,9 @@
 rasterHuff(x, mask = NULL)
 }
 \arguments{
-\item{x,}{SP OBJECT (SpatialPointsDataFrame), output of the \code{huff} function.}
+\item{x}{SP OBJECT (SpatialPointsDataFrame), output of the \code{huff} function.}
 
-\item{mask,}{SP OBJECT (SpatialPolygonsDataFrame) to clip the raster with.}
+\item{mask}{SP OBJECT (SpatialPolygonsDataFrame) to clip the raster with.}
 }
 \description{
 This function creates a raster layer from SpatialPointsDataFrame
@@ -19,7 +19,14 @@ potential layer, output of the \code{\link{huff}} function.
 Raster layer with output values (catchment areas).
 }
 \examples{
-# Calculate potentials
 data(spatData)
+# Compute Huff catchment areas from known points (spatPts) on a
+# grid defined by its resolution
+myhuff <- huff(knownpts = spatPts, varname = "POPULATION",
+                     typefct = "exponential", span = 1250, beta = 3,
+                     resolution = 200, longlat = FALSE, mask = spatMask)
+# Create a raster of huff values
+myhuffraster <- rasterHuff(x = myhuff, mask = spatMask)
+plot(myhuffraster)
 }
 

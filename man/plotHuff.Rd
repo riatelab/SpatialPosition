@@ -8,26 +8,26 @@ plotHuff(x, add = TRUE, breaks = NULL, typec = "equal", nclass = 5,
   legend.rnd = 0, col = colorRampPalette(c("#E8F6A4", "#445200")))
 }
 \arguments{
-\item{x,}{RASTER OBJECT, output of the \code{\link{rasterHuff}} function.}
+\item{x}{RASTER OBJECT, output of the \code{\link{rasterHuff}} function.}
 
-\item{add,}{LOGICAL, add parameter for the \code{plot} function.}
+\item{add}{LOGICAL, add parameter for the \code{plot} function.}
 
-\item{breaks,}{NUMERIC, vector of break values to map. If used,
+\item{breaks}{NUMERIC, vector of break values to map. If used,
 this parameter override \code{typec} and \code{nclass} parameters}
 
-\item{typec,}{CHARACTER, either "equal" or "quantile", how to discretize the values.}
+\item{typec}{CHARACTER, either "equal" or "quantile", how to discretize the values.}
 
-\item{nclass,}{INTEGER, number of classes to map.}
+\item{nclass}{INTEGER, number of classes to map.}
 
-\item{legend.rnd,}{INTEGER, number of digits used to round the figures displayed in the legend.}
+\item{legend.rnd}{INTEGER, number of digits used to round the figures displayed in the legend.}
 
-\item{col,}{FUNCTION, color ramp produced by functions such as \code{\link{colorRampPalette}}.}
+\item{col}{FUNCTION, color ramp produced by functions such as \code{\link{colorRampPalette}}.}
 }
 \description{
 This function plots the raster produced by the \code{\link{rasterHuff}} function.
 }
 \details{
-Print the raster and return invisible list of break values.
+Display the raster nicely and return invisible list of break values.
 }
 \examples{
 # Calculate potentials

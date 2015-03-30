@@ -22,7 +22,17 @@ correspondance between raster values and catchement areas values. Use \code{
 unique(levels(rasterName)[[1]])} to see the correpondance table.
 }
 \examples{
-# Calculate potentials
 data(spatData)
+row.names(spatPts) <- spatPts$INSEE_COM
+# Compute Reilly catchment areas from known points (spatPts) on a
+# grid defined by its resolution
+myreilly <- reilly(knownpts = spatPts, varname = "POPULATION",
+               typefct = "exponential", span = 1250, beta = 3,
+               resolution = 200, longlat = FALSE, mask = spatMask)
+# Create a raster of reilly values
+myreillyraster <- rasterReilly(x = myreilly, mask = spatMask)
+plot(myreillyraster)
+# Correspondance between raster values and reilly areas
+head(unique(levels(myreillyraster)[[1]]))
 }
 

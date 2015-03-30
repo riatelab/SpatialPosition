@@ -94,7 +94,6 @@ CreateGrid <- function (w, resolution)
 #' # resolution
 #' data(spatData)
 #' mygrid <- CreateGrid(w = spatMask, resolution = 200)
-#' 
 #' # Create a distance matrix between known points (spatPts) and mygrid
 #' mymat <- CreateDistMatrix(knownpts = spatPts, unknownpts = mygrid, 
 #'                           longlat = FALSE)
@@ -175,27 +174,22 @@ CreateDistMatrix  <- function(knownpts, unknownpts, longlat = FALSE)
 #' # resolution
 #' data(spatData)
 #' mygrid <- CreateGrid(w = spatMask, resolution = 200)
-#' 
 #' # Create a distance matrix between known points (spatPts) and mygrid
 #' mymat <- CreateDistMatrix(knownpts = spatPts, unknownpts = mygrid, 
 #'                           longlat = FALSE)
-#'
 #' # Compute Stewart potentials from known points (spatPts) on a given 
 #' # grid (mygrid) using a given distance matrix (mymat)
 #' mystewart <- stewart(knownpts = spatPts, unknownpts = mygrid, 
 #'                      matdist = mymat, varname = "POPULATION", 
 #'                      typefct = "exponential", span = 1250, 
 #'                      beta = 3, longlat = FALSE, mask = spatMask)
-#' 
 #' # Compute Stewart potentials from known points (spatPts) on a 
 #' # grid defined by its resolution
 #' mystewart2 <- stewart(knownpts = spatPts, varname = "POPULATION", 
 #'                       typefct = "exponential", span = 1250, beta = 3, 
 #'                       resolution = 200, longlat = FALSE, mask = spatMask)
-#'
 #' # The two methods have the same result
 #' identical(mystewart, mystewart2)
-#' 
 #' # the function output a SpatialPointsDataFrame
 #' class(mystewart)
 #' @references Stewart J. Q. (1948) Demographic gravitation: evidence and applications
@@ -285,27 +279,22 @@ stewart <- function(knownpts,
 #' # resolution
 #' data(spatData)
 #' mygrid <- CreateGrid(w = spatMask, resolution = 200)
-#' 
 #' # Create a distance matrix between known points (spatPts) and mygrid
 #' mymat <- CreateDistMatrix(knownpts = spatPts, unknownpts = mygrid, 
 #'                           longlat = FALSE)
-#'                           
 #' # Compute Huff catchment areas from known points (spatPts) on a given 
 #' # grid (mygrid) using a given distance matrix (mymat)
 #' myhuff <- huff(knownpts = spatPts, unknownpts = mygrid, 
 #'                matdist = mymat, varname = "POPULATION", 
 #'                typefct = "exponential", span = 1250, 
 #'                beta = 3, longlat = FALSE, mask = spatMask)
-#' 
 #' # Compute Huff catchment areas from known points (spatPts) on a 
 #' # grid defined by its resolution
 #' myhuff2 <- huff(knownpts = spatPts, varname = "POPULATION", 
 #'                       typefct = "exponential", span = 1250, beta = 3, 
-#'                       resolution = 500, longlat = FALSE, mask = spatMask)
-#' 
+#'                       resolution = 200, longlat = FALSE, mask = spatMask)
 #' # The two methods have the same result
 #' identical(myhuff, myhuff2)
-#' 
 #' # the function output a SpatialPointsDataFrame
 #' class(myhuff)
 #' @references Huff D. (1964) Defining and Estimating a Trading Area. Journal of Marketing, 28: 34-38.
@@ -395,29 +384,23 @@ huff <- function(knownpts,
 #' # resolution
 #' data(spatData)
 #' mygrid <- CreateGrid(w = spatMask, resolution = 200)
-#' 
 #' # Create a distance matrix between known points (spatPts) and mygrid
 #' mymat <- CreateDistMatrix(knownpts = spatPts, unknownpts = mygrid, 
 #'                           longlat = FALSE)
-#'                           
 #' # Compute Reilly catchment areas from known points (spatPts) on a given 
 #' # grid (mygrid) using a given distance matrix (mymat)
 #' myreilly2 <- reilly(knownpts = spatPts, unknownpts = mygrid, 
 #'                matdist = mymat, varname = "POPULATION", 
 #'                typefct = "exponential", span = 1250, 
 #'                beta = 3, longlat = FALSE, mask = spatMask)
-#' 
-#' 
 #' row.names(spatPts) <- spatPts$INSEE_COM
 #' # Compute Reilly catchment areas from known points (spatPts) on a 
 #' # grid defined by its resolution
 #' myreilly <- reilly(knownpts = spatPts, varname = "POPULATION", 
 #'                 typefct = "exponential", span = 1250, beta = 3, 
-#'                 resolution = 500, longlat = FALSE, mask = spatMask)
-#' 
+#'                 resolution = 200, longlat = FALSE, mask = spatMask)
 #' # The function output a SpatialPointsDataFrame
 #' class(myreilly)
-#' 
 #' # The OUTPUT field values match knownpts row names
 #' head(unique(myreilly$OUTPUT))
 #' @references Reilly, W. J. (1931) The law of retail gravitation, W. J. Reilly, New York.
@@ -480,7 +463,8 @@ reilly <- function(knownpts,
 #' @param x SP OBJECT (SpatialPointsDataFrame), output of the \code{stewart} function.
 #' @param mask SP OBJECT (SpatialPolygonsDataFrame) to clip the raster with.
 #' @details Raster layer with output values (potentials).
-#' @examples 
+#' @examples
+#' data(spatData) 
 #' # Compute Stewart potentials from known points (spatPts) on a 
 #' # grid defined by its resolution
 #' mystewart <- stewart(knownpts = spatPts, varname = "POPULATION", 
@@ -508,12 +492,20 @@ rasterStewart <- function(x, mask = NULL){
 #' @name rasterHuff
 #' @description This function creates a raster layer from SpatialPointsDataFrame 
 #' potential layer, output of the \code{\link{huff}} function. 
-#' @param x, SP OBJECT (SpatialPointsDataFrame), output of the \code{huff} function.
-#' @param mask, SP OBJECT (SpatialPolygonsDataFrame) to clip the raster with.
+#' @param x SP OBJECT (SpatialPointsDataFrame), output of the \code{huff} function.
+#' @param mask SP OBJECT (SpatialPolygonsDataFrame) to clip the raster with.
 #' @details Raster layer with output values (catchment areas).
 #' @examples 
-#' # Calculate potentials
 #' data(spatData)
+#' # Compute Huff catchment areas from known points (spatPts) on a 
+#' # grid defined by its resolution
+#' myhuff <- huff(knownpts = spatPts, varname = "POPULATION", 
+#'                      typefct = "exponential", span = 1250, beta = 3, 
+#'                      resolution = 200, longlat = FALSE, mask = spatMask)
+#' # Create a raster of huff values
+#' myhuffraster <- rasterHuff(x = myhuff, mask = spatMask)
+#' plot(myhuffraster)
+#'                      
 #' @import sp
 #' @import raster
 #' @export
@@ -539,8 +531,19 @@ rasterHuff <- function(x, mask = NULL){
 #' correspondance between raster values and catchement areas values. Use \code{
 #' unique(levels(rasterName)[[1]])} to see the correpondance table.
 #' @examples 
-#' # Calculate potentials
 #' data(spatData)
+#' row.names(spatPts) <- spatPts$INSEE_COM
+#' # Compute Reilly catchment areas from known points (spatPts) on a 
+#' # grid defined by its resolution
+#' myreilly <- reilly(knownpts = spatPts, varname = "POPULATION", 
+#'                typefct = "exponential", span = 1250, beta = 3, 
+#'                resolution = 200, longlat = FALSE, mask = spatMask)
+#' # Create a raster of reilly values
+#' myreillyraster <- rasterReilly(x = myreilly, mask = spatMask)
+#' plot(myreillyraster)
+#' # Correspondance between raster values and reilly areas
+#' head(unique(levels(myreillyraster)[[1]]))
+#' 
 #' @import sp
 #' @import raster
 #' @export
@@ -565,19 +568,29 @@ rasterReilly <- function(x ,mask = NULL){
 #' @title Plot a Stewart Raster
 #' @name plotStewart
 #' @description This function plots the raster produced by the \code{\link{rasterStewart}} function.
-#' @param x, RASTER OBJECT, output of the \code{\link{rasterStewart}} function.
-#' @param add, LOGICAL, add parameter for the \code{plot} function.
-#' @param breaks, NUMERIC, vector of break values to map. If used, 
-#' this parameter override \code{typec} and \code{nclass} parameters 
-#' @param typec, CHARACTER, either "equal" or "quantile", how to discretize the values.
-#' @param nclass, INTEGER, number of classes to map.
-#' @param legend.rnd, INTEGER, number of digits used to round the figures displayed in the legend.
-#' @param col, FUNCTION, color ramp produced by functions such as \code{\link{colorRampPalette}}.
-#' @details Print the raster and return invisible list of break values.
+#' @param x RASTER OBJECT, output of the \code{\link{rasterStewart}} function.
+#' @param add LOGICAL, add parameter for the \code{plot} function.
+#' @param breaks NUMERIC, vector of break values to map. If used, 
+#' this parameter overrides \code{typec} and \code{nclass} parameters 
+#' @param typec CHARACTER, either "equal" or "quantile", how to discretize the values.
+#' @param nclass INTEGER, number of classes to map.
+#' @param legend.rnd INTEGER, number of digits used to round the figures displayed in the legend.
+#' @param col FUNCTION, color ramp produced by functions such as \code{\link{colorRampPalette}}.
+#' @details Display the raster nicely and return invisible list of break values.
 #' @examples 
-#' # Calculate potentials
 #' data(spatData)
-#' 
+#' # Compute Stewart potentials from known points (spatPts) on a
+#' # grid defined by its resolution
+#' mystewart <- stewart(knownpts = spatPts, varname = "POPULATION",
+#'                      typefct = "exponential", span = 1250, beta = 3,
+#'                      resolution = 200, longlat = FALSE, mask = spatMask)
+#' # Create a raster of potentials values
+#' mystewartraster <- rasterStewart(x = mystewart, mask = spatMask)
+#' # Plot stewart potentials nicely
+#' plotStewart(x = mystewartraster, add = FALSE, nclass = 5)
+#' # Can be used to obtain break values
+#' break.values <- plotStewart(x = mystewartraster, add = FALSE, nclass = 5)
+#' break.values
 #' @import sp
 #' @import raster
 #' @export
@@ -609,15 +622,15 @@ plotStewart <- function(x, add = TRUE,
 #' @title Plot a Huff Raster
 #' @name plotHuff
 #' @description This function plots the raster produced by the \code{\link{rasterHuff}} function.
-#' @param x, RASTER OBJECT, output of the \code{\link{rasterHuff}} function.
-#' @param add, LOGICAL, add parameter for the \code{plot} function.
-#' @param breaks, NUMERIC, vector of break values to map. If used, 
+#' @param x RASTER OBJECT, output of the \code{\link{rasterHuff}} function.
+#' @param add LOGICAL, add parameter for the \code{plot} function.
+#' @param breaks NUMERIC, vector of break values to map. If used, 
 #' this parameter override \code{typec} and \code{nclass} parameters 
-#' @param typec, CHARACTER, either "equal" or "quantile", how to discretize the values.
-#' @param nclass, INTEGER, number of classes to map.
-#' @param legend.rnd, INTEGER, number of digits used to round the figures displayed in the legend.
-#' @param col, FUNCTION, color ramp produced by functions such as \code{\link{colorRampPalette}}.
-#' @details Print the raster and return invisible list of break values.
+#' @param typec CHARACTER, either "equal" or "quantile", how to discretize the values.
+#' @param nclass INTEGER, number of classes to map.
+#' @param legend.rnd INTEGER, number of digits used to round the figures displayed in the legend.
+#' @param col FUNCTION, color ramp produced by functions such as \code{\link{colorRampPalette}}.
+#' @details Display the raster nicely and return invisible list of break values.
 #' @examples 
 #' # Calculate potentials
 #' data(spatData)
@@ -695,11 +708,10 @@ contourStewart <- function(x, breaks, type = "line"){
     return(rasterToContour(x = x, levels = breaks))
   } 
   if (type=="poly"){
-    if (!requireNamespace("rgeos", quietly = T)) {
+    if (!requireNamespace("rgeos", quietly = TRUE)) {
       stop("'rgeos' package needed for this function to work. Please install it.",
            call. = FALSE)
     }
-    loadNamespace("rgeos")
     cl <- rasterToContour(x, levels = breaks)
     cl$level <- as.numeric (as.character(cl$level))
     SPlist <- list()
@@ -713,16 +725,18 @@ contourStewart <- function(x, breaks, type = "line"){
       Plist <- list()
       for (j in 1:length(linex)){
         x <- linex[[j]]@coords
-        x <- Polygon(coords =  x, hole = F)
-        x <- Polygons(srl = list(x), ID = j)
+        x <- sp::Polygon(coords =  x, hole = F)
+        x <- sp::Polygons(srl = list(x), ID = j)
         Plist[j] <- x
       }  
-      x <- SpatialPolygons(Srl = Plist)
+      x <- sp::SpatialPolygons(Srl = Plist)
+      attachNamespace('rgeos')
       x <- rgeos::union(x = x)
+      unloadNamespace('rgeos')
       if (class(x) != "SpatialPolygonsDataFrame"){
-        x <- SpatialPolygonsDataFrame(Sr = x, 
-                                      data = data.frame(
-                                        level = rep(i, length(x))))
+        x <- sp::SpatialPolygonsDataFrame(Sr = x, 
+                                          data = data.frame(
+                                            level = rep(i, length(x))))
       } else {
         x <- x[x@data$count < 2,]
         x@data <- data.frame(level = rep(i, dim(x)[1]))
@@ -735,11 +749,10 @@ contourStewart <- function(x, breaks, type = "line"){
       SPlist[[i]]@ID <- as.character(i)
     }
     
-    x <- SpatialPolygons(Srl = SPlist)
-    x <- SpatialPolygonsDataFrame(Sr = x, data = data.frame(levels = SPlevels))
+    x <- sp::SpatialPolygons(Srl = SPlist)
+    x <- sp::SpatialPolygonsDataFrame(Sr = x, 
+                                      data = data.frame(levels = SPlevels))
     return (x)
-    
-    
     
   } else {
     stop(paste("type must be either 'SpatialLinesDataFrame' or", 
