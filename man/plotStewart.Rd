@@ -8,32 +8,26 @@ plotStewart(x, add = TRUE, breaks = NULL, typec = "equal", nclass = 5,
   legend.rnd = 0, col = colorRampPalette(c("#FEA3A3", "#980000")))
 }
 \arguments{
-\item{x}{object of class raster outputed by the
-\code{\link{rasterStewart}} function.}
+\item{x,}{RASTER OBJECT, output of the \code{\link{rasterStewart}} function.}
 
-\item{add}{BOOLEAN, classic add parameter}
+\item{add,}{LOGICAL, add parameter for the \code{plot} function.}
 
-\item{breaks}{NUMERIC, a vector of break values to map. If used,
-this parameter override \code{typec} and \code{nclass} params}
+\item{breaks,}{NUMERIC, vector of break values to map. If used,
+this parameter override \code{typec} and \code{nclass} parameters}
 
-\item{typec}{CHARACTER, either "equal" or "quantile", how to discretize the
-map.}
+\item{typec,}{CHARACTER, either "equal" or "quantile", how to discretize the values.}
 
-\item{nclass}{NUMERIC, number of class to map.}
+\item{nclass,}{INTEGER, number of classes to map.}
 
-\item{legend.rnd}{NUMERIC, number of digits used to round the figures
-displayed in the legend}
+\item{legend.rnd,}{INTEGER, number of digits used to round the figures displayed in the legend.}
 
-\item{col}{FUNCTION, colors to display the map like
-\code{\link{colorRampPalette}}.}
+\item{col,}{FUNCTION, color ramp produced by functions such as \code{\link{colorRampPalette}}.}
 }
 \description{
-This function plot a potential raster outputed by the
-\code{\link{rasterStewart}} function.
+This function plots the raster produced by the \code{\link{rasterStewart}} function.
 }
 \details{
-The ouput of the function is a plotted raster and the (invisible)
-list of break values
+Print the raster and return invisible list of break values.
 }
 \examples{
 # Calculate potentials

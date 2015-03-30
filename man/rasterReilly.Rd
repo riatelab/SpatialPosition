@@ -7,18 +7,16 @@
 rasterReilly(x, mask = NULL)
 }
 \arguments{
-\item{x}{object of class sp (SpatialPointsDataFrame) outputed by the
-huff function.}
+\item{x,}{SP OBJECT (SpatialPointsDataFrame), output of the \code{reilly} function.}
 
-\item{mask}{object of class sp (SpatialPolygonsDataFrame) to clip the map of
-reilly catchement areas.}
+\item{mask,}{SP OBJECT (SpatialPolygonsDataFrame) to clip the raster with.}
 }
 \description{
-This function create a raster layer from gridded
-SpatialPointsDataFrame layer outputed by the \code{\link{reilly}} function.
+This function creates a raster layer from SpatialPointsDataFrame
+potential layer, output of the \code{\link{reilly}} function.
 }
 \details{
-The ouput of the function is a raster of the Reilly values.
+Raster layer with output values (catchment areas).
 The raster uses a RAT (\code{\link{ratify}}) that contains the
 correspondance between raster values and catchement areas values. Use \code{
 unique(levels(rasterName)[[1]])} to see the correpondance table.

@@ -8,20 +8,18 @@ Stewart Raster}
 contourStewart(x, breaks, type = "line")
 }
 \arguments{
-\item{x}{object of class raster outputed by the rasterStewart function}
+\item{x,}{SP OBJECT (SpatialPoints- or SpatialPolygonsDataFrame), output of the
+\code{stewart}, \code{huff} or \code{reilly} function.}
 
-\item{breaks}{NUMERIC, a vector of break values.}
+\item{breaks,}{NUMERIC, a vector of break values.}
 
-\item{type}{'poly' or 'line'. WARNING: the poly option is experimental and
-can output errors}
+\item{type,}{CHARACTER, "poly" or "line". WARNING: the poly option is experimental.}
 }
 \description{
-This function create a SpatialPolygonsDataFrame or a
-SpatialLinesDataFrame from the stewart raster
+This function create a SpatialPolygonsDataFrame or a SpatialLinesDataFrame from the Stewart raster
 }
 \details{
-The ouput of the function is a SpatialPolygonsDataFrame or a
-SpatialLinesDataFrame
+The ouput of the function is a SpatialPolygonsDataFrame or a SpatialLinesDataFrame
 }
 \examples{
 # Calculate potentials

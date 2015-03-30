@@ -39,15 +39,19 @@ NULL
 #' @name CreateGrid
 #' @description This function creates a regular grid of SpatialPointDataFrame 
 #' from the extent of a given Spatial*DataFrame and a given resolution.
-#' @param w, SP OBJECT, (SpatialPointsDataFrame or 
+#' @param w SP OBJECT, (SpatialPointsDataFrame or 
 #' SpatialPolygonsDataFrame). The spatial extent of this object is used to 
 #' create the regular SpatialPointsDataFrame
-#' @param resolution, INTEGER, resolution of the output grid (in map units). 
+#' @param resolution INTEGER, resolution of the output grid (in map units). 
 #' @details The output of the function is a SpatialPointsDataFrame of regularly
 #' spaced points with the same extent as \code{w}. 
 #' @examples 
-#' # Calculate potentials
+#' # Create a SpatialPointsDataFrame grid of spatMask extent and 200 meters 
+#' # resolution
 #' data(spatData)
+#' mygrid <- CreateGrid(w = spatMask, resolution = 200)
+#' plot(mygrid, cex = 0.1, pch = ".")
+#' plot(spatMask, border="red", lwd = 2, add = TRUE)
 #' @import sp
 #' @export
 CreateGrid <- function (w, resolution)
@@ -79,15 +83,23 @@ CreateGrid <- function (w, resolution)
 #' @name CreateDistMatrix
 #' @description This function creates a distace matrix between two 
 #' SpatialPointsDataFrame Objects
-#' @param knownpts, SP OBJECT (SpatialPointsDataFrame). 
-#' @param unknownpts, SP OBJECT (SpatialPointsDataFrame). 
-#' @param longlat, LOGICAL, Euclidean distance (FALSE, default) or Great Circle distance (TRUE)
+#' @param knownpts SP OBJECT (SpatialPointsDataFrame). 
+#' @param unknownpts SP OBJECT (SpatialPointsDataFrame). 
+#' @param longlat LOGICAL, Euclidean distance (FALSE, default) or Great Circle distance (TRUE)
 #' @details The function returns a full matrix of distances in the metric of the
 #'  points if longlat=FALSE, or in kilometers if longlat=TRUE. This is a wrapper
 #'   for the \code{\link{spDists}} function.
 #' @examples 
-#' # Calculate potentials
+#' # Create a SpatialPointsDataFrame grid of spatMask extent and 200 meters 
+#' # resolution
 #' data(spatData)
+#' mygrid <- CreateGrid(w = spatMask, resolution = 200)
+#' 
+#' # Create a distance matrix between known points (spatPts) and mygrid
+#' mymat <- CreateDistMatrix(knownpts = spatPts, unknownpts = mygrid, 
+#'                           longlat = FALSE)
+#' mymat[1:5,1:5]
+#' dim(mymat)
 #' @import sp
 #' @export
 CreateDistMatrix  <- function(knownpts, unknownpts, longlat = FALSE)
@@ -130,37 +142,62 @@ CreateDistMatrix  <- function(knownpts, unknownpts, longlat = FALSE)
 #' @title Stewart Potentials
 #' @name stewart
 #' @description This function compute the potentials as defined by J.Q. Stewart.
-#' @param knownpts, SP OBJECT (SpatialPoints- or SpatialPolygonsDataFrame). 
+#' @param knownpts SP OBJECT, (SpatialPoints- or SpatialPolygonsDataFrame). 
 #' This is the set of known points (observed variable) to estimate the potentials from.
-#' @param unknownpts, SP OBJECT, (SpatialPoints- or SpatialPolygonsDataFrame). 
+#' @param unknownpts SP OBJECT, (SpatialPoints- or SpatialPolygonsDataFrame). 
 #' This is the set of unknown points for which the function computes the estimates. 
 #' Not used when \code{resolution} is set up.
-#' @param matdist, NUMERIC MATRIX, a distance matrix. Row names match the first 
+#' @param matdist NUMERIC MATRIX, a distance matrix. Row names match the first 
 #' column of the knownpts object dataframe. Column names match the first column 
 #' of the knownpts object dataframe. 
-#' @param varname, CHARACTER, name of the variable in the dataframe of the 
+#' @param varname CHARACTER, name of the variable in the dataframe of the 
 #' Spatial*DataFrame from which potentials are computed.
 #' Quantitative variable with no negative values. 
-#' @param typefct, CHARACTER, spatial interaction function. Options are "pareto" 
+#' @param typefct CHARACTER, spatial interaction function. Options are "pareto" 
 #' (default, means power law) or "exponential".
 #' If "pareto" the interaction is defined as: (1 + alpha * mDistance) ^ (-beta).
 #' If "exponential" the interaction is defined as: 
 #' exp(- alpha * mDistance ^ beta).
 #' The alpha parameter is computed from parameters given by the user 
 #' (beta and span).
-#' @param span, NUMERIC, distance where the density of probability of the spatial 
+#' @param span NUMERIC, distance where the density of probability of the spatial 
 #' interaction function equals 0.5.
-#' @param beta, NUMERIC, impedance factor for the spatial interaction function.  
-#' @param resolution, INTEGER, resolution of the output SpatialPointsDataFrame
+#' @param beta NUMERIC, impedance factor for the spatial interaction function.  
+#' @param resolution NUMERIC, resolution of the output SpatialPointsDataFrame
 #'  (in map units). 
-#' @param longlat, LOGICAL, Euclidean distance (FALSE, default) or Great Circle distance (TRUE). 
+#' @param longlat LOGICAL, Euclidean distance (FALSE, default) or Great Circle distance (TRUE). 
 #' If TRUE longitude and latitude are expected in decimal degrees, in WGS84 reference system.
-#' @param mask, SP OBJECT (SpatialPolygonsDataFrame), border of the studied region
+#' @param mask SP OBJECT (SpatialPolygonsDataFrame), border of the studied region
 #' to clip the map of potentials with.
 #' @details SpatialPointsDataFrame with the computed potentials in a new field called \code{OUTPUT}
 #' @examples 
-#' # Calculate potentials
+#' # Create a SpatialPointsDataFrame grid of spatMask extent and 200 meters 
+#' # resolution
 #' data(spatData)
+#' mygrid <- CreateGrid(w = spatMask, resolution = 200)
+#' 
+#' # Create a distance matrix between known points (spatPts) and mygrid
+#' mymat <- CreateDistMatrix(knownpts = spatPts, unknownpts = mygrid, 
+#'                           longlat = FALSE)
+#'
+#' # Compute Stewart potentials from known points (spatPts) on a given 
+#' # grid (mygrid) using a given distance matrix (mymat)
+#' mystewart <- stewart(knownpts = spatPts, unknownpts = mygrid, 
+#'                      matdist = mymat, varname = "POPULATION", 
+#'                      typefct = "exponential", span = 1250, 
+#'                      beta = 3, longlat = FALSE, mask = spatMask)
+#' 
+#' # Compute Stewart potentials from known points (spatPts) on a 
+#' # grid defined by its resolution
+#' mystewart2 <- stewart(knownpts = spatPts, varname = "POPULATION", 
+#'                       typefct = "exponential", span = 1250, beta = 3, 
+#'                       resolution = 200, longlat = FALSE, mask = spatMask)
+#'
+#' # The two methods have the same result
+#' identical(mystewart, mystewart2)
+#' 
+#' # the function output a SpatialPointsDataFrame
+#' class(mystewart)
 #' @references Stewart J. Q. (1948) Demographic gravitation: evidence and applications
 #' , Sociometry, 11(1-2), 31-58.
 #' @import sp
@@ -215,37 +252,62 @@ stewart <- function(knownpts,
 #' @title Huff Catchment Areas
 #' @name huff
 #' @description This function computes the cathcment areas as defined by D. Huff (1964).
-#' @param knownpts, SP OBJECT (SpatialPoints- or SpatialPolygonsDataFrame). 
+#' @param knownpts SP OBJECT (SpatialPoints- or SpatialPolygonsDataFrame). 
 #' This is the set of known points (observed variable) to draw the catchment areas from.
-#' @param unknownpts, SP OBJECT, (SpatialPoints- or SpatialPolygonsDataFrame). 
+#' @param unknownpts SP OBJECT, (SpatialPoints- or SpatialPolygonsDataFrame). 
 #' This is the set of unknown points for which the function computes the estimates. 
 #' Not used when \code{resolution} is set up.
-#' @param matdist, NUMERIC MATRIX, a distance matrix. Row names match the first 
+#' @param matdist NUMERIC MATRIX, a distance matrix. Row names match the first 
 #' column of the knownpts object dataframe. Column names match the first column 
 #' of the knownpts object dataframe. 
-#' @param varname, CHARACTER, name of the variable in the dataframe of the 
+#' @param varname CHARACTER, name of the variable in the dataframe of the 
 #' Spatial*DataFrame from which potentials are computed.
 #' Quantitative variable with no negative values. 
-#' @param typefct, CHARACTER, spatial interaction function. Options are "pareto" 
+#' @param typefct CHARACTER, spatial interaction function. Options are "pareto" 
 #' (default, means power law) or "exponential".
 #' If "pareto" the interaction is defined as: (1 + alpha * mDistance) ^ (-beta).
 #' If "exponential" the interaction is defined as: 
 #' exp(- alpha * mDistance ^ beta).
 #' The alpha parameter is computed from parameters given by the user 
 #' (beta and span).
-#' @param span, NUMERIC, distance where the density of probability of the spatial 
+#' @param span NUMERIC, distance where the density of probability of the spatial 
 #' interaction function equals 0.5.
-#' @param beta, NUMERIC, impedance factor for the spatial interaction function.  
-#' @param resolution, INTEGER, resolution of the output SpatialPointsDataFrame
+#' @param beta NUMERIC, impedance factor for the spatial interaction function.  
+#' @param resolution NUMERIC, resolution of the output SpatialPointsDataFrame
 #'  (in map units). 
-#' @param longlat, LOGICAL, Euclidean distance (FALSE, default) or Great Circle distance (TRUE). 
+#' @param longlat LOGICAL, Euclidean distance (FALSE, default) or Great Circle distance (TRUE). 
 #' If TRUE longitude and latitude are expected in decimal degrees, in WGS84 reference system.
-#' @param mask, SP OBJECT (SpatialPolygonsDataFrame), border of the studied region
+#' @param mask SP OBJECT (SpatialPolygonsDataFrame), border of the studied region
 #' to clip the map of potentials with.
 #' @details SpatialPointsDataFrame with the computed catchment areas in a new field called \code{OUTPUT}
 #' @examples 
-#' # Calculate potentials
+#' # Create a SpatialPointsDataFrame grid of spatMask extent and 200 meters 
+#' # resolution
 #' data(spatData)
+#' mygrid <- CreateGrid(w = spatMask, resolution = 200)
+#' 
+#' # Create a distance matrix between known points (spatPts) and mygrid
+#' mymat <- CreateDistMatrix(knownpts = spatPts, unknownpts = mygrid, 
+#'                           longlat = FALSE)
+#'                           
+#' # Compute Huff catchment areas from known points (spatPts) on a given 
+#' # grid (mygrid) using a given distance matrix (mymat)
+#' myhuff <- huff(knownpts = spatPts, unknownpts = mygrid, 
+#'                matdist = mymat, varname = "POPULATION", 
+#'                typefct = "exponential", span = 1250, 
+#'                beta = 3, longlat = FALSE, mask = spatMask)
+#' 
+#' # Compute Huff catchment areas from known points (spatPts) on a 
+#' # grid defined by its resolution
+#' myhuff2 <- huff(knownpts = spatPts, varname = "POPULATION", 
+#'                       typefct = "exponential", span = 1250, beta = 3, 
+#'                       resolution = 500, longlat = FALSE, mask = spatMask)
+#' 
+#' # The two methods have the same result
+#' identical(myhuff, myhuff2)
+#' 
+#' # the function output a SpatialPointsDataFrame
+#' class(myhuff)
 #' @references Huff D. (1964) Defining and Estimating a Trading Area. Journal of Marketing, 28: 34-38.
 #' @import sp
 #' @import raster
@@ -298,38 +360,66 @@ huff <- function(knownpts,
 
 #' @title Reilly Catchment Areas
 #' @name reilly
-#' @description This function compute the cathcment areas as defined by W.J. Reilly (1931).
-#' @param knownpts, SP OBJECT (SpatialPoints- or SpatialPolygonsDataFrame). 
+#' @description This function compute the catchment areas as defined by W.J. Reilly (1931).
+#' @param knownpts SP OBJECT (SpatialPoints- or SpatialPolygonsDataFrame). 
 #' This is the set of known points (observed variable) to draw the catchment areas from.
-#' @param unknownpts, SP OBJECT, (SpatialPoints- or SpatialPolygonsDataFrame). 
+#' @param unknownpts SP OBJECT, (SpatialPoints- or SpatialPolygonsDataFrame). 
 #' This is the set of unknown points for which the function computes the estimates. 
 #' Not used when \code{resolution} is set up.
-#' @param matdist, NUMERIC MATRIX, a distance matrix. Row names match the first 
+#' @param matdist NUMERIC MATRIX, a distance matrix. Row names match the first 
 #' column of the knownpts object dataframe. Column names match the first column 
 #' of the knownpts object dataframe. 
-#' @param varname, CHARACTER, name of the variable in the dataframe of the 
+#' @param varname CHARACTER, name of the variable in the dataframe of the 
 #' Spatial*DataFrame from which potentials are computed.
 #' Quantitative variable with no negative values. 
-#' @param typefct, CHARACTER, spatial interaction function. Options are "pareto" 
+#' @param typefct CHARACTER, spatial interaction function. Options are "pareto" 
 #' (default, means power law) or "exponential".
 #' If "pareto" the interaction is defined as: (1 + alpha * mDistance) ^ (-beta).
 #' If "exponential" the interaction is defined as: 
 #' exp(- alpha * mDistance ^ beta).
 #' The alpha parameter is computed from parameters given by the user 
 #' (beta and span).
-#' @param span, NUMERIC, distance where the density of probability of the spatial 
+#' @param span NUMERIC, distance where the density of probability of the spatial 
 #' interaction function equals 0.5.
-#' @param beta, NUMERIC, impedance factor for the spatial interaction function.  
-#' @param resolution, INTEGER, resolution of the output SpatialPointsDataFrame
+#' @param beta NUMERIC, impedance factor for the spatial interaction function.  
+#' @param resolution INTEGER, resolution of the output SpatialPointsDataFrame
 #'  (in map units). 
-#' @param longlat, LOGICAL, Euclidean distance (FALSE, default) or Great Circle distance (TRUE). 
+#' @param longlat LOGICAL, Euclidean distance (FALSE, default) or Great Circle distance (TRUE). 
 #' If TRUE longitude and latitude are expected in decimal degrees, in WGS84 reference system.
-#' @param mask, SP OBJECT (SpatialPolygonsDataFrame), border of the studied region
+#' @param mask SP OBJECT (SpatialPolygonsDataFrame), border of the studied region
 #' to clip the map of potentials with.
-#' @details SpatialPointsDataFrame with the computed catchment areas in a new field called \code{OUTPUT}
+#' @details SpatialPointsDataFrame with the computed catchment areas in a new field called \code{OUTPUT}. 
+#' Values match the row.names of knownpts
 #' @examples 
-#' # Calculate potentials
+#' # Create a SpatialPointsDataFrame grid of spatMask extent and 200 meters 
+#' # resolution
 #' data(spatData)
+#' mygrid <- CreateGrid(w = spatMask, resolution = 200)
+#' 
+#' # Create a distance matrix between known points (spatPts) and mygrid
+#' mymat <- CreateDistMatrix(knownpts = spatPts, unknownpts = mygrid, 
+#'                           longlat = FALSE)
+#'                           
+#' # Compute Reilly catchment areas from known points (spatPts) on a given 
+#' # grid (mygrid) using a given distance matrix (mymat)
+#' myreilly2 <- reilly(knownpts = spatPts, unknownpts = mygrid, 
+#'                matdist = mymat, varname = "POPULATION", 
+#'                typefct = "exponential", span = 1250, 
+#'                beta = 3, longlat = FALSE, mask = spatMask)
+#' 
+#' 
+#' row.names(spatPts) <- spatPts$INSEE_COM
+#' # Compute Reilly catchment areas from known points (spatPts) on a 
+#' # grid defined by its resolution
+#' myreilly <- reilly(knownpts = spatPts, varname = "POPULATION", 
+#'                 typefct = "exponential", span = 1250, beta = 3, 
+#'                 resolution = 500, longlat = FALSE, mask = spatMask)
+#' 
+#' # The function output a SpatialPointsDataFrame
+#' class(myreilly)
+#' 
+#' # The OUTPUT field values match knownpts row names
+#' head(unique(myreilly$OUTPUT))
 #' @references Reilly, W. J. (1931) The law of retail gravitation, W. J. Reilly, New York.
 #' @import sp
 #' @import raster
@@ -387,12 +477,18 @@ reilly <- function(knownpts,
 #' @name rasterStewart
 #' @description This function creates a raster layer from SpatialPointsDataFrame 
 #' potential layer, output of the \code{\link{stewart}} function. 
-#' @param x, SP OBJECT (SpatialPointsDataFrame), output of the \code{stewart} function.
-#' @param mask, SP OBJECT (SpatialPolygonsDataFrame) to clip the raster with.
+#' @param x SP OBJECT (SpatialPointsDataFrame), output of the \code{stewart} function.
+#' @param mask SP OBJECT (SpatialPolygonsDataFrame) to clip the raster with.
 #' @details Raster layer with output values (potentials).
 #' @examples 
-#' # Calculate potentials
-#' data(spatData)
+#' # Compute Stewart potentials from known points (spatPts) on a 
+#' # grid defined by its resolution
+#' mystewart <- stewart(knownpts = spatPts, varname = "POPULATION", 
+#'                      typefct = "exponential", span = 1250, beta = 3, 
+#'                      resolution = 200, longlat = FALSE, mask = spatMask)
+#' # Create a raster of potentials values
+#' mystewartraster <- rasterStewart(x = mystewart, mask = spatMask)
+#' plot(mystewartraster)
 #' @import sp
 #' @import raster
 #' @export
@@ -476,7 +572,7 @@ rasterReilly <- function(x ,mask = NULL){
 #' @param typec, CHARACTER, either "equal" or "quantile", how to discretize the values.
 #' @param nclass, INTEGER, number of classes to map.
 #' @param legend.rnd, INTEGER, number of digits used to round the figures displayed in the legend.
-#' @param col.raster, FUNCTION, color ramp produced by functions such as \code{\link{colorRampPalette}}.
+#' @param col, FUNCTION, color ramp produced by functions such as \code{\link{colorRampPalette}}.
 #' @details Print the raster and return invisible list of break values.
 #' @examples 
 #' # Calculate potentials

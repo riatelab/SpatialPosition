@@ -9,58 +9,80 @@ stewart(knownpts, unknownpts = NULL, matdist = NULL, varname,
   mask = NULL)
 }
 \arguments{
-\item{knownpts}{object of class sp (SpatialPointsDataFrame or
-SpatialPolygonsDataFrame). It contains the known points to calculate
-potentials from.}
+\item{knownpts}{SP OBJECT, (SpatialPoints- or SpatialPolygonsDataFrame).
+This is the set of known points (observed variable) to estimate the potentials from.}
 
-\item{unknownpts}{object of class sp (SpatialPointsDataFrame or
-SpatialPolygonsDataFrame). It contains points to calculate the potentials on.
-When used \code{resolution} is not used.}
+\item{unknownpts}{SP OBJECT, (SpatialPoints- or SpatialPolygonsDataFrame).
+This is the set of unknown points for which the function computes the estimates.
+Not used when \code{resolution} is set up.}
 
 \item{matdist}{NUMERIC MATRIX, a distance matrix. Row names match the first
 column of the knownpts object dataframe. Column names match the first column
-of the knownpts object dataframe. if used \code{longlat} is not used}
+of the knownpts object dataframe.}
 
-\item{varname}{CHARACTER, name of the variable (in the dataframe of the
-Spatial*DataFrame) from which potentials are computed.
+\item{varname}{CHARACTER, name of the variable in the dataframe of the
+Spatial*DataFrame from which potentials are computed.
 Quantitative variable with no negative values.}
 
 \item{typefct}{CHARACTER, spatial interaction function. Options are "pareto"
-(default) or "exponential".
+(default, means power law) or "exponential".
 If "pareto" the interaction is defined as: (1 + alpha * mDistance) ^ (-beta).
 If "exponential" the interaction is defined as:
 exp(- alpha * mDistance ^ beta).
 The alpha parameter is computed from parameters given by the user
-(beta and reach).}
+(beta and span).}
 
 \item{span}{NUMERIC, distance where the density of probability of the spatial
 interaction function equals 0.5.}
 
 \item{beta}{NUMERIC, impedance factor for the spatial interaction function.}
 
-\item{resolution}{INTEGER, resolution of the output SpatialPointsDataFrame
+\item{resolution}{NUMERIC, resolution of the output SpatialPointsDataFrame
 (in map units).}
 
-\item{longlat}{BOOLEAN, type of distance. If TRUE longitudz and latitude are
-expected in decimal degrees, in WGS84 reference system.}
+\item{longlat}{LOGICAL, Euclidean distance (FALSE, default) or Great Circle distance (TRUE).
+If TRUE longitude and latitude are expected in decimal degrees, in WGS84 reference system.}
 
-\item{mask}{object of class sp (SpatialPolygonsDataFrame) to clip the map of
-potentials.}
+\item{mask}{SP OBJECT (SpatialPolygonsDataFrame), border of the studied region
+to clip the map of potentials with.}
 }
 \description{
-This function compute the potentials of spatial interaction as
-defined by J.Q. Stewart (1950).
+This function compute the potentials as defined by J.Q. Stewart.
 }
 \details{
-The ouput value returned by the function is a SpatialPointsDataFrame
-of points with the computed potential in the "POTENTIALS" variable
+SpatialPointsDataFrame with the computed potentials in a new field called \code{OUTPUT}
 }
 \examples{
-# Calculate potentials
+# Create a SpatialPointsDataFrame grid of spatMask extent and 200 meters
+# resolution
 data(spatData)
+mygrid <- CreateGrid(w = spatMask, resolution = 200)
+
+# Create a distance matrix between known points (spatPts) and mygrid
+mymat <- CreateDistMatrix(knownpts = spatPts, unknownpts = mygrid,
+                          longlat = FALSE)
+
+# Compute Stewart potentials from known points (spatPts) on a given
+# grid (mygrid) using a given distance matrix (mymat)
+mystewart <- stewart(knownpts = spatPts, unknownpts = mygrid,
+                     matdist = mymat, varname = "POPULATION",
+                     typefct = "exponential", span = 1250,
+                     beta = 3, longlat = FALSE, mask = spatMask)
+
+# Compute Stewart potentials from known points (spatPts) on a
+# grid defined by its resolution
+mystewart2 <- stewart(knownpts = spatPts, varname = "POPULATION",
+                      typefct = "exponential", span = 1250, beta = 3,
+                      resolution = 200, longlat = FALSE, mask = spatMask)
+
+# The two methods have the same result
+identical(mystewart, mystewart2)
+
+# the function output a SpatialPointsDataFrame
+class(mystewart)
 }
 \references{
-Stewart J. Q., Demographic gravitation: evidence and applications
+Stewart J. Q. (1948) Demographic gravitation: evidence and applications
 , Sociometry, 11(1-2), 31-58.
 }
 

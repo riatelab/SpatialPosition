@@ -7,18 +7,16 @@
 rasterHuff(x, mask = NULL)
 }
 \arguments{
-\item{x}{object of class sp (SpatialPointsDataFrame) outputed by the
-huff function.}
+\item{x,}{SP OBJECT (SpatialPointsDataFrame), output of the \code{huff} function.}
 
-\item{mask}{object of class sp (SpatialPolygonsDataFrame) to clip the map of
-huff catchement areas.}
+\item{mask,}{SP OBJECT (SpatialPolygonsDataFrame) to clip the raster with.}
 }
 \description{
-This function create a raster layer from gridded
-SpatialPointsDataFrame layer outputed by the \code{\link{huff}}.
+This function creates a raster layer from SpatialPointsDataFrame
+potential layer, output of the \code{\link{huff}} function.
 }
 \details{
-The ouput of the function is a raster of the Huff values.
+Raster layer with output values (catchment areas).
 }
 \examples{
 # Calculate potentials

@@ -7,21 +7,25 @@
 rasterStewart(x, mask = NULL)
 }
 \arguments{
-\item{x}{object of class sp (SpatialPointsDataFrame) outputed by the
-stewart function.}
+\item{x}{SP OBJECT (SpatialPointsDataFrame), output of the \code{stewart} function.}
 
-\item{mask}{object of class sp (SpatialPolygonsDataFrame) to clip the map of
-potentials.}
+\item{mask}{SP OBJECT (SpatialPolygonsDataFrame) to clip the raster with.}
 }
 \description{
-This function create a raster layer from gridded
-SpatialPointsDataFrame layer outputed by the \code{\link{stewart}}.
+This function creates a raster layer from SpatialPointsDataFrame
+potential layer, output of the \code{\link{stewart}} function.
 }
 \details{
-The ouput of the function is a raster of the Stewart potentials
+Raster layer with output values (potentials).
 }
 \examples{
-# Calculate potentials
-data(spatData)
+# Compute Stewart potentials from known points (spatPts) on a
+# grid defined by its resolution
+mystewart <- stewart(knownpts = spatPts, varname = "POPULATION",
+                     typefct = "exponential", span = 1250, beta = 3,
+                     resolution = 200, longlat = FALSE, mask = spatMask)
+# Create a raster of potentials values
+mystewartraster <- rasterStewart(x = mystewart, mask = spatMask)
+plot(mystewartraster)
 }
 

@@ -7,19 +7,17 @@
 plotReilly(x, add = TRUE, col = rainbow)
 }
 \arguments{
-\item{x}{object of class raster outputed by the
-\code{\link{rasterReilly}} function.}
+\item{x,}{RASTER OBJECT, output of the \code{\link{rasterStewart}} function.}
 
-\item{add}{BOOLEAN, classic add parameter}
+\item{add,}{LOGICAL, add parameter for the \code{plot} function.}
 
-\item{col}{FUNCTION, colors to display the map, like \code{\link{rainbow}}.}
+\item{col,}{FUNCTION, color ramp produced by functions such as \code{\link{colorRampPalette}}.}
 }
 \description{
-This function plot a potential raster outputed by the
-\code{\link{rasterReilly}} function.
+This function plots the raster produced by the \code{\link{rasterReilly}} function.
 }
 \details{
-The ouput of the function is a plotted raster.
+Print the raster.
 }
 \examples{
 # Calculate potentials

@@ -7,11 +7,11 @@
 CreateDistMatrix(knownpts, unknownpts, longlat = FALSE)
 }
 \arguments{
-\item{knownpts}{object of class SpatialPointsDataFrame.}
+\item{knownpts}{SP OBJECT (SpatialPointsDataFrame).}
 
-\item{unknownpts}{object of class SpatialPointsDataFrame.}
+\item{unknownpts}{SP OBJECT (SpatialPointsDataFrame).}
 
-\item{longlat}{if FALSE, Euclidean distance, if TRUE Great Circle distance}
+\item{longlat}{LOGICAL, Euclidean distance (FALSE, default) or Great Circle distance (TRUE)}
 }
 \description{
 This function creates a distace matrix between two
@@ -20,10 +20,18 @@ SpatialPointsDataFrame Objects
 \details{
 The function returns a full matrix of distances in the metric of the
  points if longlat=FALSE, or in kilometers if longlat=TRUE. This is a wrapper
-  around the \code{\link{spDists}} function.
+  for the \code{\link{spDists}} function.
 }
 \examples{
-# Calculate potentials
+# Create a SpatialPointsDataFrame grid of spatMask extent and 200 meters
+# resolution
 data(spatData)
+mygrid <- CreateGrid(w = spatMask, resolution = 200)
+
+# Create a distance matrix between known points (spatPts) and mygrid
+mymat <- CreateDistMatrix(knownpts = spatPts, unknownpts = mygrid,
+                          longlat = FALSE)
+mymat[1:5,1:5]
+dim(mymat)
 }
 

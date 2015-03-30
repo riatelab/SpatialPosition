@@ -9,57 +9,79 @@ huff(knownpts, unknownpts = NULL, matdist = NULL, varname,
   mask = NULL)
 }
 \arguments{
-\item{knownpts}{object of class sp (SpatialPointsDataFrame or
-SpatialPolygonsDataFrame). It contains the known points to calculate
-potentials from.}
+\item{knownpts}{SP OBJECT (SpatialPoints- or SpatialPolygonsDataFrame).
+This is the set of known points (observed variable) to draw the catchment areas from.}
 
-\item{unknownpts}{object of class sp (SpatialPointsDataFrame or
-SpatialPolygonsDataFrame). It contains points to calculate the potentials on.
-When used \code{resolution} is not used.}
+\item{unknownpts}{SP OBJECT, (SpatialPoints- or SpatialPolygonsDataFrame).
+This is the set of unknown points for which the function computes the estimates.
+Not used when \code{resolution} is set up.}
 
 \item{matdist}{NUMERIC MATRIX, a distance matrix. Row names match the first
 column of the knownpts object dataframe. Column names match the first column
-of the knownpts object dataframe. if used \code{typedist} is not used}
+of the knownpts object dataframe.}
 
-\item{varname}{CHARACTER, name of the variable (in the dataframe of the
-Spatial*DataFrame) from which potentials are computed.
+\item{varname}{CHARACTER, name of the variable in the dataframe of the
+Spatial*DataFrame from which potentials are computed.
 Quantitative variable with no negative values.}
 
 \item{typefct}{CHARACTER, spatial interaction function. Options are "pareto"
-(default) or "exponential".
+(default, means power law) or "exponential".
 If "pareto" the interaction is defined as: (1 + alpha * mDistance) ^ (-beta).
 If "exponential" the interaction is defined as:
 exp(- alpha * mDistance ^ beta).
 The alpha parameter is computed from parameters given by the user
-(beta and reach).}
+(beta and span).}
 
 \item{span}{NUMERIC, distance where the density of probability of the spatial
 interaction function equals 0.5.}
 
 \item{beta}{NUMERIC, impedance factor for the spatial interaction function.}
 
-\item{resolution}{INTEGER, resolution of the output grid (in map units).}
+\item{resolution}{NUMERIC, resolution of the output SpatialPointsDataFrame
+(in map units).}
 
-\item{longlat}{BOOLEAN, type of distance. If TRUE longitudz and latitude are
-expected in decimal degrees, in WGS84 reference system.}
+\item{longlat}{LOGICAL, Euclidean distance (FALSE, default) or Great Circle distance (TRUE).
+If TRUE longitude and latitude are expected in decimal degrees, in WGS84 reference system.}
 
-\item{mask}{object of class sp (SpatialPolygonsDataFrame) to clip the map of
-potentials.}
+\item{mask}{SP OBJECT (SpatialPolygonsDataFrame), border of the studied region
+to clip the map of potentials with.}
 }
 \description{
-This function compute the potentials of spatial interaction as
-defined by J.Q. Stewart (1950).
+This function computes the cathcment areas as defined by D. Huff (1964).
 }
 \details{
-The ouput value returned by the function is a SpatialPointsDataFrame
-of points with the computed potential in the "POTENTIALS" variable
+SpatialPointsDataFrame with the computed catchment areas in a new field called \code{OUTPUT}
 }
 \examples{
-# Calculate potentials
+# Create a SpatialPointsDataFrame grid of spatMask extent and 200 meters
+# resolution
 data(spatData)
+mygrid <- CreateGrid(w = spatMask, resolution = 200)
+
+# Create a distance matrix between known points (spatPts) and mygrid
+mymat <- CreateDistMatrix(knownpts = spatPts, unknownpts = mygrid,
+                          longlat = FALSE)
+
+# Compute Huff catchment areas from known points (spatPts) on a given
+# grid (mygrid) using a given distance matrix (mymat)
+myhuff <- huff(knownpts = spatPts, unknownpts = mygrid,
+               matdist = mymat, varname = "POPULATION",
+               typefct = "exponential", span = 1250,
+               beta = 3, longlat = FALSE, mask = spatMask)
+
+# Compute Huff catchment areas from known points (spatPts) on a
+# grid defined by its resolution
+myhuff2 <- huff(knownpts = spatPts, varname = "POPULATION",
+                      typefct = "exponential", span = 1250, beta = 3,
+                      resolution = 500, longlat = FALSE, mask = spatMask)
+
+# The two methods have the same result
+identical(myhuff, myhuff2)
+
+# the function output a SpatialPointsDataFrame
+class(myhuff)
 }
 \references{
-Stewart J. Q., Demographic gravitation: evidence and applications
-, Sociometry, 11(1-2), 31-58.
+Huff D. (1964) Defining and Estimating a Trading Area. Journal of Marketing, 28: 34-38.
 }
 

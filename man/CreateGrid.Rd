@@ -7,7 +7,7 @@
 CreateGrid(w, resolution)
 }
 \arguments{
-\item{w}{object of class sp (SpatialPointsDataFrame or
+\item{w}{SP OBJECT, (SpatialPointsDataFrame or
 SpatialPolygonsDataFrame). The spatial extent of this object is used to
 create the regular SpatialPointsDataFrame}
 
@@ -22,7 +22,11 @@ The output of the function is a SpatialPointsDataFrame of regularly
 spaced points with the same extent as \code{w}.
 }
 \examples{
-# Calculate potentials
+# Create a SpatialPointsDataFrame grid of spatMask extent and 200 meters
+# resolution
 data(spatData)
+mygrid <- CreateGrid(w = spatMask, resolution = 200)
+plot(mygrid, cex = 0.1, pch = ".")
+plot(spatMask, border="red", lwd = 2, add = TRUE)
 }
 
