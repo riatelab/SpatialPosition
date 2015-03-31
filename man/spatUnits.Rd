@@ -5,6 +5,6 @@
 \alias{spatUnits}
 \title{SpatialUnits}
 \description{
-SpatialUnits
+Extent of Paris arrondissements and its surrounding communes (SpatialPolygonsDataFrame).
 }
 

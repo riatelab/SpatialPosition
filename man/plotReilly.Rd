@@ -4,23 +4,32 @@
 \alias{plotReilly}
 \title{Plot a Reilly Raster}
 \usage{
-plotReilly(x, add = TRUE, col = rainbow)
+plotReilly(x, add = FALSE, col = rainbow)
 }
 \arguments{
-\item{x,}{RASTER OBJECT, output of the \code{\link{rasterStewart}} function.}
+\item{x}{RASTER OBJECT, output of the \code{\link{rasterStewart}} function.}
 
-\item{add,}{LOGICAL, add parameter for the \code{plot} function.}
+\item{add}{LOGICAL, add parameter for the \code{plot} function.}
 
-\item{col,}{FUNCTION, color ramp produced by functions such as \code{\link{colorRampPalette}}.}
+\item{col}{FUNCTION, color ramp produced by functions such as \code{\link{colorRampPalette}}.}
 }
 \description{
 This function plots the raster produced by the \code{\link{rasterReilly}} function.
 }
 \details{
-Print the raster.
+Display the raster nicely.
 }
 \examples{
-# Calculate potentials
 data(spatData)
+row.names(spatPts) <- spatPts$INSEE_COM
+# Compute Reilly catchment areas from known points (spatPts) on a
+# grid defined by its resolution
+myreilly <- reilly(knownpts = spatPts, varname = "POPULATION",
+               typefct = "exponential", span = 1500, beta = 3,
+               resolution = 200, longlat = FALSE, mask = spatMask)
+# Create a raster of reilly values
+myreillyraster <- rasterReilly(x = myreilly, mask = spatMask)
+# Plot the raster nicely
+plotReilly(x = myreillyraster)
 }
 

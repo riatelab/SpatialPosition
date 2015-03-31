@@ -5,6 +5,6 @@
 \alias{spatPts}
 \title{SpatialUnits}
 \description{
-SpatialUnits
+Centroids of Paris arrondissements and its surrounding communes (SpatialPointsDataFrame). Total population in the POPULATION field.
 }
 

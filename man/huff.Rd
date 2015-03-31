@@ -21,7 +21,7 @@ column of the knownpts object dataframe. Column names match the first column
 of the knownpts object dataframe.}
 
 \item{varname}{CHARACTER, name of the variable in the dataframe of the
-Spatial*DataFrame from which potentials are computed.
+Spatial*DataFrame from which values are computed.
 Quantitative variable with no negative values.}
 
 \item{typefct}{CHARACTER, spatial interaction function. Options are "pareto"
@@ -44,10 +44,10 @@ interaction function equals 0.5.}
 If TRUE longitude and latitude are expected in decimal degrees, in WGS84 reference system.}
 
 \item{mask}{SP OBJECT (SpatialPolygonsDataFrame), border of the studied region
-to clip the map of potentials with.}
+to clip the map with.}
 }
 \description{
-This function computes the cathcment areas as defined by D. Huff (1964).
+This function computes the catchment areas as defined by D. Huff (1964).
 }
 \details{
 SpatialPointsDataFrame with the computed catchment areas in a new field called \code{OUTPUT}

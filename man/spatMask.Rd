@@ -5,6 +5,6 @@
 \alias{spatMask}
 \title{SpatialUnits}
 \description{
-SpatialUnits
+Paris arrondissements and its surrounding communes (SpatialPolygonsDataFrame). Total population in the POPULATION field.
 }
 

@@ -1,0 +1,29 @@
+---
+title: "Vignette Title"
+author: "Vignette Author"
+date: "`r Sys.Date()`"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{SpatialPosition}
+  %\VignetteEngine{knitr::rmarkdown}
+  \usepackage[utf8]{inputenc}
+---
+
+````{r }
+### ** Examples
+library(SpatialPosition)
+data(spatData)
+# Compute Stewart potentials from known points (spatPts) on a
+# grid defined by its resolution
+mystewart <- stewart(knownpts = spatPts, varname = "POPULATION",
+                     typefct = "exponential", span = 1250, beta = 3,
+                     resolution = 200, longlat = FALSE, mask = spatMask)
+# Create a raster of potentials values
+mystewartraster <- rasterStewart(x = mystewart, mask = spatMask)
+# Plot stewart potentials nicely
+par(mar = c(0,0,0,0))
+plotStewart(x = mystewartraster, add = FALSE, nclass = 5)
+# Can be used to obtain break values
+break.values <- plotStewart(x = mystewartraster, add = FALSE, nclass = 5)
+break.values
+````

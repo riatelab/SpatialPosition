@@ -6,32 +6,20 @@
 NULL
 
 #' @title SpatialUnits
+#' @description Paris arrondissements and its surrounding communes (SpatialPolygonsDataFrame). Total population in the POPULATION field.
 #' @name spatMask
 #' @docType data
 NULL
 
 #' @title SpatialUnits
+#' @description Centroids of Paris arrondissements and its surrounding communes (SpatialPointsDataFrame). Total population in the POPULATION field.
 #' @name spatPts
 #' @docType data
 NULL
 
 #' @title SpatialUnits
+#' @description Extent of Paris arrondissements and its surrounding communes (SpatialPolygonsDataFrame). 
 #' @name spatUnits
-#' @docType data
-NULL
-
-#' @title SpatialUnits
-#' @name FRdep
-#' @docType data
-NULL
-
-#' @title SpatialUnits
-#' @name FRdep.spdf
-#' @docType data
-NULL
-
-#' @title SpatialUnits
-#' @name spuniv
 #' @docType data
 NULL
 
@@ -81,7 +69,7 @@ CreateGrid <- function (w, resolution)
 
 #' @title Create a Distance Matrix Between Two SpatialPointsDataFrame Objects
 #' @name CreateDistMatrix
-#' @description This function creates a distace matrix between two 
+#' @description This function creates a distance matrix between two 
 #' SpatialPointsDataFrame Objects
 #' @param knownpts SP OBJECT (SpatialPointsDataFrame). 
 #' @param unknownpts SP OBJECT (SpatialPointsDataFrame). 
@@ -116,7 +104,7 @@ CreateDistMatrix  <- function(knownpts, unknownpts, longlat = FALSE)
     if (interactive()){
       cat("Do you really want to compute potentials values (from", nk , 
           "known points to", nu,"estimated values) ? \n 
-          (Your computer is likely to collapse under the charge.) [y/n]" )
+          (It seems to be a heavy computation.) [y/n]" )
       z <- readLines(con = stdin(), n = 1) 
       while (!z %in% c("n","y")){
         cat ("Enter y or n")
@@ -245,7 +233,7 @@ stewart <- function(knownpts,
 
 #' @title Huff Catchment Areas
 #' @name huff
-#' @description This function computes the cathcment areas as defined by D. Huff (1964).
+#' @description This function computes the catchment areas as defined by D. Huff (1964).
 #' @param knownpts SP OBJECT (SpatialPoints- or SpatialPolygonsDataFrame). 
 #' This is the set of known points (observed variable) to draw the catchment areas from.
 #' @param unknownpts SP OBJECT, (SpatialPoints- or SpatialPolygonsDataFrame). 
@@ -255,7 +243,7 @@ stewart <- function(knownpts,
 #' column of the knownpts object dataframe. Column names match the first column 
 #' of the knownpts object dataframe. 
 #' @param varname CHARACTER, name of the variable in the dataframe of the 
-#' Spatial*DataFrame from which potentials are computed.
+#' Spatial*DataFrame from which values are computed.
 #' Quantitative variable with no negative values. 
 #' @param typefct CHARACTER, spatial interaction function. Options are "pareto" 
 #' (default, means power law) or "exponential".
@@ -272,7 +260,7 @@ stewart <- function(knownpts,
 #' @param longlat LOGICAL, Euclidean distance (FALSE, default) or Great Circle distance (TRUE). 
 #' If TRUE longitude and latitude are expected in decimal degrees, in WGS84 reference system.
 #' @param mask SP OBJECT (SpatialPolygonsDataFrame), border of the studied region
-#' to clip the map of potentials with.
+#' to clip the map with.
 #' @details SpatialPointsDataFrame with the computed catchment areas in a new field called \code{OUTPUT}
 #' @examples 
 #' # Create a SpatialPointsDataFrame grid of spatMask extent and 200 meters 
@@ -594,7 +582,7 @@ rasterReilly <- function(x ,mask = NULL){
 #' @import sp
 #' @import raster
 #' @export
-plotStewart <- function(x, add = TRUE, 
+plotStewart <- function(x, add = FALSE, 
                         breaks = NULL, typec = "equal", 
                         nclass = 5, legend.rnd = 0, 
                         col =  colorRampPalette(c("#FEA3A3","#980000"))){
@@ -629,16 +617,23 @@ plotStewart <- function(x, add = TRUE,
 #' @param typec CHARACTER, either "equal" or "quantile", how to discretize the values.
 #' @param nclass INTEGER, number of classes to map.
 #' @param legend.rnd INTEGER, number of digits used to round the figures displayed in the legend.
-#' @param col FUNCTION, color ramp produced by functions such as \code{\link{colorRampPalette}}.
+#' @param col FUNCTION, color ramp function such as \code{\link{colorRampPalette}}.
 #' @details Display the raster nicely and return invisible list of break values.
 #' @examples 
-#' # Calculate potentials
 #' data(spatData)
-#' 
+#' # Compute Huff catchment areas from known points (spatPts) on a 
+#' # grid defined by its resolution
+#' myhuff <- huff(knownpts = spatPts, varname = "POPULATION", 
+#'                      typefct = "exponential", span = 1250, beta = 3, 
+#'                      resolution = 200, longlat = FALSE, mask = spatMask)
+#' # Create a raster of huff values
+#' myhuffraster <- rasterHuff(x = myhuff, mask = spatMask)
+#' # Plot Huff values nicely
+#' plotHuff(x = myhuffraster)
 #' @import sp
 #' @import raster
 #' @export
-plotHuff <- function(x, add = TRUE, 
+plotHuff <- function(x, add = FALSE, 
                      breaks = NULL, typec = "equal", 
                      nclass = 5, legend.rnd = 0, 
                      col =  colorRampPalette(c("#E8F6A4","#445200"))){
@@ -668,18 +663,26 @@ plotHuff <- function(x, add = TRUE,
 #' @title Plot a Reilly Raster
 #' @name plotReilly
 #' @description This function plots the raster produced by the \code{\link{rasterReilly}} function.
-#' @param x, RASTER OBJECT, output of the \code{\link{rasterStewart}} function.
-#' @param add, LOGICAL, add parameter for the \code{plot} function.
-#' @param col, FUNCTION, color ramp produced by functions such as \code{\link{colorRampPalette}}.
-#' @details Print the raster.
+#' @param x RASTER OBJECT, output of the \code{\link{rasterStewart}} function.
+#' @param add LOGICAL, add parameter for the \code{plot} function.
+#' @param col FUNCTION, color ramp produced by functions such as \code{\link{colorRampPalette}}.
+#' @details Display the raster nicely.
 #' @examples 
-#' # Calculate potentials
 #' data(spatData)
-#' 
+#' row.names(spatPts) <- spatPts$INSEE_COM
+#' # Compute Reilly catchment areas from known points (spatPts) on a 
+#' # grid defined by its resolution
+#' myreilly <- reilly(knownpts = spatPts, varname = "POPULATION", 
+#'                typefct = "exponential", span = 1500, beta = 3, 
+#'                resolution = 200, longlat = FALSE, mask = spatMask)
+#' # Create a raster of reilly values
+#' myreillyraster <- rasterReilly(x = myreilly, mask = spatMask)
+#' # Plot the raster nicely
+#' plotReilly(x = myreillyraster)
 #' @import sp
 #' @import raster
 #' @export
-plotReilly <- function(x, add = TRUE, 
+plotReilly <- function(x, add = FALSE, 
                        col =  rainbow){
   nclass <- nrow(unique(levels(x)[[1]]))
   colorReilly <- col(n = nclass)
@@ -692,14 +695,36 @@ plotReilly <- function(x, add = TRUE,
 #' Stewart Raster
 #' @name contourStewart 
 #' @description This function create a SpatialPolygonsDataFrame or a SpatialLinesDataFrame from the Stewart raster
-#' @param x, SP OBJECT (SpatialPoints- or SpatialPolygonsDataFrame), output of the 
-#' \code{stewart}, \code{huff} or \code{reilly} function.
-#' @param breaks, NUMERIC, a vector of break values. 
-#' @param type, CHARACTER, "poly" or "line". WARNING: the poly option is experimental.
-#' @details The ouput of the function is a SpatialPolygonsDataFrame or a SpatialLinesDataFrame
+#' @param x RASTER OBJECT, output of the \code{rasterStewart} function.
+#' @param breaks NUMERIC, a vector of break values. 
+#' @param type CHARACTER, "poly" or "line". WARNING: the poly option is experimental and needs the rgeos package.
+#' @details The ouput of the function is a SpatialPolygonsDataFrame or a SpatialLinesDataFrame.
 #' @examples 
-#' # Calculate potentials
 #' data(spatData)
+#' # Compute Stewart potentials from known points (spatPts) on a
+#' # grid defined by its resolution
+#' mystewart <- stewart(knownpts = spatPts, varname = "POPULATION",
+#'                      typefct = "exponential", span = 1250, beta = 3,
+#'                      resolution = 200, longlat = FALSE, mask = spatMask)
+#' # Create a raster of potentials values
+#' mystewartraster <- rasterStewart(x = mystewart, mask = spatMask)
+#' break.values <- c(0,50,100,150,200,250,300)
+#' # Create contour SpatialLinesDataFrame
+#' mystewartcontourlines <- contourStewart(x = mystewartraster, 
+#'                                        breaks = break.values,
+#'                                        type = "line")
+#' mystewartcontourlines@@data
+#' plotStewart(x = mystewartraster, breaks = break.values)
+#' plot(mystewartcontourlines, col = "grey20", add=TRUE)
+#' plot(spatMask, lwd = 1.25, add=TRUE)
+#' # Create contour SpatialPolygonsDataFrame
+#' mystewartcontourpoly<- contourStewart(x = mystewartraster, 
+#'                                         breaks = break.values,
+#'                                         type = "poly")
+#' unique(mystewartcontourpoly@@data)
+#' plot(spatMask, col = "grey80", border = "grey50")
+#' plot(mystewartcontourpoly, col = "#0000ff50", border = "grey40", add = TRUE)
+#' plot(spatPts, cex = 0.5, pch = 20, col  = "#ff000050", add = TRUE)
 #' @import sp
 #' @import raster
 #' @export
@@ -711,6 +736,9 @@ contourStewart <- function(x, breaks, type = "line"){
     if (!requireNamespace("rgeos", quietly = TRUE)) {
       stop("'rgeos' package needed for this function to work. Please install it.",
            call. = FALSE)
+    }
+    if(!'package:rgeos' %in% search()){
+      attachNamespace('rgeos')
     }
     cl <- rasterToContour(x, levels = breaks)
     cl$level <- as.numeric (as.character(cl$level))
@@ -730,9 +758,7 @@ contourStewart <- function(x, breaks, type = "line"){
         Plist[j] <- x
       }  
       x <- sp::SpatialPolygons(Srl = Plist)
-      attachNamespace('rgeos')
       x <- rgeos::union(x = x)
-      unloadNamespace('rgeos')
       if (class(x) != "SpatialPolygonsDataFrame"){
         x <- sp::SpatialPolygonsDataFrame(Sr = x, 
                                           data = data.frame(
@@ -744,16 +770,13 @@ contourStewart <- function(x, breaks, type = "line"){
       SPlist <- c(SPlist , x@polygons  )
       SPlevels <- c(SPlevels,x@data$level)
     }
-    
     for (i in 1:length(SPlist)){
       SPlist[[i]]@ID <- as.character(i)
     }
-    
     x <- sp::SpatialPolygons(Srl = SPlist)
     x <- sp::SpatialPolygonsDataFrame(Sr = x, 
                                       data = data.frame(levels = SPlevels))
     return (x)
-    
   } else {
     stop(paste("type must be either 'SpatialLinesDataFrame' or", 
                "'SpatialPolygonsDataFrame'", sep =""), call. = FALSE)

@@ -4,7 +4,7 @@
 \alias{plotStewart}
 \title{Plot a Stewart Raster}
 \usage{
-plotStewart(x, add = TRUE, breaks = NULL, typec = "equal", nclass = 5,
+plotStewart(x, add = FALSE, breaks = NULL, typec = "equal", nclass = 5,
   legend.rnd = 0, col = colorRampPalette(c("#FEA3A3", "#980000")))
 }
 \arguments{

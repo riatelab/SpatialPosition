@@ -3,11 +3,13 @@ Title: Spatial Position Models
 Version: 0.9
 Authors@R: c(
       person("Timothee", "Giraud", email = "timothee.giraud@ums-riate.fr", role = c("cre","aut")),
-      person("Hadrien", "Commenges", email = "hcommenges@parisgeo.cnrs.fr", role = "aut"))
+      person("Hadrien", "Commenges", email = "hcommenges@parisgeo.cnrs.fr", role = c("aut")))
 Description: Computes spatial position models: Stewart potentials, Reilly catchment areas, Huff catchment areas.
 Depends: R (>= 3.0.0), 
     raster
 License: GPL-3
 LazyData: true
 Imports: sp
-Suggests: rgeos
+Suggests: rgeos,
+    knitr
+VignetteBuilder: knitr

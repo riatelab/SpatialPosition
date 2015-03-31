@@ -8,21 +8,43 @@ Stewart Raster}
 contourStewart(x, breaks, type = "line")
 }
 \arguments{
-\item{x,}{SP OBJECT (SpatialPoints- or SpatialPolygonsDataFrame), output of the
-\code{stewart}, \code{huff} or \code{reilly} function.}
+\item{x}{RASTER OBJECT, output of the \code{rasterStewart} function.}
 
-\item{breaks,}{NUMERIC, a vector of break values.}
+\item{breaks}{NUMERIC, a vector of break values.}
 
-\item{type,}{CHARACTER, "poly" or "line". WARNING: the poly option is experimental.}
+\item{type}{CHARACTER, "poly" or "line". WARNING: the poly option is experimental and needs the rgeos package.}
 }
 \description{
 This function create a SpatialPolygonsDataFrame or a SpatialLinesDataFrame from the Stewart raster
 }
 \details{
-The ouput of the function is a SpatialPolygonsDataFrame or a SpatialLinesDataFrame
+The ouput of the function is a SpatialPolygonsDataFrame or a SpatialLinesDataFrame.
 }
 \examples{
-# Calculate potentials
 data(spatData)
+# Compute Stewart potentials from known points (spatPts) on a
+# grid defined by its resolution
+mystewart <- stewart(knownpts = spatPts, varname = "POPULATION",
+                     typefct = "exponential", span = 1250, beta = 3,
+                     resolution = 200, longlat = FALSE, mask = spatMask)
+# Create a raster of potentials values
+mystewartraster <- rasterStewart(x = mystewart, mask = spatMask)
+break.values <- c(0,50,100,150,200,250,300)
+# Create contour SpatialLinesDataFrame
+mystewartcontourlines <- contourStewart(x = mystewartraster,
+                                       breaks = break.values,
+                                       type = "line")
+mystewartcontourlines@data
+plotStewart(x = mystewartraster, breaks = break.values)
+plot(mystewartcontourlines, col = "grey20", add=TRUE)
+plot(spatMask, lwd = 1.25, add=TRUE)
+# Create contour SpatialPolygonsDataFrame
+mystewartcontourpoly<- contourStewart(x = mystewartraster,
+                                        breaks = break.values,
+                                        type = "poly")
+unique(mystewartcontourpoly@data)
+plot(spatMask, col = "grey80", border = "grey50")
+plot(mystewartcontourpoly, col = "#0000ff50", border = "grey40", add = TRUE)
+plot(spatPts, cex = 0.5, pch = 20, col  = "#ff000050", add = TRUE)
 }
 

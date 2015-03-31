@@ -14,7 +14,7 @@ CreateDistMatrix(knownpts, unknownpts, longlat = FALSE)
 \item{longlat}{LOGICAL, Euclidean distance (FALSE, default) or Great Circle distance (TRUE)}
 }
 \description{
-This function creates a distace matrix between two
+This function creates a distance matrix between two
 SpatialPointsDataFrame Objects
 }
 \details{

@@ -4,7 +4,7 @@
 \alias{plotHuff}
 \title{Plot a Huff Raster}
 \usage{
-plotHuff(x, add = TRUE, breaks = NULL, typec = "equal", nclass = 5,
+plotHuff(x, add = FALSE, breaks = NULL, typec = "equal", nclass = 5,
   legend.rnd = 0, col = colorRampPalette(c("#E8F6A4", "#445200")))
 }
 \arguments{
@@ -21,7 +21,7 @@ this parameter override \code{typec} and \code{nclass} parameters}
 
 \item{legend.rnd}{INTEGER, number of digits used to round the figures displayed in the legend.}
 
-\item{col}{FUNCTION, color ramp produced by functions such as \code{\link{colorRampPalette}}.}
+\item{col}{FUNCTION, color ramp function such as \code{\link{colorRampPalette}}.}
 }
 \description{
 This function plots the raster produced by the \code{\link{rasterHuff}} function.
@@ -30,7 +30,15 @@ This function plots the raster produced by the \code{\link{rasterHuff}} function
 Display the raster nicely and return invisible list of break values.
 }
 \examples{
-# Calculate potentials
 data(spatData)
+# Compute Huff catchment areas from known points (spatPts) on a
+# grid defined by its resolution
+myhuff <- huff(knownpts = spatPts, varname = "POPULATION",
+                     typefct = "exponential", span = 1250, beta = 3,
+                     resolution = 200, longlat = FALSE, mask = spatMask)
+# Create a raster of huff values
+myhuffraster <- rasterHuff(x = myhuff, mask = spatMask)
+# Plot Huff values nicely
+plotHuff(x = myhuffraster)
 }
 
