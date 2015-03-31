@@ -1,6 +1,6 @@
 ---
-title: "Vignette Title"
-author: "Vignette Author"
+title: "Introduction to the `SpatialPosition` package"
+author: "Hadrien Commenges & Timothée Giraud"
 date: "`r Sys.Date()`"
 output: rmarkdown::html_vignette
 vignette: >
@@ -8,6 +8,64 @@ vignette: >
   %\VignetteEngine{knitr::rmarkdown}
   \usepackage[utf8]{inputenc}
 ---
+
+## Modeling spatial interactions
+
+Modeling spatial interactions is used to understand and quantify the level of interaction between different locations. It means carrying out the three following steps: 
+
+1. **Conceptual formalization** of entities (e.g. individuals, spatial units) and relationships (e.g. work, power, goods).
+2. Corresponent **mathematical formalization**: $T_{ij} = S_i D_j / d_{ij}^2$ the trade flow between countries *i* and *j* ($T_{ij}$) is proportional to the supply of country *i* ($S_i$) and the demand of country *j* ($D_j$) and inversely proportional to the squared distance between both countries ($d_{ij}^2$).
+3. **Informatic formalization** of the model: language, algorithms, etc.
+
+The most ancient and common spatial interactions model is of the gravity form (like below). It has roots in the late 19st century (Casey, Ravenstein) and has been used in several fields (geography, economy, demography) to model a high variety of flows (commuting, trade, migrations). A brief presentation can be found in the [Geography of transport systems](https://people.hofstra.edu/geotrans/eng/methods/ch5m1en.html). For a detailed one see, among many others, the book of Fotheringham and O'Kelly, *Spatial Interaction Models: Formulations and Applications* (Kluwer Academic Publishers, 1989). In French you can found pedagogic materials on the [website of Pr. Grasland](http://grasland.script.univ-paris-diderot.fr)
+
+
+## Place-based models: Stewart, Reilly, Huff
+
+There are two main ways of modeling spatial interactions: the first one focuses on links between places (flows), the second one focuses on places and their influence at a distance. Following the physics metaphor, the flow may be seen as the **gravitational force** between two masses, the place influence as the **gravitational potential**. The `SpatialPosition` package, as its name suggests, proposes an implementation of place-based models: Stewart, Reilly and Huff models.
+
+The Stewart model ("Measure of the influence of a population at a distance", *Sociometry*, 5(1): 63-71, 1942) is also known in the literature, depending on the discipline, as **potential access**, **gravitational potential** or **gravitational accessibility**. The concept was developped in the 1940s by physicist John Q. Stewart from an analogy to the gravity model. In his seminal work on the catchment area of American universities, Stewart computes **potentials of population**. This potential is defined as a stock of population weighted by distance:
+
+$$
+A_i = \sum_{j=1}^n O_j f(d_{ij})
+$$
+
+The terms of this equation can be interpreted in a potential approach or an accessibility approach (in brackets): 
+
+- $A_i$ is the potential at $i$ (the accessibility)
+- $O_j$ is the stock of population at $j$ (the number of opportunities)
+- $f(d_{ij})$ a negative function of the distance between $i$ and $j$, mainly of the power or the exponential form.
+
+The computation of potentials could be considered as a **spatial interpolation method** such as inverse distance weighted interpolation (IDW) or kernel density estimator. These models aim to estimate unknown values of non-observed points from known values given by measure points. Cartographically speaking, they are often used to get a continuous surface from a set of discrete points. However, we argue that the Stewart model is mainly a spatial interaction modeling approach, with a possible secondary use for spatial interpolation.
+
+The Reilly (*The law of retail gravitation*, W. J. Reilly, New York, 1931) and the Huff ("Defining and Estimating a Trading Area", *Journal of Marketing*, 28: 34-38, 1964) models draw catchment areas. They have been widely used to study the location of economic activities and are part of the geomarketing toolbox. 
+
+
+
+
+
+
+
+
+````{r }
+### ** Examples
+library(SpatialPosition)
+data(spatData)
+# Compute Stewart potentials from known points (spatPts) on a
+# grid defined by its resolution
+mystewart <- stewart(knownpts = spatPts, varname = "POPULATION",
+                     typefct = "exponential", span = 1250, beta = 3,
+                     resolution = 200, longlat = FALSE, mask = spatMask)
+# Create a raster of potentials values
+mystewartraster <- rasterStewart(x = mystewart, mask = spatMask)
+# Plot stewart potentials nicely
+par(mar = c(0,0,0,0))
+plotStewart(x = mystewartraster, add = FALSE, nclass = 5)
+# Can be used to obtain break values
+break.values <- plotStewart(x = mystewartraster, add = FALSE, nclass = 5)
+break.values
+````
+
 
 ````{r }
 ### ** Examples
