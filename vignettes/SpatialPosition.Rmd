@@ -103,6 +103,7 @@ We now want to draw the catchment areas corresponing to the public hospitals. Th
 
 ````{r }
 ### ** Examples
+row.names(spatPts)
 catchReilly <- reilly(knownpts = spatPts, varname = "Capacite",
                      typefct = "exponential", span = 500, beta = 2,
                      resolution = 50, longlat = FALSE, mask = spatMask)
