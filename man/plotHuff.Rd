@@ -33,7 +33,7 @@ Display the raster nicely and return invisible list of break values.
 data(spatData)
 # Compute Huff catchment areas from known points (spatPts) on a
 # grid defined by its resolution
-myhuff <- huff(knownpts = spatPts, varname = "POPULATION",
+myhuff <- huff(knownpts = spatPts, varname = "Capacite",
                      typefct = "exponential", span = 1250, beta = 3,
                      resolution = 200, longlat = FALSE, mask = spatMask)
 # Create a raster of huff values

@@ -3,8 +3,8 @@
 \docType{data}
 \name{spatUnits}
 \alias{spatUnits}
-\title{SpatialUnits}
+\title{Spatial Units of Paris}
 \description{
-Extent of Paris arrondissements and its surrounding communes (SpatialPolygonsDataFrame).
+20 spatial units representing the Paris' districts (*arrondissements*), (SpatialPolygonsDataFrame).
 }
 

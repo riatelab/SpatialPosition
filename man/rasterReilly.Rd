@@ -23,10 +23,10 @@ unique(levels(rasterName)[[1]])} to see the correpondance table.
 }
 \examples{
 data(spatData)
-row.names(spatPts) <- spatPts$INSEE_COM
+row.names(spatPts) <- spatPts$CodHop
 # Compute Reilly catchment areas from known points (spatPts) on a
 # grid defined by its resolution
-myreilly <- reilly(knownpts = spatPts, varname = "POPULATION",
+myreilly <- reilly(knownpts = spatPts, varname = "Capacite",
                typefct = "exponential", span = 1250, beta = 3,
                resolution = 200, longlat = FALSE, mask = spatMask)
 # Create a raster of reilly values

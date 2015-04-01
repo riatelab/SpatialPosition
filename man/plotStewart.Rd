@@ -33,7 +33,7 @@ Display the raster nicely and return invisible list of break values.
 data(spatData)
 # Compute Stewart potentials from known points (spatPts) on a
 # grid defined by its resolution
-mystewart <- stewart(knownpts = spatPts, varname = "POPULATION",
+mystewart <- stewart(knownpts = spatPts, varname = "Capacite",
                      typefct = "exponential", span = 1250, beta = 3,
                      resolution = 200, longlat = FALSE, mask = spatMask)
 # Create a raster of potentials values

@@ -64,13 +64,13 @@ mymat <- CreateDistMatrix(knownpts = spatPts, unknownpts = mygrid,
 # Compute Reilly catchment areas from known points (spatPts) on a given
 # grid (mygrid) using a given distance matrix (mymat)
 myreilly2 <- reilly(knownpts = spatPts, unknownpts = mygrid,
-               matdist = mymat, varname = "POPULATION",
+               matdist = mymat, varname = "Capacite",
                typefct = "exponential", span = 1250,
                beta = 3, longlat = FALSE, mask = spatMask)
-row.names(spatPts) <- spatPts$INSEE_COM
+row.names(spatPts) <- spatPts$CodHop
 # Compute Reilly catchment areas from known points (spatPts) on a
 # grid defined by its resolution
-myreilly <- reilly(knownpts = spatPts, varname = "POPULATION",
+myreilly <- reilly(knownpts = spatPts, varname = "Capacite",
                 typefct = "exponential", span = 1250, beta = 3,
                 resolution = 200, longlat = FALSE, mask = spatMask)
 # The function output a SpatialPointsDataFrame

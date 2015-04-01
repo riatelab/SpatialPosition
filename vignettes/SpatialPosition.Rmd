@@ -138,9 +138,9 @@ plot(spatPts, pch = 20, add = TRUE)
 
 ## References
 
-[1] STEWART J.Q. (1942) "Measure of the influence of a population at a distance", *Sociometry*, 5(1): 63-71.
-[2] Reilly W.J. (1931) *The law of retail gravitation*, W. J. Reilly, New York.
-[3] Huff D. (1964) "Defining and Estimating a Trading Area", *Journal of Marketing*, 28: 34-38.
+[1] STEWART J.Q. (1942) "Measure of the influence of a population at a distance", *Sociometry*, 5(1): 63-71.  
+[2] Reilly W.J. (1931) *The law of retail gravitation*, W. J. Reilly, New York.  
+[3] Huff D. (1964) "Defining and Estimating a Trading Area", *Journal of Marketing*, 28: 34-38.  
 
 
 

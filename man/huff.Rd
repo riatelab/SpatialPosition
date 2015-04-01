@@ -63,12 +63,12 @@ mymat <- CreateDistMatrix(knownpts = spatPts, unknownpts = mygrid,
 # Compute Huff catchment areas from known points (spatPts) on a given
 # grid (mygrid) using a given distance matrix (mymat)
 myhuff <- huff(knownpts = spatPts, unknownpts = mygrid,
-               matdist = mymat, varname = "POPULATION",
+               matdist = mymat, varname = "Capacite",
                typefct = "exponential", span = 1250,
                beta = 3, longlat = FALSE, mask = spatMask)
 # Compute Huff catchment areas from known points (spatPts) on a
 # grid defined by its resolution
-myhuff2 <- huff(knownpts = spatPts, varname = "POPULATION",
+myhuff2 <- huff(knownpts = spatPts, varname = "Capacite",
                       typefct = "exponential", span = 1250, beta = 3,
                       resolution = 200, longlat = FALSE, mask = spatMask)
 # The two methods have the same result

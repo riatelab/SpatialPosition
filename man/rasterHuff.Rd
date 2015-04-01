@@ -22,7 +22,7 @@ Raster layer with output values (catchment areas).
 data(spatData)
 # Compute Huff catchment areas from known points (spatPts) on a
 # grid defined by its resolution
-myhuff <- huff(knownpts = spatPts, varname = "POPULATION",
+myhuff <- huff(knownpts = spatPts, varname = "Capacite",
                      typefct = "exponential", span = 1250, beta = 3,
                      resolution = 200, longlat = FALSE, mask = spatMask)
 # Create a raster of huff values

@@ -5,21 +5,21 @@
 #' @docType package
 NULL
 
-#' @title SpatialUnits
-#' @description Paris arrondissements and its surrounding communes (SpatialPolygonsDataFrame). Total population in the POPULATION field.
-#' @name spatMask
+#' @title Spatial Units of Paris 
+#' @description 20 spatial units representing the Paris' districts (*arrondissements*), (SpatialPolygonsDataFrame).
+#' @name spatUnits
 #' @docType data
 NULL
 
 #' @title SpatialUnits
-#' @description Centroids of Paris arrondissements and its surrounding communes (SpatialPointsDataFrame). Total population in the POPULATION field.
+#' @description 18 points representing the public hospitals with their capacity (number of beds), (SpatialPointsDataFrame).
 #' @name spatPts
 #' @docType data
 NULL
 
-#' @title SpatialUnits
-#' @description Extent of Paris arrondissements and its surrounding communes (SpatialPolygonsDataFrame). 
-#' @name spatUnits
+#' @title Paris Perimeter
+#' @description 1 spatial unit representing the Paris' perimeter, (SpatialPolygonsDataFrame). 
+#' @name spatMask
 #' @docType data
 NULL
 
@@ -168,12 +168,12 @@ CreateDistMatrix  <- function(knownpts, unknownpts, longlat = FALSE)
 #' # Compute Stewart potentials from known points (spatPts) on a given 
 #' # grid (mygrid) using a given distance matrix (mymat)
 #' mystewart <- stewart(knownpts = spatPts, unknownpts = mygrid, 
-#'                      matdist = mymat, varname = "POPULATION", 
+#'                      matdist = mymat, varname = "Capacite", 
 #'                      typefct = "exponential", span = 1250, 
 #'                      beta = 3, longlat = FALSE, mask = spatMask)
 #' # Compute Stewart potentials from known points (spatPts) on a 
 #' # grid defined by its resolution
-#' mystewart2 <- stewart(knownpts = spatPts, varname = "POPULATION", 
+#' mystewart2 <- stewart(knownpts = spatPts, varname = "Capacite", 
 #'                       typefct = "exponential", span = 1250, beta = 3, 
 #'                       resolution = 200, longlat = FALSE, mask = spatMask)
 #' # The two methods have the same result
@@ -273,12 +273,12 @@ stewart <- function(knownpts,
 #' # Compute Huff catchment areas from known points (spatPts) on a given 
 #' # grid (mygrid) using a given distance matrix (mymat)
 #' myhuff <- huff(knownpts = spatPts, unknownpts = mygrid, 
-#'                matdist = mymat, varname = "POPULATION", 
+#'                matdist = mymat, varname = "Capacite", 
 #'                typefct = "exponential", span = 1250, 
 #'                beta = 3, longlat = FALSE, mask = spatMask)
 #' # Compute Huff catchment areas from known points (spatPts) on a 
 #' # grid defined by its resolution
-#' myhuff2 <- huff(knownpts = spatPts, varname = "POPULATION", 
+#' myhuff2 <- huff(knownpts = spatPts, varname = "Capacite", 
 #'                       typefct = "exponential", span = 1250, beta = 3, 
 #'                       resolution = 200, longlat = FALSE, mask = spatMask)
 #' # The two methods have the same result
@@ -378,13 +378,13 @@ huff <- function(knownpts,
 #' # Compute Reilly catchment areas from known points (spatPts) on a given 
 #' # grid (mygrid) using a given distance matrix (mymat)
 #' myreilly2 <- reilly(knownpts = spatPts, unknownpts = mygrid, 
-#'                matdist = mymat, varname = "POPULATION", 
+#'                matdist = mymat, varname = "Capacite", 
 #'                typefct = "exponential", span = 1250, 
 #'                beta = 3, longlat = FALSE, mask = spatMask)
-#' row.names(spatPts) <- spatPts$INSEE_COM
+#' row.names(spatPts) <- spatPts$CodHop
 #' # Compute Reilly catchment areas from known points (spatPts) on a 
 #' # grid defined by its resolution
-#' myreilly <- reilly(knownpts = spatPts, varname = "POPULATION", 
+#' myreilly <- reilly(knownpts = spatPts, varname = "Capacite", 
 #'                 typefct = "exponential", span = 1250, beta = 3, 
 #'                 resolution = 200, longlat = FALSE, mask = spatMask)
 #' # The function output a SpatialPointsDataFrame
@@ -455,7 +455,7 @@ reilly <- function(knownpts,
 #' data(spatData) 
 #' # Compute Stewart potentials from known points (spatPts) on a 
 #' # grid defined by its resolution
-#' mystewart <- stewart(knownpts = spatPts, varname = "POPULATION", 
+#' mystewart <- stewart(knownpts = spatPts, varname = "Capacite", 
 #'                      typefct = "exponential", span = 1250, beta = 3, 
 #'                      resolution = 200, longlat = FALSE, mask = spatMask)
 #' # Create a raster of potentials values
@@ -487,7 +487,7 @@ rasterStewart <- function(x, mask = NULL){
 #' data(spatData)
 #' # Compute Huff catchment areas from known points (spatPts) on a 
 #' # grid defined by its resolution
-#' myhuff <- huff(knownpts = spatPts, varname = "POPULATION", 
+#' myhuff <- huff(knownpts = spatPts, varname = "Capacite", 
 #'                      typefct = "exponential", span = 1250, beta = 3, 
 #'                      resolution = 200, longlat = FALSE, mask = spatMask)
 #' # Create a raster of huff values
@@ -520,10 +520,10 @@ rasterHuff <- function(x, mask = NULL){
 #' unique(levels(rasterName)[[1]])} to see the correpondance table.
 #' @examples 
 #' data(spatData)
-#' row.names(spatPts) <- spatPts$INSEE_COM
+#' row.names(spatPts) <- spatPts$CodHop
 #' # Compute Reilly catchment areas from known points (spatPts) on a 
 #' # grid defined by its resolution
-#' myreilly <- reilly(knownpts = spatPts, varname = "POPULATION", 
+#' myreilly <- reilly(knownpts = spatPts, varname = "Capacite", 
 #'                typefct = "exponential", span = 1250, beta = 3, 
 #'                resolution = 200, longlat = FALSE, mask = spatMask)
 #' # Create a raster of reilly values
@@ -569,7 +569,7 @@ rasterReilly <- function(x ,mask = NULL){
 #' data(spatData)
 #' # Compute Stewart potentials from known points (spatPts) on a
 #' # grid defined by its resolution
-#' mystewart <- stewart(knownpts = spatPts, varname = "POPULATION",
+#' mystewart <- stewart(knownpts = spatPts, varname = "Capacite",
 #'                      typefct = "exponential", span = 1250, beta = 3,
 #'                      resolution = 200, longlat = FALSE, mask = spatMask)
 #' # Create a raster of potentials values
@@ -623,7 +623,7 @@ plotStewart <- function(x, add = FALSE,
 #' data(spatData)
 #' # Compute Huff catchment areas from known points (spatPts) on a 
 #' # grid defined by its resolution
-#' myhuff <- huff(knownpts = spatPts, varname = "POPULATION", 
+#' myhuff <- huff(knownpts = spatPts, varname = "Capacite", 
 #'                      typefct = "exponential", span = 1250, beta = 3, 
 #'                      resolution = 200, longlat = FALSE, mask = spatMask)
 #' # Create a raster of huff values
@@ -669,10 +669,10 @@ plotHuff <- function(x, add = FALSE,
 #' @details Display the raster nicely.
 #' @examples 
 #' data(spatData)
-#' row.names(spatPts) <- spatPts$INSEE_COM
+#' row.names(spatPts) <- spatPts$CodHop
 #' # Compute Reilly catchment areas from known points (spatPts) on a 
 #' # grid defined by its resolution
-#' myreilly <- reilly(knownpts = spatPts, varname = "POPULATION", 
+#' myreilly <- reilly(knownpts = spatPts, varname = "Capacite", 
 #'                typefct = "exponential", span = 1500, beta = 3, 
 #'                resolution = 200, longlat = FALSE, mask = spatMask)
 #' # Create a raster of reilly values
@@ -703,7 +703,7 @@ plotReilly <- function(x, add = FALSE,
 #' data(spatData)
 #' # Compute Stewart potentials from known points (spatPts) on a
 #' # grid defined by its resolution
-#' mystewart <- stewart(knownpts = spatPts, varname = "POPULATION",
+#' mystewart <- stewart(knownpts = spatPts, varname = "Capacite",
 #'                      typefct = "exponential", span = 1250, beta = 3,
 #'                      resolution = 200, longlat = FALSE, mask = spatMask)
 #' # Create a raster of potentials values

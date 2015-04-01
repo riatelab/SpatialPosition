@@ -3,8 +3,8 @@
 \docType{data}
 \name{spatMask}
 \alias{spatMask}
-\title{SpatialUnits}
+\title{Paris Perimeter}
 \description{
-Paris arrondissements and its surrounding communes (SpatialPolygonsDataFrame). Total population in the POPULATION field.
+1 spatial unit representing the Paris' perimeter, (SpatialPolygonsDataFrame).
 }
 

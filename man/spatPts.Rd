@@ -5,6 +5,6 @@
 \alias{spatPts}
 \title{SpatialUnits}
 \description{
-Centroids of Paris arrondissements and its surrounding communes (SpatialPointsDataFrame). Total population in the POPULATION field.
+18 points representing the public hospitals with their capacity (number of beds), (SpatialPointsDataFrame).
 }
 
