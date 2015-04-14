@@ -11,7 +11,7 @@ plotReilly(x, add = FALSE, col = rainbow)
 
 \item{add}{LOGICAL, add parameter for the \code{plot} function.}
 
-\item{col}{FUNCTION, color ramp produced by functions such as \code{\link{colorRampPalette}}.}
+\item{col}{FUNCTION, color ramp functions such as \code{\link{colorRampPalette}}.}
 }
 \description{
 This function plots the raster produced by the \code{\link{rasterReilly}} function.

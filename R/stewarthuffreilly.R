@@ -74,9 +74,14 @@ CreateGrid <- function (w, resolution)
 #' @param knownpts SP OBJECT (SpatialPointsDataFrame). 
 #' @param unknownpts SP OBJECT (SpatialPointsDataFrame). 
 #' @param longlat LOGICAL, Euclidean distance (FALSE, default) or Great Circle distance (TRUE)
-#' @details The function returns a full matrix of distances in the metric of the
-#'  points if longlat=FALSE, or in kilometers if longlat=TRUE. This is a wrapper
-#'   for the \code{\link{spDists}} function.
+#' @param bypassctrl LOGICAL, bypass the distance matrix size control (see Details).
+#' @details The function returns a full matrix of distances in the metric of the 
+#' points if longlat=FALSE, or in kilometers if longlat=TRUE. This is a wrapper
+#' for the \code{\link{spDists}} function. 
+#' 
+#' If the matrix to compute is too large (more than 100,000,000 cells or more than 10,000,000 origins or destinations) 
+#' the function sends a confirmation message to warn users about the amount of RAM mobilized. 
+#' bypassctrl=TRUE skip this control.
 #' @examples 
 #' # Create a SpatialPointsDataFrame grid of spatMask extent and 200 meters 
 #' # resolution
@@ -89,7 +94,7 @@ CreateGrid <- function (w, resolution)
 #' dim(mymat)
 #' @import sp
 #' @export
-CreateDistMatrix  <- function(knownpts, unknownpts, longlat = FALSE)
+CreateDistMatrix  <- function(knownpts, unknownpts, longlat = FALSE, bypassctrl = FALSE)
 {
   TestSp(knownpts)
   TestSp(unknownpts)
@@ -97,29 +102,29 @@ CreateDistMatrix  <- function(knownpts, unknownpts, longlat = FALSE)
     stop(paste("Inputs (",quote(knownpts), " and ",quote(unknownpts),
                ") do not use the same projection", sep = ""),call. = FALSE)
   }
-  
-  nk <- nrow(knownpts)
-  nu <- nrow(unknownpts)
-  if(nk * nu > 100000000 | nu > 10000000 | nk > 10000000){
-    if (interactive()){
-      cat("Do you really want to compute potentials values (from", nk , 
-          "known points to", nu,"estimated values) ? \n 
+  if (bypassctrl == FALSE){
+    nk <- nrow(knownpts)
+    nu <- nrow(unknownpts)
+    if(nk * nu > 100000000 | nu > 10000000 | nk > 10000000){
+      if (interactive()){
+        cat("Do you really want to compute potentials values (from", nk , 
+            "known points to", nu,"estimated values) ? \n 
           (It seems to be a heavy computation.) [y/n]" )
-      z <- readLines(con = stdin(), n = 1) 
-      while (!z %in% c("n","y")){
-        cat ("Enter y or n")
-        z <- readLines(con = stdin(), n = 1)  
-      }
-      if (z == "y"){
-        cat("Ok, YOLO!")
+        z <- readLines(con = stdin(), n = 1) 
+        while (!z %in% c("n","y")){
+          cat ("Enter y or n")
+          z <- readLines(con = stdin(), n = 1)  
+        }
+        if (z == "y"){
+          cat("Ok, YOLO!")
+        } else {
+          stop("Computation aborted.", call. = F)
+        }
       } else {
-        stop("Computation aborted.", call. = F)
+        stop("Computation aborted. Matrix would probably be too big", call. = F)
       }
-    } else {
-      stop("Computation aborted. Matrix would probably be too big", call. = F)
     }
   }
-  
   matDist <- spDists(x = knownpts, y = unknownpts, longlat = longlat)
   dimnames(matDist) <- list(row.names(knownpts), row.names(unknownpts))
   return(round(matDist, digits = 8))
@@ -633,29 +638,16 @@ plotStewart <- function(x, add = FALSE,
 #' @import sp
 #' @import raster
 #' @export
-plotHuff <- function(x, add = FALSE, 
-                     breaks = NULL, typec = "equal", 
-                     nclass = 5, legend.rnd = 0, 
-                     col =  colorRampPalette(c("#E8F6A4","#445200"))){
-  
-  if (!is.null(breaks)){
-    bks <- unique(breaks[order(breaks)])
-  } else if (typec == "equal"){
-    bks <- seq(from = cellStats(x, min), 
-               to = cellStats(x, max), length.out = nclass+1)
-  } else if (typec == "quantile"){
-    bks <- quantile (x, probs = seq(0,1, by = 1/nclass))
-  } else {
-    stop('Enter a proper discretisation type: "equal" or "quantile"')
-  }
-  bks <- unique(bks)
-  col <- col(length(bks)-1)
+plotHuff <- function(x, add = FALSE){
+  bks <- seq(from = cellStats(x, min), 
+             to = cellStats(x, max), length.out = 11)
+  col <- c("#543005", "#8C510A", "#BF812D", "#DFC27D", 
+           "#F6E8C3","#C7EAE5", "#80CDC1", "#35978F", 
+           "#01665E", "#003C30")
   plot(x, breaks = bks, legend = FALSE, axes = FALSE,
        box = FALSE, col = col,  add = add)
   plot(x, legend.only=TRUE, col = col, 
-       breaks=round(bks,legend.rnd))
-  breaks <- bks
-  return(invisible(breaks))
+       breaks=round(bks,0))
 }
 
 
@@ -665,7 +657,7 @@ plotHuff <- function(x, add = FALSE,
 #' @description This function plots the raster produced by the \code{\link{rasterReilly}} function.
 #' @param x RASTER OBJECT, output of the \code{\link{rasterStewart}} function.
 #' @param add LOGICAL, add parameter for the \code{plot} function.
-#' @param col FUNCTION, color ramp produced by functions such as \code{\link{colorRampPalette}}.
+#' @param col FUNCTION, color ramp functions such as \code{\link{colorRampPalette}}.
 #' @details Display the raster nicely.
 #' @examples 
 #' data(spatData)

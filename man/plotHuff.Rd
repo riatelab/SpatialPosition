@@ -4,8 +4,7 @@
 \alias{plotHuff}
 \title{Plot a Huff Raster}
 \usage{
-plotHuff(x, add = FALSE, breaks = NULL, typec = "equal", nclass = 5,
-  legend.rnd = 0, col = colorRampPalette(c("#E8F6A4", "#445200")))
+plotHuff(x, add = FALSE)
 }
 \arguments{
 \item{x}{RASTER OBJECT, output of the \code{\link{rasterHuff}} function.}

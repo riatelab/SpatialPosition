@@ -4,7 +4,7 @@
 \alias{CreateDistMatrix}
 \title{Create a Distance Matrix Between Two SpatialPointsDataFrame Objects}
 \usage{
-CreateDistMatrix(knownpts, unknownpts, longlat = FALSE)
+CreateDistMatrix(knownpts, unknownpts, longlat = FALSE, bypassctrl = FALSE)
 }
 \arguments{
 \item{knownpts}{SP OBJECT (SpatialPointsDataFrame).}
@@ -12,6 +12,8 @@ CreateDistMatrix(knownpts, unknownpts, longlat = FALSE)
 \item{unknownpts}{SP OBJECT (SpatialPointsDataFrame).}
 
 \item{longlat}{LOGICAL, Euclidean distance (FALSE, default) or Great Circle distance (TRUE)}
+
+\item{bypassctrl}{LOGICAL, bypass the distance matrix size control (see Details).}
 }
 \description{
 This function creates a distance matrix between two
@@ -19,8 +21,12 @@ SpatialPointsDataFrame Objects
 }
 \details{
 The function returns a full matrix of distances in the metric of the
- points if longlat=FALSE, or in kilometers if longlat=TRUE. This is a wrapper
-  for the \code{\link{spDists}} function.
+points if longlat=FALSE, or in kilometers if longlat=TRUE. This is a wrapper
+for the \code{\link{spDists}} function.
+
+If the matrix to compute is too large (more than 100,000,000 cells or more than 10,000,000 origins or destinations)
+the function sends a confirmation message to warn users about the amount of RAM mobilized.
+bypassctrl=TRUE skip this control.
 }
 \examples{
 # Create a SpatialPointsDataFrame grid of spatMask extent and 200 meters
