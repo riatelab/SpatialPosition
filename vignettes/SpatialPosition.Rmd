@@ -13,10 +13,10 @@ vignette: >
 
 ### Modeling spatial interactions
 
-Modeling spatial interactions is used to understand and quantify the level of interaction between different locations. It means carrying out the three following steps: 
+Modeling spatial interactions is used to understand and quantify the level of interaction between different locations. It implies carrying out the three following steps: 
 
 1. **Conceptual formalization** of entities (e.g. individuals, spatial units) and relationships (e.g. work, power, goods).
-2. Corresponent **mathematical formalization**: $T_{ij} = S_i D_j / d_{ij}^2$ the trade flow between countries *i* and *j* ($T_{ij}$) is proportional to the supply of country *i* ($S_i$) and the demand of country *j* ($D_j$) and inversely proportional to the squared distance between both countries ($d_{ij}^2$).
+2. Corresponent **mathematical formalization**: $T_{ij} = S_i D_j / d_{ij}^2$ the trade flow between units *i* and *j* ($T_{ij}$) is proportional to the supply of unit *i* ($S_i$) and the demand of unit *j* ($D_j$) and inversely proportional to the squared distance between both units ($d_{ij}^2$).
 3. **Informatic formalization** of the model: language, algorithms, etc.
 
 The most ancient and common spatial interactions model is of the gravity form (like below). It has roots in the late 19st century (Casey, Ravenstein) and has been used in several fields (geography, economy, demography) to model a high variety of flows (commuting, trade, migrations). A brief presentation can be found in the [Geography of transport systems](https://people.hofstra.edu/geotrans/eng/methods/ch5m1en.html). For a detailed one see, among many others, the book of Fotheringham and O'Kelly, *Spatial Interaction Models: Formulations and Applications* (Kluwer Academic Publishers, 1989). In French you can found pedagogic materials on the [website of Pr. Grasland](http://grasland.script.univ-paris-diderot.fr)
@@ -26,7 +26,7 @@ The most ancient and common spatial interactions model is of the gravity form (l
 
 There are two main ways of modeling spatial interactions: the first one focuses on links between places (flows), the second one focuses on places and their influence at a distance. Following the physics metaphor, the flow may be seen as the **gravitational force** between two masses, the place influence as the **gravitational potential**. The `SpatialPosition` package, as its name suggests, proposes an implementation of place-based models: Stewart, Reilly and Huff models.
 
-The Stewart model [1] is also known in the literature, depending on the discipline, as **potential access**, **gravitational potential** or **gravitational accessibility**. The concept was developped in the 1940s by physicist John Q. Stewart from an analogy to the gravity model. In his seminal work on the catchment area of American universities, Stewart computes **potentials of population**. This potential is defined as a stock of population weighted by distance:
+The Stewart model [1] is also known in the literature, depending on the discipline, as **potential access**, **gravitational potential** or **gravitational accessibility**. The concept was developped in the 1940s by physicist John Q. Stewart from an analogy to the gravity model. In his seminal work on the catchment areas of American universities, Stewart computes **potentials of population**. This potential is defined as a stock of population weighted by distance:
 
 $$
 A_i = \sum_{j=1}^n O_j f(d_{ij})
@@ -53,7 +53,7 @@ The Huff model is a relative version of the Reilly model: for a given point $i$ 
 
 ### The distance friction
 
-Modeling spatial interactions means quantifying the distance friction or impedance. The role of the distance can be interpreted as a disincentive to access desired destinations or opportunities (e.g. jobs, shops). At the very place of the opoortunity, the interaction function equals 1, meaning that the potential access is 100%. Far away from the opportunity, the interaction function tends to 0, meaning that the potential access is 0 %. The **span** is defined as the value where the interaction function falls to 0.5 (50%). From the individuals' point of vue, this function may be seen as a degree of availability of a given opportunity. From the opportunity's point of vue (a store for example), the interaction function may be seen as a decreasing catchment area: there is a maximal attraction close to the opportunity and this attraction decreases progressively through distance. 
+Modeling spatial interactions means quantifying the distance friction or impedance. The role of the distance can be interpreted as a disincentive to access desired destinations or opportunities (e.g. jobs, shops). At the very place of the opportunity, the interaction function equals 1, meaning that the potential access is 100%. Far away from the opportunity, the interaction function tends to 0, meaning that the potential access is 0 %. The **span** is defined as the value where the interaction function falls to 0.5 (50%). From the individuals' point of vue, this function may be seen as a degree of availability of a given opportunity. From the opportunity's point of vue (a store for example), the interaction function may be seen as a decreasing catchment area: there is a maximal attraction close to the opportunity and this attraction decreases progressively through distance. 
 
 
 ## Examples
@@ -71,21 +71,22 @@ First we want to compute a global accessibility to hospitals. This computation c
 
 The set of known points are the hospitals and the weighting variable -- i.e. the mass of the points -- is their capacity (`Capacite`). We want to create a raster of values and to clip it with the perimeter of the study area so we provide clipping mask (`spatMask`). The function type, the span and the exponent should reflect research hypothesis or known behavior of the individuals: e.g. in a dense urban area such as the center of Paris, an average consumer wouldn't go farther than 500 meters to reach a small retail shop and the friction of the distance is very high (exponential form with a large beta coefficient). Here we set the span at 1000 meters, the impedance function is exponential with beta = 3.
 
-````{r }
-### ** Examples
+````{r , fig.width=5, fig.height=5}
 library(SpatialPosition)
 data(spatData)
 
 # Compute potentials (accessibility)
 globalAccessibility <- stewart(knownpts = spatPts, varname = "Capacite",
                                typefct = "exponential", span = 1000, beta = 3,
-                               resolution = 50, longlat = FALSE, mask = spatMask)
+                               resolution = 50, longlat = FALSE, 
+                               mask = spatMask)
 
 # Create a raster
 rasterAccessibility <- rasterStewart(x = globalAccessibility, mask = spatMask)
 
 # Plot the raster
-par(mar = c(0,0,0,0))
+par(mar = c(4,2,2,1))
+
 plotStewart(x = rasterAccessibility, add = FALSE, nclass = 6)
 
 # The function returns break values
@@ -95,52 +96,67 @@ breakValues <- plotStewart(x = rasterAccessibility, add = FALSE, nclass = 6)
 contLines <- contourStewart(x = rasterAccessibility, breaks = breakValues)
 plot(contLines, add = TRUE)
 plot(spatMask, add = TRUE)
+
+mtext("Global Accessibility to Public Hospitals", side = 3,cex = 1.5)
+mtext(text = "Potential nb. of beds\n distance function: exponential, span = 1 km, beta = 3",
+      side = 1, line = 1)   
+
+
 ````
 
 ### Drawing catchment areas of public hospitals
 
-We now want to draw the catchment areas corresponing to the public hospitals. These areas could be used as a zoning tool, in order to set the residential zones with its referent hospital. Just like before, there are three steps: computing the values (`reilly`), creating the raster (`rasterReilly`), plotting the raster (`plotReilly`).
+We now want to draw the catchment areas corresponing to the public hospitals. These areas could be used as a zoning tool, in order to set the residential zones with its referent hospital. As for the global accessibility, three steps are needed: computing the values (`reilly`), creating the raster (`rasterReilly`), plotting the raster (`plotReilly`).
 
-````{r }
-### ** Examples
+````{r , fig.width=5, fig.height=5}
 row.names(spatPts)
 catchReilly <- reilly(knownpts = spatPts, varname = "Capacite",
-                     typefct = "exponential", span = 500, beta = 2,
-                     resolution = 50, longlat = FALSE, mask = spatMask)
+                      typefct = "exponential", span = 500, beta = 2,
+                      resolution = 50, longlat = FALSE, mask = spatMask)
 
 # Create a raster
 rasterCatch <- rasterReilly(x = catchReilly, mask = spatMask)
 
+par(mar = c(4,2,2,1))
 # Plot the raster and add the points
 plotReilly(x = rasterCatch)
 plot(spatPts, pch = 20, add = TRUE)
+
+mtext("Catchment Areas of Public Hospitals", side = 3,cex = 1.5)
+mtext(text = "distance function: exponential, span = 0.5 km, beta = 2",
+      side = 1, line = 0) 
 ````
 
 
 
 ### Drawing probabilistic catchment areas of public hospitals
 
-We now want to draw the catchment areas corresponing to the public hospitals. These areas show the probability for a patient to go to one hospital or to another. It is used in geomarketing to detect the fuzzy areas where there are competing shopping malls and where the brand should focus its advertising. Just like before, there are three steps: computing the values (`huff`), creating the raster (`rasterHuff`) and plotting the raster (`plotHuff`).
+We now want to draw the probabilistic catchment areas corresponing to the public hospitals. These areas show the probability for a patient to go to one hospital or to another. It is used in geomarketing to detect the fuzzy areas where there are competing shopping malls and where the brand should focus its advertising. The same three steps are needed: computing the values (`huff`), creating the raster (`rasterHuff`) and plotting the raster (`plotHuff`).
 
-````{r }
-### ** Examples
+````{r , fig.width=5, fig.height=5}
+###
 catchHuff <- huff(knownpts = spatPts, varname = "Capacite",
-                     typefct = "exponential", span = 500, beta = 2,
-                     resolution = 50, longlat = FALSE, mask = spatMask)
+                  typefct = "exponential", span = 500, beta = 2,
+                  resolution = 50, longlat = FALSE, mask = spatMask)
 
 # Create a raster
 rasterCatch <- rasterHuff(x = catchHuff, mask = spatMask)
 
 # Plot the raster and add the points
-plotHuff(x = rasterCatch, nclass = 6)
-plot(spatPts, pch = 20, add = TRUE)
+par(mar = c(4,2,2,1))
+plotHuff(x = rasterCatch)
+plot(spatPts, pch = 20, col = "red", add = TRUE)
+
+mtext("Probabilistic Catchment Areas \nof Public Hospitals", side = 3,cex = 1.5, line=-1.5)
+mtext(text = "distance function: exponential, span = 0.5 km, beta = 2",
+      side = 1, line = 0) 
 ````
 
 ## References
 
-[1] STEWART J.Q. (1942) "Measure of the influence of a population at a distance", *Sociometry*, 5(1): 63-71.  
-[2] Reilly W.J. (1931) *The law of retail gravitation*, W. J. Reilly, New York.  
-[3] Huff D. (1964) "Defining and Estimating a Trading Area", *Journal of Marketing*, 28: 34-38.  
+[1] STEWART J.Q. (1942) "Measure of the influence of a population at a distance", *Sociometry*, 5(1): 63-71.    
+[2] REILLY W.J. (1931) *The law of retail gravitation*, W. J. Reilly, New York.    
+[3] HUFF D. (1964) "Defining and Estimating a Trading Area", *Journal of Marketing*, 28: 34-38.    
 
 
 
