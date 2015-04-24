@@ -68,10 +68,14 @@ CreateGrid <- function (w, resolution)
 #' mymat <- CreateDistMatrix(knownpts = spatPts, unknownpts = mygrid, 
 #'                           longlat = FALSE, bypassctrl = FALSE)
 #' mymat[1:5,1:5]
+#' nrow(spatPts)
+#' nrow(mygrid)
 #' dim(mymat)
 #' @import sp
 #' @export
-CreateDistMatrix  <- function(knownpts, unknownpts, longlat = FALSE, 
+CreateDistMatrix  <- function(knownpts, 
+                              unknownpts, 
+                              longlat = FALSE, 
                               bypassctrl = FALSE)
 {
   TestSp(knownpts)

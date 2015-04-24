@@ -112,14 +112,14 @@ huff <- function(knownpts,
 #' @seealso \link{huff}, \link{rasterHuff}, \link{plotHuff}, \link{CreateGrid}, \link{CreateDistMatrix}.
 #' @examples 
 #' data(spatData)
-#' # Compute Huff catchment areas from known points (spatPts) on a 
+#' # Compute Huff catchment areas from known points (spatPts) on a
 #' # grid defined by its resolution
-#' myhuff <- huff(knownpts = spatPts, varname = "Capacite", 
-#'                      typefct = "exponential", span = 1250, beta = 3, 
-#'                      resolution = 200, longlat = FALSE, mask = spatMask)
+#' myhuff <- huff(knownpts = spatPts, varname = "Capacite",
+#'                typefct = "exponential", span = 750, beta = 2,
+#'                resolution = 50, longlat = FALSE, mask = spatMask)
 #' # Create a raster of huff values
 #' myhuffraster <- rasterHuff(x = myhuff, mask = spatMask)
-#' plot(myhuffraster)               
+#' plot(myhuffraster)
 #' @import sp
 #' @import raster
 #' @export
@@ -143,11 +143,11 @@ rasterHuff <- function(x, mask = NULL){
 #' @seealso \link{huff}, \link{rasterHuff}, \link{plotHuff}, \link{CreateGrid}, \link{CreateDistMatrix}.
 #' @examples 
 #' data(spatData)
-#' # Compute Huff catchment areas from known points (spatPts) on a 
+#' # Compute Huff catchment areas from known points (spatPts) on a
 #' # grid defined by its resolution
-#' myhuff <- huff(knownpts = spatPts, varname = "Capacite", 
-#'                      typefct = "exponential", span = 1250, beta = 3, 
-#'                      resolution = 200, longlat = FALSE, mask = spatMask)
+#' myhuff <- huff(knownpts = spatPts, varname = "Capacite",
+#'                typefct = "exponential", span = 750, beta = 2,
+#'                resolution = 50, longlat = FALSE, mask = spatMask)
 #' # Create a raster of huff values
 #' myhuffraster <- rasterHuff(x = myhuff, mask = spatMask)
 #' # Plot Huff values nicely

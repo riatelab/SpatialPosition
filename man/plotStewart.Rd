@@ -34,8 +34,8 @@ data(spatData)
 # Compute Stewart potentials from known points (spatPts) on a
 # grid defined by its resolution
 mystewart <- stewart(knownpts = spatPts, varname = "Capacite",
-                     typefct = "exponential", span = 1250, beta = 3,
-                     resolution = 200, longlat = FALSE, mask = spatMask)
+                     typefct = "exponential", span = 1000, beta = 3,
+                     resolution = 50, longlat = FALSE, mask = spatMask)
 # Create a raster of potentials values
 mystewartraster <- rasterStewart(x = mystewart, mask = spatMask)
 # Plot stewart potentials nicely

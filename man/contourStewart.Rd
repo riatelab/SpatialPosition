@@ -25,26 +25,28 @@ data(spatData)
 # Compute Stewart potentials from known points (spatPts) on a
 # grid defined by its resolution
 mystewart <- stewart(knownpts = spatPts, varname = "Capacite",
-                     typefct = "exponential", span = 1250, beta = 3,
-                     resolution = 200, longlat = FALSE, mask = spatMask)
+                     typefct = "exponential", span = 1000, beta = 3,
+                     resolution = 50, longlat = FALSE,
+                     mask = spatMask)
 # Create a raster of potentials values
 mystewartraster <- rasterStewart(x = mystewart, mask = spatMask)
-break.values <- c(0,50,100,150,200,250,300)
+# Display the raster and get break values
+break.values <- plotStewart(x = mystewartraster)
 # Create contour SpatialLinesDataFrame
 mystewartcontourlines <- contourStewart(x = mystewartraster,
-                                       breaks = break.values,
-                                       type = "line")
+                                        breaks = break.values,
+                                        type = "line")
 mystewartcontourlines@data
-plotStewart(x = mystewartraster, breaks = break.values)
 plot(mystewartcontourlines, col = "grey20", add=TRUE)
 plot(spatMask, lwd = 1.25, add=TRUE)
 # Create contour SpatialPolygonsDataFrame
 mystewartcontourpoly<- contourStewart(x = mystewartraster,
-                                        breaks = break.values,
-                                        type = "poly")
+                                      breaks = break.values,
+                                      type = "poly")
 unique(mystewartcontourpoly@data)
 plot(spatMask, col = "grey80", border = "grey50")
-plot(mystewartcontourpoly, col = "#0000ff50", border = "grey40", add = TRUE)
+plot(mystewartcontourpoly, col = "#0000ff50", border = "grey40",
+     add = TRUE)
 plot(spatPts, cex = 0.5, pch = 20, col  = "#ff000050", add = TRUE)
 }
 \seealso{

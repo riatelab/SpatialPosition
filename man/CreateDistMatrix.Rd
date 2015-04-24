@@ -40,6 +40,8 @@ mygrid <- CreateGrid(w = spatMask, resolution = 200)
 mymat <- CreateDistMatrix(knownpts = spatPts, unknownpts = mygrid,
                           longlat = FALSE, bypassctrl = FALSE)
 mymat[1:5,1:5]
+nrow(spatPts)
+nrow(mygrid)
 dim(mymat)
 }
 \seealso{

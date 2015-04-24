@@ -25,8 +25,8 @@ row.names(spatPts) <- spatPts$CodHop
 # Compute Reilly catchment areas from known points (spatPts) on a
 # grid defined by its resolution
 myreilly <- reilly(knownpts = spatPts, varname = "Capacite",
-               typefct = "exponential", span = 1500, beta = 3,
-               resolution = 200, longlat = FALSE, mask = spatMask)
+                   typefct = "exponential", span = 750, beta = 2,
+                   resolution = 50, longlat = FALSE, mask = spatMask)
 # Create a raster of reilly values
 myreillyraster <- rasterReilly(x = myreilly, mask = spatMask)
 # Plot the raster nicely
