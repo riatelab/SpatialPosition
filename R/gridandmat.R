@@ -89,7 +89,7 @@ CreateDistMatrix  <- function(knownpts,
     nu <- nrow(unknownpts)
     if(nk * nu > 100000000 | nu > 10000000 | nk > 10000000){
       if (interactive()){
-        cat("Do you really want to compute potentials values (from", nk , 
+        cat("Do you really want to this distance matrix (from", nk , 
             "known points to", nu,"estimated values) ? \n 
             (It seems to be a heavy computation.) [y/n]" )
         z <- readLines(con = stdin(), n = 1) 

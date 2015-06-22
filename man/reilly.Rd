@@ -24,7 +24,7 @@ of the \code{unknownpts} object dataframe. (optional)}
 Quantitative variable with no negative values.}
 
 \item{typefct}{character; spatial interaction function. Options are "pareto"
-(default, means power law) or "exponential".
+(means power law) or "exponential".
 If "pareto" the interaction is defined as: (1 + alpha * mDistance) ^ (-beta).
 If "exponential" the interaction is defined as:
 exp(- alpha * mDistance ^ beta).

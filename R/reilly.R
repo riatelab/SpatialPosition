@@ -12,7 +12,7 @@
 #' @param varname character; name of the variable in the \code{knownpts} dataframe from which values are computed.
 #' Quantitative variable with no negative values. 
 #' @param typefct character; spatial interaction function. Options are "pareto" 
-#' (default, means power law) or "exponential".
+#' (means power law) or "exponential".
 #' If "pareto" the interaction is defined as: (1 + alpha * mDistance) ^ (-beta).
 #' If "exponential" the interaction is defined as: 
 #' exp(- alpha * mDistance ^ beta).
