@@ -6,8 +6,13 @@
 \alias{SpatialPosition-package}
 \title{Spatial Position Package}
 \description{
-Computes spatial position models: Stewart
-potentials, Reilly catchment areas, Huff catchment areas.
+Computes spatial position models: \itemize{
+\item{Stewart potentials,}
+\item{Reilly catchment areas,}
+\item{Huff catchment areas.}
+}
+An introduction to the package conceptual background and usage is proposed in
+a vignette (see \code{vignette(topic = "SpatialPosition")}).
 }
 \seealso{
 \link{stewart}, \link{rasterStewart}, \link{plotStewart},
