@@ -169,9 +169,10 @@ rasterReilly <- function(x ,mask = NULL){
 #' plotReilly(x = myreillyraster)
 #' @import sp
 #' @import raster
+#' @importFrom grDevices rainbow
 #' @export
 plotReilly <- function(x, add = FALSE, 
-                       col =  rainbow){
+                       col = rainbow){
   nclass <- nrow(unique(levels(x)[[1]]))
   colorReilly <- col(n = nclass)
   plot(x, legend = FALSE, axes = FALSE,

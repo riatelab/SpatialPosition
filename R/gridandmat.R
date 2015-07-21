@@ -23,7 +23,6 @@ CreateGrid <- function (w, resolution)
   boundingBox <- bbox(w)
   rounder <- boundingBox %% resolution
   boundingBox[,1] <- boundingBox[,1] - rounder[,1]
-  roundermax <- resolution - rounder[,2]
   boundingBox[,2] <- boundingBox[,2] + resolution - rounder[,2]
   boxCoordX <- seq(from = boundingBox[1,1], to = boundingBox[1,2], 
                    by = resolution)

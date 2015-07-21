@@ -169,6 +169,7 @@ rasterStewart <- function(x, mask = NULL){
 #' break.values
 #' @import sp
 #' @import raster
+#' @importFrom grDevices colorRampPalette
 #' @export
 plotStewart <- function(x, add = FALSE, 
                         breaks = NULL, typec = "equal", 
