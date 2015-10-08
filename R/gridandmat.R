@@ -24,9 +24,9 @@ CreateGrid <- function (w, resolution)
   rounder <- boundingBox %% resolution
   boundingBox[,1] <- boundingBox[,1] - rounder[,1]
   boundingBox[,2] <- boundingBox[,2] + resolution - rounder[,2]
-  boxCoordX <- seq(from = boundingBox[1,1], to = boundingBox[1,2], 
+  boxCoordX <- seq(from = boundingBox[1,1] - resolution*10, to = boundingBox[1,2]+resolution*10, 
                    by = resolution)
-  boxCoordY <- seq(from = boundingBox[2,1], to = boundingBox[2,2], 
+  boxCoordY <- seq(from = boundingBox[2,1] - resolution * 10, to = boundingBox[2,2] + resolution*10, 
                    by = resolution)
   spatGrid <- expand.grid(boxCoordX, boxCoordY)
   idSeq <- seq(1, nrow(spatGrid), 1)

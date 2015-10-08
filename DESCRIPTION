@@ -1,6 +1,6 @@
 Package: SpatialPosition
 Title: Spatial Position Models
-Version: 1.0
+Version: 1.1
 Authors@R: c(
       person("Timothée", "Giraud", email = "timothee.giraud@ums-riate.fr", role = c("cre","aut")),
       person("Hadrien", "Commenges", email = "hcommenges@parisgeo.cnrs.fr", role = c("aut")), 
@@ -11,7 +11,8 @@ Depends: R (>= 3.0.0),
 License: GPL-3
 LazyData: true
 Imports: sp, 
-    grDevices
+    grDevices, 
+    methods
 Suggests: rgeos,
     knitr
 URL: https://github.com/Groupe-ElementR/SpatialPosition
