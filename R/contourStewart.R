@@ -133,6 +133,7 @@ contourStewart <- function(x, breaks, mask, type = "line"){
     row.names(df) <- df$id
     final <- sp::SpatialPolygonsDataFrame(Sr = final, data = df)
     final@data <- data.frame(id = final$id, x[match(final$id, x$id),2:4])
+    final@plotOrder <- 1:nrow(final)
     return(final)
   }
 }
