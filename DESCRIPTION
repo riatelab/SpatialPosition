@@ -5,17 +5,22 @@ Authors@R: c(
       person("Timothée", "Giraud", email = "timothee.giraud@ums-riate.fr", role = c("cre","aut")),
       person("Hadrien", "Commenges", email = "hcommenges@parisgeo.cnrs.fr", role = c("aut")), 
       person("Joël", "Boulier", email = "joel.boulier@univ-paris1.fr", role = c("ctb")))
-Description: Computes spatial position models: Stewart potentials, Reilly catchment areas, Huff catchment areas.
-Depends: R (>= 3.0.0), 
+Description: Computes spatial position models: Stewart potentials, Reilly
+    catchment areas, Huff catchment areas.
+Depends:
+    R (>= 3.0.0),
     raster
 License: GPL-3
 LazyData: true
-Imports: sp, 
-    grDevices, 
+Imports:
+    sp,
+    grDevices,
     methods
-Suggests: rgeos,
+Suggests:
+    rgeos,
     knitr
 URL: https://github.com/Groupe-ElementR/SpatialPosition
 BugReports: https://github.com/Groupe-ElementR/SpatialPosition/issues
 VignetteBuilder: knitr
 Encoding: UTF-8
+RoxygenNote: 5.0.0

@@ -38,7 +38,7 @@
 #' @export
 contourStewart <- function(x, breaks, mask, type = "line"){
   if (type=="line"){
-    return(rasterToContour(x = x, levels = breaks))
+    return(rasterToContour(x = x, levels = breaks[1:(length(breaks)-1)]))
   } 
   if (type=="poly"){
     if (!requireNamespace("rgeos", quietly = TRUE)) {
@@ -57,19 +57,21 @@ contourStewart <- function(x, breaks, mask, type = "line"){
     myres <- res(x)[1]
     
     # union the mask
-    mask <- rgeos::gUnaryUnion(mask, id = NULL)
+    mask <- rgeos::gUnaryUnion(spgeom = mask, id = NULL)
     
     # buffer around the mask
     maskbuff <- rgeos::gBuffer(mask, byid = FALSE, width = 5 * myres )
-    
+
     # use a mask around the raster with the maskbuff
-    x <- mask(x,maskbuff, updatevalue = 0)
+    x <- mask(x,maskbuff, updatevalue = -1)
     
     # adapt the breaks to the masked raster
-    minx <- min(x[x!=0])
-    maxx <- max(x[x!=0])
+    minx <- min(x[x!=-1])
+    maxx <- max(x[x!=-1])
     breaks <- breakss[(breakss>=minx & breakss<maxx)]
     breaks <- c(breakss[which(min(breaks)==breakss)-1],breaks)
+    
+    
     
     # test breaks
     if(length(breaks)<2){stop("break values do not fit the raster values", 
@@ -113,10 +115,11 @@ contourStewart <- function(x, breaks, mask, type = "line"){
     x <- sp::SpatialPolygonsDataFrame(Sr = x, 
                                       data = data.frame(levels = SPlevels))
     # manage attributes data of the contour spdf
+    breaks <- c(breaks, maxx)
+    
     x@data <- data.frame(id = paste("id_",row.names(x),sep=""),
-                         min = as.numeric(as.character(x@data$levels)), 
-                         max = c(as.numeric(as.character(x@data$levels[-1])),
-                                 maxx), 
+                         min = breaks[match(x$levels, breaks)], 
+                         max = breaks[match(x$levels, breaks)+1],
                          mean = NA, 
                          stringsAsFactors = FALSE)
     x@data$mean <- (x$min+x$max) / 2 

@@ -189,104 +189,23 @@ plotStewart <- function(x, add = FALSE,
   col <- col(length(bks)-1)
   plot(x, breaks = bks, legend = FALSE, axes = FALSE,
        box = FALSE, col = col,  add = add)
-  plot(x, legend.only=TRUE, col = col, 
-       breaks=round(bks,legend.rnd))
-  breaks <- bks
-  return(invisible(breaks))
+  
+  nbks <- round(bks,legend.rnd)
+  leglab <- rep(NA, (length(nbks)-1))
+  for(i in 1:(length(nbks)-1)){
+    leglab[i] <- paste("[", nbks[i], " - ", nbks[i+1],"[" ,sep="")
+  }
+  leglab[i] <- paste( substr(leglab[i],1, nchar(leglab[i])-1), "]", sep="")
+  
+  legend(x='topright', legend = rev(leglab), xpd=T,inset=c(-0.2,0),
+         fill = rev(col), cex = 0.7, plot = T, bty = "n", 
+         title = "Potentials")
+  
+  
+  
+  #   plot(x, legend.only=TRUE, col = col, 
+  #        breaks=round(bks,legend.rnd))
+  
+  return(invisible(bks))
 }
 
-
-# #' @title Create a SpatialPolygonsDataFrame or a SpatialLinesDataFrame from a 
-# #' Stewart Raster
-# #' @name contourStewart 
-# #' @description This function create a SpatialPolygonsDataFrame or a SpatialLinesDataFrame from the Stewart raster.
-# #' @param x raster; output of the \code{\link{rasterStewart}} function.
-# #' @param breaks numeric; a vector of break values. 
-# #' @param type character; "poly" or "line". WARNING: the poly option is experimental and needs the rgeos package.
-# #' @return The ouput of the function is a SpatialPolygonsDataFrame (\code{type = "poly"}) or a SpatialLinesDataFrame (\code{type = "line"}).
-# #' @seealso \link{stewart}, \link{rasterStewart}, \link{plotStewart}, \link{contourStewart}, \link{CreateGrid}, \link{CreateDistMatrix}.
-# #' @examples 
-# #' data(spatData)
-# #' # Compute Stewart potentials from known points (spatPts) on a
-# #' # grid defined by its resolution
-# #' mystewart <- stewart(knownpts = spatPts, varname = "Capacite",
-# #'                      typefct = "exponential", span = 1000, beta = 3,
-# #'                      resolution = 50, longlat = FALSE, 
-# #'                      mask = spatMask)
-# #' # Create a raster of potentials values
-# #' mystewartraster <- rasterStewart(x = mystewart, mask = spatMask)
-# #' # Display the raster and get break values
-# #' break.values <- plotStewart(x = mystewartraster)
-# #' # Create contour SpatialLinesDataFrame
-# #' mystewartcontourlines <- contourStewart(x = mystewartraster,
-# #'                                         breaks = break.values,
-# #'                                         type = "line")
-# #' mystewartcontourlines@@data
-# #' plot(mystewartcontourlines, col = "grey20", add=TRUE)
-# #' plot(spatMask, lwd = 1.25, add=TRUE)
-# #' # Create contour SpatialPolygonsDataFrame
-# #' mystewartcontourpoly<- contourStewart(x = mystewartraster,
-# #'                                       breaks = break.values,
-# #'                                       type = "poly")
-# #' unique(mystewartcontourpoly@@data)
-# #' plot(spatMask, col = "grey80", border = "grey50")
-# #' plot(mystewartcontourpoly, col = "#0000ff50", border = "grey40", 
-# #'      add = TRUE)
-# #' plot(spatPts, cex = 0.5, pch = 20, col  = "#ff000050", add = TRUE)
-# #' @import sp
-# #' @import raster
-# #' @export
-# contourStewart <- function(x, breaks, type = "line"){
-#   if (type=="line"){
-#     return(rasterToContour(x = x, levels = breaks))
-#   } 
-#   if (type=="poly"){
-#     if (!requireNamespace("rgeos", quietly = TRUE)) {
-#       stop("'rgeos' package needed for this function to work. Please install it.",
-#            call. = FALSE)
-#     }
-#     if(!'package:rgeos' %in% search()){
-#       attachNamespace('rgeos')
-#     }
-#     cl <- rasterToContour(x, levels = breaks)
-#     cl$level <- as.numeric (as.character(cl$level))
-#     SPlist <- list()
-#     SPlevels <- character()
-#     for (i in cl$level){ 
-#       linex <- cl[cl@data$level == i,]
-#       linex <- linex@lines
-#       linex <- linex[[1]]
-#       linex <- linex@Lines
-#       Plist <- NULL
-#       Plist <- list()
-#       for (j in 1:length(linex)){
-#         x <- linex[[j]]@coords
-#         x <- sp::Polygon(coords =  x, hole = F)
-#         x <- sp::Polygons(srl = list(x), ID = j)
-#         Plist[j] <- x
-#       }  
-#       x <- sp::SpatialPolygons(Srl = Plist)
-#       x <- rgeos::union(x = x)
-#       if (class(x) != "SpatialPolygonsDataFrame"){
-#         x <- sp::SpatialPolygonsDataFrame(Sr = x, 
-#                                           data = data.frame(
-#                                             level = rep(i, length(x))))
-#       } else {
-#         x <- x[x@data$count < 2,]
-#         x@data <- data.frame(level = rep(i, dim(x)[1]))
-#       }
-#       SPlist <- c(SPlist , x@polygons  )
-#       SPlevels <- c(SPlevels,x@data$level)
-#     }
-#     for (i in 1:length(SPlist)){
-#       SPlist[[i]]@ID <- as.character(i)
-#     }
-#     x <- sp::SpatialPolygons(Srl = SPlist)
-#     x <- sp::SpatialPolygonsDataFrame(Sr = x, 
-#                                       data = data.frame(levels = SPlevels))
-#     return (x)
-#   } else {
-#     stop(paste("type must be either 'SpatialLinesDataFrame' or", 
-#                "'SpatialPolygonsDataFrame'", sep =""), call. = FALSE)
-#   }
-# }
