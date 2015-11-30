@@ -197,9 +197,11 @@ plotStewart <- function(x, add = FALSE,
   }
   leglab[i] <- paste( substr(leglab[i],1, nchar(leglab[i])-1), "]", sep="")
   
-  legend(x='topright', legend = rev(leglab), xpd=T,inset=c(-0.2,0),
-         fill = rev(col), cex = 0.7, plot = T, bty = "n", 
-         title = "Potentials")
+  graphics::legend(x='topright', legend = rev(leglab), 
+                   xpd=T,inset=c(-0.2,0), 
+                   fill = rev(col), cex = 0.7, 
+                   plot = TRUE, bty = "n", 
+                   title = "Potentials")
   
   
   

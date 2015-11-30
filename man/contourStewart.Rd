@@ -8,7 +8,7 @@ Stewart Raster}
 contourStewart(x, breaks, mask, type = "line")
 }
 \arguments{
-\item{x}{raster; output of the \code{\link{rasterStewart}} function.}
+\item{x}{raster; output of the \code{\link{rasterStewart}} function. The raster must contain only positive values.}
 
 \item{breaks}{numeric; a vector of break values.}
 
@@ -23,19 +23,45 @@ The ouput of the function is a SpatialPolygonsDataFrame (\code{type = "poly"}) o
 This function create a SpatialPolygonsDataFrame or SpatialLinesDataFrame contour from the Stewart raster.
 }
 \details{
-The steps to obtain a SpatialPolygonsDataFrame: \itemize{
-\item{Step 1: Set a resolution in stewart (do not enter an unknownpts layer) and enter a SpatialPolygonsDataFrame as mask.}
-\item{Step 2: Do not set a mask in rasterStewart}
-\item{Step 3: Enter the step 1 mask SpatialPolygonsDataFrame as mask in contourStewart}
+To obtain a correct SpatialPolygonsDataFrame of potentials follow theses steps: \itemize{
+\item{Step 1: Create a SpatialPointsDataFrame of potentials with the 
+stewart function. Do not enter an unknownpts layer, set a resolution, 
+and set a SpatialPolygonsDataFrame (spmask) as mask.}
+\item{Step 2: Create a raster from the SpatialPointsDataFrame of potentials 
+with the rasterStewart function without using a mask.}
+\item{Step 3: Create the SpatialPolygonsDataFrame of potential with the 
+contourStewart function and use the spamask SpatialPolygonsDataFrame (Step1) as mask.}
 }
+See also the second example in the examples section.
 }
 \examples{
-# type = "poly"
+#### Example with type = "line"
 mystewart <- stewart(knownpts = spatPts, varname = "Capacite",
                      typefct = "exponential", span = 1000, beta = 3,
                      resolution = 50, longlat = FALSE,
                      mask = spatMask)
 # Create a raster of potentials values
+mystewartraster <- rasterStewart(x = mystewart, mask = spatMask)
+# Display the raster and get break values
+break.values <- plotStewart(x = mystewartraster)
+# Create contour SpatialLinesDataFrame
+mystewartcontourpoly <- contourStewart(x = mystewartraster,
+                                       breaks = break.values,
+                                       type = "line")
+# Display the Map
+plot(spatMask, add=TRUE)
+plot(mystewartcontourpoly, border = "grey40",add = TRUE)
+plot(spatPts, cex = 0.8, pch = 20, col  = "black", add = TRUE)
+
+
+
+#### Example with type = "poly"
+\dontrun{
+mystewart <- stewart(knownpts = spatPts, varname = "Capacite",
+                     typefct = "exponential", span = 1000, beta = 3,
+                     resolution = 50, longlat = FALSE,
+                     mask = spatMask)
+# Create a raster of potentials valuesn, no mask
 mystewartraster <- rasterStewart(x = mystewart)
 # Display the raster and get break values
 break.values <- plotStewart(x = mystewartraster)
@@ -44,11 +70,24 @@ mystewartcontourpoly <- contourStewart(x = mystewartraster,
                                        breaks = break.values,
                                        mask = spatMask,
                                        type = "poly")
-
-plot(spatMask, col = "grey80", border = "grey50")
-plot(mystewartcontourpoly, col = "#0000ff50", border = "grey40",
-     add = TRUE)
-plot(spatPts, cex = 0.5, pch = 20, col  = "#ff000050", add = TRUE)
+# Display the map
+library(cartography)
+opar <- par(mar = c(0,0,1.1,0))
+choroLayer(spdf = mystewartcontourpoly, 
+           df = mystewartcontourpoly@data, 
+           var = "mean", legend.pos = "topleft",
+           breaks = break.values, border = "grey90", 
+           lwd = 0.2, 
+           legend.title.txt = "Potential number\\nof beds in the\\nneighbourhood", 
+           legend.values.rnd = 0)
+plot(spatMask, add = TRUE)
+propSymbolsLayer(spdf = spatPts, df = spatPts@data, var = "Capacite",
+                 legend.title.txt = "Number of beds", 
+                 col = "#ff000020")
+layoutLayer(title = "Global Accessibility to Public Hospitals", 
+            south = TRUE, sources = "", author = "")
+par(opar)
+}
 }
 \seealso{
 \link{stewart}, \link{rasterStewart}, \link{plotStewart}, \link{contourStewart}, \link{CreateGrid}, \link{CreateDistMatrix}.

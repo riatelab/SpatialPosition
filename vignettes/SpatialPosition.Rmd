@@ -4,7 +4,7 @@ author: "Hadrien Commenges & Timothée Giraud"
 date: "`r Sys.Date()`"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{SpatialPosition}
+  %\VignetteIndexEntry{Introduction to the SpatialPosition package}
   %\VignetteEngine{knitr::rmarkdown}
   \usepackage[utf8]{inputenc}
 ---
