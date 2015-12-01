@@ -1,0 +1,11 @@
+SpatialPosition version 1.0 (Release date: 2015-11-30)
+==============
+
+Major changes:
+* Better code for contourStewart.
+* Better legend for plotStewart
+* New vignette 'Stewart Potentials: a Use Case'.
+
+Minor changes:
+* Minor changes in documentation and vignette.
+* Add 'cartography' in suggested packages
