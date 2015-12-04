@@ -1,6 +1,6 @@
 ---
 title: "Stewart Potentials: a Use Case"
-author: "Timothée Giraud"
+author: "Timothée Giraud & Hadrien Commenges"
 date: "`r Sys.Date()`"
 output: rmarkdown::html_vignette
 vignette: >
@@ -9,22 +9,20 @@ vignette: >
   \usepackage[utf8]{inputenc}
 ---
 
-The Stewart potentials method relies on spatial interaction modeling, it aims to compute indicators based on stock values processed in a way that take into account the units neighborhood.
-These indicators have two main benefits: 
+The Stewart potentials of population is a spatial interaction modeling approach which aims to compute indicators based on stock values weighted by distance. These indicators have two main interests:
 
-1. they make the maps more understandable in simplifying the representation of spatial patterns;  
-2. they enrich the information displayed in addressing accessibility issues together with regional structural characteristics.  
+1. they produce understandable maps by smoothing complex spatial patterns;
+2. they enrich the stock variables with contextual spatial information.
 
 At the European scale, this functional semantic simplification may help to show a smoothed context-aware picture of the localized socio-economic activities.
 
-In this vignette, we will show a use case of these potentials on the regional GDP per capita at the european scale and we will build three maps to show the benefits of this method:
+In this vignette, we show a use case of these "potentials" on the regional GDP per capita at the European scale with three maps:
 
-* a regional map of the GDP per capita;  
+* a regional map of the GDP per capita;
 * a regional map of the potential GDP per capita;
-* a smoothed map of the GDP per capita.  
+* a smoothed map of the GDP per capita.
 
 Note that this example is based on data and mapping functions proposed in the **[cartography]( https://cran.r-project.org/package=cartography) package**.  
-
 
 ## Regional Map of the GDP per Capita
 ```{r regionalmap, fig.width=7, fig.height=6}
@@ -32,22 +30,23 @@ library(cartography)
 library(SpatialPosition)
 data(nuts2006)
 
-# Create the GDP per capita variable
+# Compute the GDP per capita variable
 nuts3.df$gdpcap <- nuts3.df$gdppps2008 * 1000000 / nuts3.df$pop2008
-# Discretization of the variable
+
+# Discretize of the variable
 bv <- quantile(nuts3.df$gdpcap, seq(from = 0, to = 1, length.out = 9))
 
-# Creation of the map
+# Draw the map
 opar <- par(mar = c(0,0,1,0))
 
-# Build a color palette
+# Set a color palette
 pal <- carto.pal(pal1 = "wine.pal", n1 = 8)
 
-# Set the basemap
+# Draw the basemap
 plot(nuts0.spdf, add = F, border = NA, bg = "#cdd2d4")
 plot(world.spdf, col = "#f5f5f3ff", border = "#a9b3b4ff", add = TRUE)
 
-# Plot the regional GDP per capita
+# Map the regional GDP per capita
 choroLayer(spdf = nuts3.spdf, df = nuts3.df, 
            var = "gdpcap", 
            legend.pos = "topright",
@@ -67,8 +66,7 @@ par(opar)
 ```
 
 ## Regional Map of the Potential GDP per Capita
-We will compute potentials of population and GDP in each units. 
-Value computed in each unit take into account the values of its neighbouring units. 
+We compute the potentials of GDP for each spatial unit. The computed value takes into account the spatial distribution of the stock variable and return a sum weighted by distance, according a specific spatial interaction and fully customizable function.
 
 ```{r regionalmappot, fig.width=7, fig.height=6 }
 # Create a distance matrix between units
@@ -103,14 +101,14 @@ pot <- data.frame(id = nuts3.df$id,
                   gdpcap = gdppot$OUTPUT * 1000000 / poppot$OUTPUT, 
                   stringsAsFactors = FALSE)
 
-# Creation of the map
+# Draw the map
 par <- par(mar = c(0,0,1,0))
 
-# Set the basemap
+# Draw the basemap
 plot(nuts0.spdf, add = F, border = NA, bg = "#cdd2d4")
 plot(world.spdf, col = "#f5f5f3ff", border = "#a9b3b4ff", add = TRUE)
 
-# Plot the regional potential of GDP per capita
+# Map the regional potential of GDP per capita
 choroLayer(spdf = nuts3.spdf, df = pot, 
            var = "gdpcap", 
            legend.pos = "topright",
@@ -158,11 +156,11 @@ gdppot <- stewart(knownpts = nuts3.spdf,
                   resolution = 50000, 
                   mask = nuts0.spdf)
 
-# From the regularly spaced SpatialPointsDataFrame to a raster
+# Transform the regularly spaced SpatialPointsDataFrame to a raster
 popras <- rasterStewart(poppot)
 gdpras <- rasterStewart(gdppot)
 
-# GDP per capita 
+# Compute the GDP per capita 
 ras <- gdpras * 1000000 / popras
 
 # Create a SpatialPolygonsDataFrame from the raster
@@ -171,14 +169,14 @@ pot.spdf <- contourStewart(x = ras,
                            mask = nuts0.spdf, 
                            type = "poly")
 
-# Creation of the map
+# Draw the map
 par <- par(mar = c(0,0,1,0))
 
-# Set the basemap
+# Draw the basemap
 plot(nuts0.spdf, add = F, border = NA, bg = "#cdd2d4")
 plot(world.spdf, col = "#f5f5f3ff", border = "#a9b3b4ff", add = TRUE)
 
-# Plot the potential GDP per Capita
+# Map the potential GDP per Capita
 choroLayer(spdf = pot.spdf, df = pot.spdf@data, var = "mean", 
            legend.pos = "topright",
            breaks = bv, col = pal, add=T, 
@@ -199,8 +197,7 @@ layoutLayer(title = "Wealth Inequality in Europe",
             author = "T. Giraud, 2015")
 par(opar)
 ```
-Unlike the previous maps, this one omits the initial territorial division to give a smoothed and continuous picture of the spatial patterns of wealth in Europe. It eases the interpretation toward a vision of the space free from territorial divisions and addresses the well-known issues of the MAUP. 
-
+Unlike the previous maps, this one doesn't keep the initial territorial division to give a smoothed picture of the spatial patterns of wealth in Europe. The result is easy to read and can be considered as a bypassing of the Modifiable Areal Unit Problem (MAUP).
 
 
 

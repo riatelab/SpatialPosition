@@ -11,8 +11,9 @@ Computes spatial position models: \itemize{
 \item{Reilly catchment areas,} 
 \item{Huff catchment areas.}
 }
-An introduction to the package conceptual background and usage is proposed in 
-a vignette (see \code{vignette(topic = "SpatialPosition")}).
+An introduction to the package conceptual background and usage 
+(see \code{vignette(topic = "SpatialPosition")}) an a Stewart potentials 
+use case (see \code{vignette(topic = "StewartExample")}) are proposed in vignettes.
 }
 \seealso{
 \link{stewart}, \link{rasterStewart}, \link{plotStewart}, 
