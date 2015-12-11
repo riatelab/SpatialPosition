@@ -1,5 +1,9 @@
 # SpatialPosition
 
+[![Version](http://www.r-pkg.org/badges/version/SpatialPosition)](https://cran.rstudio.com/web/packages/SpatialPosition/)
+![](http://cranlogs.r-pkg.org/badges/grand-total/SpatialPosition?color=brightgreen)
+
+
 ![Stewart Potentials ](http://rgeomatic.hypotheses.org/files/2015/12/potentials.png)
 
 R package for computing spatial position models:  
