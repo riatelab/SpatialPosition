@@ -1,6 +1,6 @@
 Package: SpatialPosition
 Title: Spatial Position Models
-Version: 1.0
+Version: 1.0.9000
 Date: 2015-12-04
 Authors@R: c(
       person("Timothée", "Giraud", email = "timothee.giraud@ums-riate.fr", role = c("cre","aut")),
@@ -26,4 +26,4 @@ URL: https://github.com/Groupe-ElementR/SpatialPosition
 BugReports: https://github.com/Groupe-ElementR/SpatialPosition/issues
 VignetteBuilder: knitr
 Encoding: UTF-8
-RoxygenNote: 5.0.0
+RoxygenNote: 5.0.1
