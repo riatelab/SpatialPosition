@@ -21,7 +21,8 @@ Imports:
 Suggests:
     rgeos,
     cartography,
-    knitr
+    knitr, 
+    rmarkdown
 URL: https://github.com/Groupe-ElementR/SpatialPosition
 BugReports: https://github.com/Groupe-ElementR/SpatialPosition/issues
 VignetteBuilder: knitr
