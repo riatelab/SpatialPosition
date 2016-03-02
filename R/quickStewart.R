@@ -29,6 +29,7 @@
 #' @seealso \link{stewart}, \link{rasterStewart}, \link{plotStewart}, \link{contourStewart}, \link{CreateGrid}, \link{CreateDistMatrix}.
 #' @import sp
 #' @import raster
+#' @export
 quickStewart <- function(spdf, df, spdfid = NULL, dfid = NULL, var, 
                          var2 = NULL, 
                          typefct = "exponential", span, 
@@ -86,9 +87,10 @@ quickStewart <- function(spdf, df, spdfid = NULL, dfid = NULL, var,
       breaks <- seq(from = min(pot$OUTPUT, na.rm = TRUE), 
                     to = max(pot$OUTPUT, na.rm = TRUE), 
                     length.out = 9)
+      ras <- rasterStewart(pot)
     }
   }
-  
+
   # Spdf creation
   pot.spdf <- contourStewart(x = ras, 
                              breaks = unique(breaks), 
@@ -97,5 +99,3 @@ quickStewart <- function(spdf, df, spdfid = NULL, dfid = NULL, var,
 
   return(pot.spdf)
 }
-
-
