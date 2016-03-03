@@ -45,6 +45,6 @@ break.values <- plotStewart(x = mystewartraster, add = FALSE, nclass = 5)
 break.values
 }
 \seealso{
-\link{stewart}, \link{rasterStewart}, \link{plotStewart}, \link{contourStewart}, \link{CreateGrid}, \link{CreateDistMatrix}.
+\link{stewart}, \link{rasterStewart}, \link{quickStewart}, \link{contourStewart}, \link{CreateGrid}, \link{CreateDistMatrix}.
 }
 

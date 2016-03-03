@@ -2,7 +2,7 @@
 % Please edit documentation in R/quickStewart.R
 \name{quickStewart}
 \alias{quickStewart}
-\title{Create a SpatialPolygonsDataFrame of Potentials}
+\title{Create a SpatialPolygonsDataFrame of Potentials Contours}
 \usage{
 quickStewart(spdf, df, spdfid = NULL, dfid = NULL, var, var2 = NULL,
   typefct = "exponential", span, beta, resolution = NULL, mask = NULL,
@@ -11,7 +11,7 @@ quickStewart(spdf, df, spdfid = NULL, dfid = NULL, var, var2 = NULL,
 \arguments{
 \item{spdf}{a SpatialPolygonsDataFrame.}
 
-\item{df}{a data frame that contains the values to plot.}
+\item{df}{a data frame that contains the values to compute}
 
 \item{spdfid}{name of the identifier field in spdf, default to the first column 
 of the spdf data frame. (optional)}
@@ -21,7 +21,8 @@ of df. (optional)}
 
 \item{var}{name of the numeric field in df used to compute potentials.}
 
-\item{var2}{name of the numeric field in df used to compute potentials, used for ratio (numerator).}
+\item{var2}{name of the numeric field in df used to compute potentials. 
+This field is used for ratio computation (see Details).}
 
 \item{typefct}{character; spatial interaction function. Options are "pareto" 
 (means power law) or "exponential".
@@ -39,21 +40,64 @@ interaction function equals 0.5.}
 \item{resolution}{numeric; resolution of the output SpatialPointsDataFrame
 (in map units).}
 
-\item{mask}{SpatialPolygonsDataFrame; mask used to clip contour shapes.}
+\item{mask}{SpatialPolygonsDataFrame; mask used to clip contours of potentials.}
 
-\item{breaks}{numeric; a vector of break values.}
+\item{breaks}{numeric; a vector of values used to discretize the potentials.}
 }
 \value{
-The ouput of the function is a SpatialPolygonsDataFrame.
+A SpatialPolygonsDataFrame is returned (see \link{contourStewart} Value).
 }
 \description{
+This function is a wrapper around \link{stewart}, \link{rasterStewart} and \link{contourStewart} functions. 
+Providing only the main parameters of these functions, it simplifies a lot the computation of potentials. 
 This function creates a SpatialPolygonsDataFrame of potential values. 
-It allows also to compute directly the ratio between two variables.
+It also allows to compute directly the ratio between the potentials of two variables.
 }
 \details{
-This function is mainly a wrapper around stewart, rasterStewart and contourStewart.
+If var2 is provided the ratio between the potentials of var (numerator) 
+and var2 (denominator) is computed.
+}
+\examples{
+# load data
+data("spatData")
+# Compute a SpatialPolygonsDataFrame of potentials
+pot.spdf <- quickStewart(spdf = spatPts, 
+                         df = spatPts@data, 
+                         var = "Capacite", 
+                         span = 1000, 
+                         beta = 2, mask = spatMask)
+plot(pot.spdf)
+# cartography
+if(require("cartography")){
+  breaks <- c(unique(pot.spdf$min), max(pot.spdf$max))
+  cartography::choroLayer(spdf = pot.spdf, df = pot.spdf@data,
+                          var = "mean", breaks = breaks, 
+                          legend.pos = "topleft",
+                          legend.title.txt = "Nb. of Beds")
+}
+pot.spdf@data
+
+
+# Compute a SpatialPolygonsDataFrame of a ratio of potentials
+spatPts$dummy <- spatPts$Capacite + round(runif(n = nrow(spatPts), 
+                                                min = -6, max = 6), 0)
+pot2.spdf <- quickStewart(spdf = spatPts, 
+                          df = spatPts@data, 
+                          var = "Capacite", 
+                          var2 = "dummy",
+                          span = 1000, 
+                          beta = 2, mask = spatMask)
+# cartography
+if(require("cartography")){
+  breaks <- c(unique(pot2.spdf$min), max(pot2.spdf$max))
+  cartography::choroLayer(spdf = pot2.spdf, df = pot2.spdf@data,
+                          var = "mean", breaks = breaks, 
+                          legend.pos = "topleft",legend.values.rnd = 3,
+                          legend.title.txt = "Nb. of Beds")
+}
 }
 \seealso{
-\link{stewart}, \link{rasterStewart}, \link{plotStewart}, \link{contourStewart}, \link{CreateGrid}, \link{CreateDistMatrix}.
+\link{stewart}, \link{rasterStewart}, \link{plotStewart}, 
+\link{contourStewart}, \link{CreateGrid}, \link{CreateDistMatrix}.
 }
 

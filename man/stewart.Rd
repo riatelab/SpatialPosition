@@ -84,6 +84,7 @@ summary(mystewart$OUTPUT)
 STEWART J.Q. (1942) "Measure of the influence of a population at a distance", Sociometry, 5(1): 63-71.
 }
 \seealso{
-\link{stewart}, \link{rasterStewart}, \link{plotStewart}, \link{contourStewart}, \link{CreateGrid}, \link{CreateDistMatrix}.
+\link{rasterStewart}, \link{plotStewart}, \link{quickStewart},
+\link{contourStewart}, \link{CreateGrid}, \link{CreateDistMatrix}.
 }
 

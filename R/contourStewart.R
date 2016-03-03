@@ -1,26 +1,32 @@
 #' @title Create a SpatialPolygonsDataFrame or a SpatialLinesDataFrame from a 
 #' Stewart Raster
 #' @name contourStewart
-#' @description This function create a SpatialPolygonsDataFrame or SpatialLinesDataFrame contour from the Stewart raster.
+#' @description This function creates a SpatialPolygonsDataFrame or SpatialLinesDataFrame contour from the Stewart raster.
 #' @param x raster; output of the \code{\link{rasterStewart}} function. The raster must contain only positive values.
 #' @param breaks numeric; a vector of break values. 
 #' @param mask SpatialPolygonsDataFrame; mask used to clip contour shapes.
 #' @param type character; "poly" or "line". WARNING: the poly option is experimental (see details). It needs the rgeos package.
-#' @return The ouput of the function is a SpatialPolygonsDataFrame (\code{type = "poly"}) or a SpatialLinesDataFrame (\code{type = "line"}).
+#' @return The ouput of the function is a SpatialPolygonsDataFrame (\code{type = "poly"}) 
+#' or a SpatialLinesDataFrame (\code{type = "line"}). 
+#' The data frame of the outputed SpatialPolygonsDataFrame contains four fields: 
+#' id (id of each polygon), min and max (minimum and maximum breaks of the polygon), 
+#' mean (center value of the class)
 #' @details To obtain a correct SpatialPolygonsDataFrame of potentials follow theses steps: \itemize{
 #' \item{Step 1: Create a SpatialPointsDataFrame of potentials with the 
 #' stewart function. Do not enter an unknownpts layer, set a resolution, 
 #' and set a SpatialPolygonsDataFrame (spmask) as mask.}
 #' \item{Step 2: Create a raster from the SpatialPointsDataFrame of potentials 
 #' with the rasterStewart function without using a mask.}
-#' \item{Step 3: Create the SpatialPolygonsDataFrame of potential with the 
-#' contourStewart function and use the spamask SpatialPolygonsDataFrame (Step1) as mask.}
+#' \item{Step 3: Create the SpatialPolygonsDataFrame of potentials with the 
+#' contourStewart function and use the same spmask SpatialPolygonsDataFrame (Step1) as mask.}
 #' }
 #' See also the second example in the examples section.
-#' @seealso \link{stewart}, \link{rasterStewart}, \link{plotStewart}, \link{contourStewart}, \link{CreateGrid}, \link{CreateDistMatrix}.
+#' @seealso \link{stewart}, \link{rasterStewart}, \link{plotStewart}, 
+#' \link{quickStewart}, \link{CreateGrid}, \link{CreateDistMatrix}.
 #' @import sp
 #' @import raster
 #' @examples
+#' data("spatData")
 #' #### Example with type = "line"
 #' mystewart <- stewart(knownpts = spatPts, varname = "Capacite",
 #'                      typefct = "exponential", span = 1000, beta = 3,

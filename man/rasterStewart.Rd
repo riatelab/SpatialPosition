@@ -30,6 +30,6 @@ mystewartraster <- rasterStewart(x = mystewart, mask = spatMask)
 plot(mystewartraster)
 }
 \seealso{
-\link{stewart}, \link{rasterStewart}, \link{plotStewart}, \link{contourStewart}, \link{CreateGrid}, \link{CreateDistMatrix}.
+\link{stewart}, \link{quickStewart}, \link{plotStewart}, \link{contourStewart}, \link{CreateGrid}, \link{CreateDistMatrix}.
 }
 

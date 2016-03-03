@@ -29,7 +29,8 @@
 #' create the regularly spaced SpatialPointsDataFrame output. (optional)
 #' @details If \code{unknownpts} is NULL then \code{resolution} must be used. 
 #' @return SpatialPointsDataFrame with the computed potentials in a new field nammed \code{OUTPUT}
-#' @seealso \link{stewart}, \link{rasterStewart}, \link{plotStewart}, \link{contourStewart}, \link{CreateGrid}, \link{CreateDistMatrix}.
+#' @seealso \link{rasterStewart}, \link{plotStewart}, \link{quickStewart},
+#' \link{contourStewart}, \link{CreateGrid}, \link{CreateDistMatrix}.
 #' @examples 
 #' # Create a SpatialPointsDataFrame grid of spatMask extent and 200 meters 
 #' # resolution
@@ -112,7 +113,7 @@ stewart <- function(knownpts,
 #' @param x sp object (SpatialPointsDataFrame); output of the \code{stewart} function.
 #' @param mask sp object (SpatialPolygonsDataFrame); this object is used to clip the raster. (optional)
 #' @return Raster of potential values.
-#' @seealso \link{stewart}, \link{rasterStewart}, \link{plotStewart}, \link{contourStewart}, \link{CreateGrid}, \link{CreateDistMatrix}.
+#' @seealso \link{stewart}, \link{quickStewart}, \link{plotStewart}, \link{contourStewart}, \link{CreateGrid}, \link{CreateDistMatrix}.
 #' @examples
 #' data(spatData)
 #' # Compute Stewart potentials from known points (spatPts) on a
@@ -152,7 +153,7 @@ rasterStewart <- function(x, mask = NULL){
 #' @param legend.rnd numeric (integer); number of digits used to round the values displayed in the legend.
 #' @param col function; color ramp function, such as \code{\link{colorRampPalette}}.
 #' @return Display the raster nicely and return the list of break values (invisible).
-#' @seealso \link{stewart}, \link{rasterStewart}, \link{plotStewart}, \link{contourStewart}, \link{CreateGrid}, \link{CreateDistMatrix}.
+#' @seealso \link{stewart}, \link{rasterStewart}, \link{quickStewart}, \link{contourStewart}, \link{CreateGrid}, \link{CreateDistMatrix}.
 #' @examples 
 #' data(spatData)
 #' # Compute Stewart potentials from known points (spatPts) on a
