@@ -3,6 +3,7 @@
 [![Version](http://www.r-pkg.org/badges/version/SpatialPosition)](https://cran.rstudio.com/web/packages/SpatialPosition/)
 ![](http://cranlogs.r-pkg.org/badges/SpatialPosition?color=brightgreen)
 ![](https://travis-ci.org/Groupe-ElementR/SpatialPosition.svg?branch=master)
+![](https://img.shields.io/badge/license-GPL3-brightgreen.svg?style=flat)
 
 ![Stewart Potentials ](http://rgeomatic.hypotheses.org/files/2015/12/potentials.png)
 

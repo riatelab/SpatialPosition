@@ -26,6 +26,7 @@
 #' @param beta numeric; impedance factor for the spatial interaction function.  
 #' @param resolution numeric; resolution of the output SpatialPointsDataFrame
 #'  (in map units). 
+#' @param nclass	numeric; a targeted number of classes (default to 8). Not used if breaks is set.
 #' @param breaks numeric; a vector of values used to discretize the potentials. 
 #' @param mask SpatialPolygonsDataFrame; mask used to clip contours of potentials.
 #' @return A SpatialPolygonsDataFrame is returned (see \link{contourStewart} Value). 
@@ -79,7 +80,9 @@ quickStewart <- function(spdf, df, spdfid = NULL, dfid = NULL, var,
                          var2 = NULL, 
                          typefct = "exponential", span, 
                          beta, resolution = NULL, 
-                         mask = NULL, breaks = NULL){
+                         mask = NULL, 
+                         nclass = 8, breaks = NULL){
+
   # IDs  
   if (is.null(spdfid)){spdfid <- names(spdf@data)[1]}
   if (is.null(dfid)){dfid <- names(df)[1]}
@@ -122,25 +125,21 @@ quickStewart <- function(spdf, df, spdfid = NULL, dfid = NULL, var,
                     resolution = resolution, 
                     mask = mask)
     ras <- rasterStewart(pot) / rasterStewart(pot2)
-    if(is.null(breaks)){
-      breaks <- seq(from = cellStats(ras, min), 
-                    to = cellStats(ras, max), length.out = 9)
-    }
   }else{
-    # missing break
-    if(is.null(breaks)){
-      breaks <- seq(from = min(pot$OUTPUT, na.rm = TRUE), 
-                    to = max(pot$OUTPUT, na.rm = TRUE), 
-                    length.out = 9)
-      ras <- rasterStewart(pot)
-    }
+    ras <- rasterStewart(pot)
   }
-
+  # missing break
+  if(is.null(breaks)){
+    breaks <- seq(from = cellStats(ras, min, na.rm = TRUE), 
+                  to = cellStats(ras, max, na.rm = TRUE), 
+                  length.out = (nclass+1))
+  }
+breaks
   # Spdf creation
   pot.spdf <- contourStewart(x = ras, 
                              breaks = unique(breaks), 
                              mask = mask, 
                              type = "poly")
-
+  plot(pot.spdf)
   return(pot.spdf)
 }

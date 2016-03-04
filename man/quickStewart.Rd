@@ -6,7 +6,7 @@
 \usage{
 quickStewart(spdf, df, spdfid = NULL, dfid = NULL, var, var2 = NULL,
   typefct = "exponential", span, beta, resolution = NULL, mask = NULL,
-  breaks = NULL)
+  nclass = 8, breaks = NULL)
 }
 \arguments{
 \item{spdf}{a SpatialPolygonsDataFrame.}
@@ -41,6 +41,8 @@ interaction function equals 0.5.}
 (in map units).}
 
 \item{mask}{SpatialPolygonsDataFrame; mask used to clip contours of potentials.}
+
+\item{nclass}{numeric; a targeted number of classes (default to 8). Not used if breaks is set.}
 
 \item{breaks}{numeric; a vector of values used to discretize the potentials.}
 }
