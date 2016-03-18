@@ -17,7 +17,7 @@ A Stewart potentials use case:\cr
  - \code{vignette(topic = "StewartExample")}.
 }
 \seealso{
-\link{stewart}, \link{rasterStewart}, \link{plotStewart}, 
+\link{stewart}, \link{rasterStewart}, \link{plotStewart},  \link{quickStewart}, 
 \link{rasterToContourPoly}, \link{huff}, \link{rasterHuff}, \link{plotHuff},\link{reilly}, 
 \link{rasterReilly}, \link{plotReilly}, 
 \link{CreateGrid}, \link{CreateDistMatrix}.
