@@ -37,7 +37,7 @@ nuts3.df$gdpcap <- nuts3.df$gdppps2008 * 1000000 / nuts3.df$pop2008
 bv <- quantile(nuts3.df$gdpcap, seq(from = 0, to = 1, length.out = 9))
 
 # Draw the map
-opar <- par(mar = c(0,0,1,0))
+opar <- par(mar = c(0,0,1.2,0))
 
 # Set a color palette
 pal <- carto.pal(pal1 = "wine.pal", n1 = 8)
@@ -102,7 +102,7 @@ pot <- data.frame(id = nuts3.df$id,
                   stringsAsFactors = FALSE)
 
 # Draw the map
-par <- par(mar = c(0,0,1,0))
+par <- par(mar = c(0,0,1.2,0))
 
 # Draw the basemap
 plot(nuts0.spdf, add = F, border = NA, bg = "#cdd2d4")
@@ -164,20 +164,19 @@ gdpras <- rasterStewart(gdppot)
 ras <- gdpras * 1000000 / popras
 
 # Create a SpatialPolygonsDataFrame from the raster
-pot.spdf <- contourStewart(x = ras, 
-                           breaks = bv, 
-                           mask = nuts0.spdf, 
-                           type = "poly")
+pot.spdf <- rasterToContourPoly(r = ras, 
+                                breaks = bv, 
+                                mask = nuts0.spdf)
 
 # Draw the map
-par <- par(mar = c(0,0,1,0))
+par <- par(mar = c(0,0,1.2,0))
 
 # Draw the basemap
 plot(nuts0.spdf, add = F, border = NA, bg = "#cdd2d4")
 plot(world.spdf, col = "#f5f5f3ff", border = "#a9b3b4ff", add = TRUE)
 
 # Map the potential GDP per Capita
-choroLayer(spdf = pot.spdf, df = pot.spdf@data, var = "mean", 
+choroLayer(spdf = pot.spdf, df = pot.spdf@data, var = "center", 
            legend.pos = "topright",
            breaks = bv, col = pal, add=T, 
            border = "grey90", lwd = 0.2,

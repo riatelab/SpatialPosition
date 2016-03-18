@@ -50,7 +50,8 @@ interaction function equals 0.5.}
 A SpatialPolygonsDataFrame is returned (see \link{contourStewart} Value).
 }
 \description{
-This function is a wrapper around \link{stewart}, \link{rasterStewart} and \link{contourStewart} functions. 
+This function is a wrapper around \link{stewart}, \link{rasterStewart} 
+and \link{rasterToContourPoly} functions. 
 Providing only the main parameters of these functions, it simplifies a lot the computation of potentials. 
 This function creates a SpatialPolygonsDataFrame of potential values. 
 It also allows to compute directly the ratio between the potentials of two variables.
@@ -73,7 +74,7 @@ plot(pot.spdf)
 if(require("cartography")){
   breaks <- c(unique(pot.spdf$min), max(pot.spdf$max))
   cartography::choroLayer(spdf = pot.spdf, df = pot.spdf@data,
-                          var = "mean", breaks = breaks, 
+                          var = "center", breaks = breaks, 
                           legend.pos = "topleft",
                           legend.title.txt = "Nb. of Beds")
 }
@@ -93,13 +94,13 @@ pot2.spdf <- quickStewart(spdf = spatPts,
 if(require("cartography")){
   breaks <- c(unique(pot2.spdf$min), max(pot2.spdf$max))
   cartography::choroLayer(spdf = pot2.spdf, df = pot2.spdf@data,
-                          var = "mean", breaks = breaks, 
+                          var = "center", breaks = breaks, 
                           legend.pos = "topleft",legend.values.rnd = 3,
                           legend.title.txt = "Nb. of Beds")
 }
 }
 \seealso{
 \link{stewart}, \link{rasterStewart}, \link{plotStewart}, 
-\link{contourStewart}, \link{CreateGrid}, \link{CreateDistMatrix}.
+\link{rasterToContourPoly}, \link{CreateGrid}, \link{CreateDistMatrix}.
 }
 

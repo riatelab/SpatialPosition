@@ -1,7 +1,8 @@
 #' @title Create a SpatialPolygonsDataFrame of Potentials Contours
 #' @name quickStewart
 #' @description 
-#' This function is a wrapper around \link{stewart}, \link{rasterStewart} and \link{contourStewart} functions. 
+#' This function is a wrapper around \link{stewart}, \link{rasterStewart} 
+#' and \link{rasterToContourPoly} functions. 
 #' Providing only the main parameters of these functions, it simplifies a lot the computation of potentials. 
 #' This function creates a SpatialPolygonsDataFrame of potential values. 
 #' It also allows to compute directly the ratio between the potentials of two variables. 
@@ -34,7 +35,7 @@
 #' If var2 is provided the ratio between the potentials of var (numerator) 
 #' and var2 (denominator) is computed.
 #' @seealso \link{stewart}, \link{rasterStewart}, \link{plotStewart}, 
-#' \link{contourStewart}, \link{CreateGrid}, \link{CreateDistMatrix}.
+#' \link{rasterToContourPoly}, \link{CreateGrid}, \link{CreateDistMatrix}.
 #' @import sp
 #' @import raster
 #' @export
@@ -52,7 +53,7 @@
 #' if(require("cartography")){
 #'   breaks <- c(unique(pot.spdf$min), max(pot.spdf$max))
 #'   cartography::choroLayer(spdf = pot.spdf, df = pot.spdf@data,
-#'                           var = "mean", breaks = breaks, 
+#'                           var = "center", breaks = breaks, 
 #'                           legend.pos = "topleft",
 #'                           legend.title.txt = "Nb. of Beds")
 #' }
@@ -72,7 +73,7 @@
 #' if(require("cartography")){
 #'   breaks <- c(unique(pot2.spdf$min), max(pot2.spdf$max))
 #'   cartography::choroLayer(spdf = pot2.spdf, df = pot2.spdf@data,
-#'                           var = "mean", breaks = breaks, 
+#'                           var = "center", breaks = breaks, 
 #'                           legend.pos = "topleft",legend.values.rnd = 3,
 #'                           legend.title.txt = "Nb. of Beds")
 #' }
@@ -82,7 +83,6 @@ quickStewart <- function(spdf, df, spdfid = NULL, dfid = NULL, var,
                          beta, resolution = NULL, 
                          mask = NULL, 
                          nclass = 8, breaks = NULL){
-
   # IDs  
   if (is.null(spdfid)){spdfid <- names(spdf@data)[1]}
   if (is.null(dfid)){dfid <- names(df)[1]}
@@ -92,22 +92,7 @@ quickStewart <- function(spdf, df, spdfid = NULL, dfid = NULL, var,
                           df[match(spdf@data[,spdfid], df[,dfid]),])
   spdf <- spdf[!is.na(spdf@data[,dfid]),]
   
-  # Missing mask 
-  if(is.null(mask)){
-    bb <- bbox(spdf)
-    mm <- matrix(data = c(bb[1,1], bb[2,1], 
-                          bb[1,2], bb[2,1], 
-                          bb[1,2], bb[2,2], 
-                          bb[1,1], bb[2,2], 
-                          bb[1,1], bb[2,1]), 
-                 nrow = 5, byrow = T)
-    mask <- SpatialPolygons(
-      Srl = list(Polygons(
-        srl = list(Polygon(coords = mm, hole = FALSE)), ID = "id")), 
-      proj4string = spdf@proj4string)
-  }
-  
-  # pot computation
+   # pot computation
   pot <- stewart(knownpts = spdf, 
                  varname = var, 
                  typefct = typefct, 
@@ -128,18 +113,11 @@ quickStewart <- function(spdf, df, spdfid = NULL, dfid = NULL, var,
   }else{
     ras <- rasterStewart(pot)
   }
-  # missing break
-  if(is.null(breaks)){
-    breaks <- seq(from = cellStats(ras, min, na.rm = TRUE), 
-                  to = cellStats(ras, max, na.rm = TRUE), 
-                  length.out = (nclass+1))
-  }
-breaks
+
   # Spdf creation
-  pot.spdf <- contourStewart(x = ras, 
-                             breaks = unique(breaks), 
-                             mask = mask, 
-                             type = "poly")
-  plot(pot.spdf)
+  pot.spdf <- rasterToContourPoly(r =  ras,
+                                  nclass = nclass, 
+                                  breaks = breaks, 
+                                  mask = mask)
   return(pot.spdf)
 }

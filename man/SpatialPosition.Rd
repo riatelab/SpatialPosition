@@ -18,7 +18,7 @@ A Stewart potentials use case:\cr
 }
 \seealso{
 \link{stewart}, \link{rasterStewart}, \link{plotStewart}, 
-\link{contourStewart}, \link{huff}, \link{rasterHuff}, \link{plotHuff},\link{reilly}, 
+\link{rasterToContourPoly}, \link{huff}, \link{rasterHuff}, \link{plotHuff},\link{reilly}, 
 \link{rasterReilly}, \link{plotReilly}, 
 \link{CreateGrid}, \link{CreateDistMatrix}.
 }

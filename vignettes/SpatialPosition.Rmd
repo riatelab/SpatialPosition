@@ -93,7 +93,7 @@ plotStewart(x = rasterAccessibility, add = FALSE, nclass = 6)
 breakValues <- plotStewart(x = rasterAccessibility, add = FALSE, nclass = 6)
 
 # Create contour lines and add them to the plot
-contLines <- contourStewart(x = rasterAccessibility, breaks = breakValues)
+contLines <- rasterToContour(x = rasterAccessibility, levels = breakValues)
 plot(contLines, add = TRUE)
 plot(spatMask, add = TRUE)
 

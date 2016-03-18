@@ -85,6 +85,6 @@ STEWART J.Q. (1942) "Measure of the influence of a population at a distance", So
 }
 \seealso{
 \link{rasterStewart}, \link{plotStewart}, \link{quickStewart},
-\link{contourStewart}, \link{CreateGrid}, \link{CreateDistMatrix}.
+\link{rasterToContourPoly}, \link{CreateGrid}, \link{CreateDistMatrix}.
 }
 

@@ -24,6 +24,9 @@ id (id of each polygon), min and max (minimum and maximum breaks of the polygon)
 mean (center value of the class)
 }
 \description{
+\code{contourStewart} is deprecated. \cr
+To obtain contour lines use \code{\link{rasterToContour}} from raster package. \cr
+To obtain contour polygons use \code{\link{rasterToContourPoly}} from SpatialPosition package. \cr\cr\cr
 This function creates a SpatialPolygonsDataFrame or SpatialLinesDataFrame contour from the Stewart raster.
 }
 \details{
@@ -40,6 +43,7 @@ See also the second example in the examples section.
 }
 \examples{
 data("spatData")
+\dontrun{
 #### Example with type = "line"
 mystewart <- stewart(knownpts = spatPts, varname = "Capacite",
                      typefct = "exponential", span = 1000, beta = 3,
@@ -61,7 +65,6 @@ plot(spatPts, cex = 0.8, pch = 20, col  = "black", add = TRUE)
 
 
 #### Example with type = "poly"
-\dontrun{
 mystewart <- stewart(knownpts = spatPts, varname = "Capacite",
                      typefct = "exponential", span = 1000, beta = 3,
                      resolution = 50, longlat = FALSE,

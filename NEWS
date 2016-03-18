@@ -1,12 +1,14 @@
-SpatialPosition version 1.1 (Release date: 2016-)
+SpatialPosition version 1.1 (Release date: 2016-03-18)
 ==============
 
 Major changes:  
-* Introduce the quickStewart function that outputs contour polygons easily
+* Introduce the quickStewart function that outputs stewart contour polygons easily. Ratio of potentials are allowed.
+* Introduce rasterToContourPoly to replace contourStewart. 
+* contourStewart is now deprecated. Use rasterToContour from raster to output contour lines and rasterToContourPoly from SpatialPosition to output polygons.
 
 Minor changes:  
-* A resolution is set by default in CreateGrid
-
+* A resolution is set by default in CreateGrid.
+* Vignettes are updated to reflect major changes.
 
 
 
