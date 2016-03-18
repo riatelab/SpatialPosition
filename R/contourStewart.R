@@ -25,8 +25,7 @@
 #' contourStewart function and use the same spmask SpatialPolygonsDataFrame (Step1) as mask.}
 #' }
 #' See also the second example in the examples section.
-#' @seealso \link{stewart}, \link{rasterStewart}, \link{plotStewart}, 
-#' \link{quickStewart}, \link{CreateGrid}, \link{CreateDistMatrix}.
+#' @seealso \link{rasterToContourPoly}.
 #' @import sp
 #' @import raster
 #' @examples

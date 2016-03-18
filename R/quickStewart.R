@@ -30,7 +30,7 @@
 #' @param nclass	numeric; a targeted number of classes (default to 8). Not used if breaks is set.
 #' @param breaks numeric; a vector of values used to discretize the potentials. 
 #' @param mask SpatialPolygonsDataFrame; mask used to clip contours of potentials.
-#' @return A SpatialPolygonsDataFrame is returned (see \link{contourStewart} Value). 
+#' @return A SpatialPolygonsDataFrame is returned (see \link{rasterToContourPoly} Value). 
 #' @details 
 #' If var2 is provided the ratio between the potentials of var (numerator) 
 #' and var2 (denominator) is computed.
