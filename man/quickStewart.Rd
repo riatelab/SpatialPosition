@@ -47,7 +47,7 @@ interaction function equals 0.5.}
 \item{breaks}{numeric; a vector of values used to discretize the potentials.}
 }
 \value{
-A SpatialPolygonsDataFrame is returned (see \link{contourStewart} Value).
+A SpatialPolygonsDataFrame is returned (see \link{rasterToContourPoly} Value).
 }
 \description{
 This function is a wrapper around \link{stewart}, \link{rasterStewart} 

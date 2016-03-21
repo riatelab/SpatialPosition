@@ -98,7 +98,6 @@ par(opar)
 }
 }
 \seealso{
-\link{stewart}, \link{rasterStewart}, \link{plotStewart}, 
-\link{quickStewart}, \link{CreateGrid}, \link{CreateDistMatrix}.
+\link{rasterToContourPoly}.
 }
 
