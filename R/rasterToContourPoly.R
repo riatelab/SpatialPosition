@@ -78,18 +78,32 @@ rasterToContourPoly <- function(r, nclass = 8, breaks = NULL, mask = NULL){
   myres <- raster::res(r)[1]
   myproj <- sp::CRS(sp::proj4string(r))
   
+  
   # extent or mask the raster around the mask
+  if(!is.null(mask)){
+    # Dissolve the mask
+    mask <- rgeos::gUnaryUnion(mask)
+    # Is the mask valid
+    options(warn=-1)
+    if(!rgeos::gIsValid(nuts3.spdf)){
+      mask <- rgeos::gBuffer(mask)
+    }
+    options(warn=0)
+    # mask too big or not valid
+    if(!rgeos::gWithin(mask, masker(r)) || !rgeos::gIsValid(mask)){
+      textx <- "'mask' is not smaller than 'r' or does not have a valid geometry.\nThe contour SpatialPolygonsDataFrame is build without mask."
+      warning(textx, call. = FALSE)
+      mask <- NULL
+    }else{
+      maskbuff <- rgeos::gBuffer(mask, byid = FALSE, width = 5 * myres )
+      r <- raster::mask(r, maskbuff, updatevalue = -1)
+    }
+  }
+  
   if (is.null(mask)){
     mask <- masker(r)
     maskbuff <- rgeos::gBuffer(mask, byid = FALSE, width = 5 * myres )
     r <- raster::extend(r, maskbuff, value=-1)
-  }else{
-    mask <- rgeos::gUnaryUnion(mask)
-    maskbuff <- rgeos::gBuffer(mask, byid = FALSE, width = 5 * myres )
-    r <- raster::mask(r, maskbuff, updatevalue = -1)  
-    # test mask extent
-    if(rgeos::gWithin(masker(r), mask)){stop("mask should be smaller than r",
-                                             call. = FALSE)}
   }
   
   # adjust breaks if necessary
