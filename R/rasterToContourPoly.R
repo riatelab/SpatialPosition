@@ -85,7 +85,7 @@ rasterToContourPoly <- function(r, nclass = 8, breaks = NULL, mask = NULL){
     mask <- rgeos::gUnaryUnion(mask)
     # Is the mask valid
     options(warn=-1)
-    if(!rgeos::gIsValid(nuts3.spdf)){
+    if(!rgeos::gIsValid(mask)){
       mask <- rgeos::gBuffer(mask)
     }
     options(warn=0)
