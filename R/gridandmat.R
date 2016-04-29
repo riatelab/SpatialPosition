@@ -114,7 +114,11 @@ CreateDistMatrix  <- function(knownpts,
       }
     }
   }
-  matDist <- spDists(x = knownpts, y = unknownpts, longlat = longlat)
+  matDist <- spDists(x = sp::spTransform(knownpts,"+init=epsg:4326"), 
+                     y = sp::spTransform(unknownpts,"+init=epsg:4326"), 
+                     longlat = TRUE) * 1000
   dimnames(matDist) <- list(row.names(knownpts), row.names(unknownpts))
   return(round(matDist, digits = 8))
 }
+
+

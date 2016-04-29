@@ -189,8 +189,43 @@ rasterToContourPoly <- function(r, nclass = 8, breaks = NULL, mask = NULL){
   final <- sp::SpatialPolygonsDataFrame(Sr = final, data = df)
   final@data <- data.frame(id = final$id, x[match(final$id, x$id),2:4])
   final@plotOrder <- 1:nrow(final)
-  return(final)
+  
+  # ring correction
+  df <- unique(final@data[,2:4])
+  df$id <- 1:nrow(df)
+  df <- df[order(df$center, decreasing = T),]
+  
+  z <- rgeos::gIntersection(final[final$center==df[1,3],],
+                            final[final$center==df[1,3],], byid = F,
+                            id = as.character(df[1,4]))
+  for(i in 2:nrow(df)){
+    y <- rgeos::gDifference(final[final$center==df[i,3],],
+                            final[final$center==df[i-1,3],], byid = F, 
+                            id = as.character(df[i,4]))
+    z <- rbind(z, y)
+  }
+  dfx <- data.frame(id = sapply(methods::slot(z, "polygons"), 
+                                methods::slot, "ID"))
+  row.names(dfx) <- dfx$id
+  z <- sp::SpatialPolygonsDataFrame(z, dfx)
+  z@data <- df[match(x=z@data$id, table = df$id),c(4,1:3)]
+  return(z)
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 masker <- function(r){
