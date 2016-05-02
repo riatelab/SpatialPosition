@@ -77,6 +77,7 @@ CreateGrid <- function (w, resolution)
 #' nrow(mygrid)
 #' dim(mymat)
 #' @import sp
+#' @import rgdal
 #' @export
 CreateDistMatrix  <- function(knownpts, 
                               unknownpts, 
@@ -114,9 +115,11 @@ CreateDistMatrix  <- function(knownpts,
       }
     }
   }
-  matDist <- spDists(x = sp::spTransform(knownpts,"+init=epsg:4326"), 
-                     y = sp::spTransform(unknownpts,"+init=epsg:4326"), 
+  
+  matDist <- spDists(x = sp::spTransform(knownpts,"+init=epsg:4326"),
+                     y = sp::spTransform(unknownpts,"+init=epsg:4326"),
                      longlat = TRUE) * 1000
+  
   dimnames(matDist) <- list(row.names(knownpts), row.names(unknownpts))
   return(round(matDist, digits = 8))
 }

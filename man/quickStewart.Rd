@@ -72,7 +72,7 @@ pot.spdf <- quickStewart(spdf = spatPts,
 plot(pot.spdf)
 # cartography
 if(require("cartography")){
-  breaks <- c(unique(pot.spdf$min), max(pot.spdf$max))
+  breaks <- sort(c(unique(pot.spdf$min), max(pot.spdf$max)), decreasing = FALSE)
   cartography::choroLayer(spdf = pot.spdf, df = pot.spdf@data,
                           var = "center", breaks = breaks, 
                           legend.pos = "topleft",
@@ -92,7 +92,7 @@ pot2.spdf <- quickStewart(spdf = spatPts,
                           beta = 2, mask = spatMask)
 # cartography
 if(require("cartography")){
-  breaks <- c(unique(pot2.spdf$min), max(pot2.spdf$max))
+  breaks <- sort(c(unique(pot2.spdf$min), max(pot2.spdf$max)), decreasing = FALSE)
   cartography::choroLayer(spdf = pot2.spdf, df = pot2.spdf@data,
                           var = "center", breaks = breaks, 
                           legend.pos = "topleft",legend.values.rnd = 3,

@@ -17,9 +17,10 @@ Imports:
     sp,
     grDevices,
     graphics,
-    methods
+    methods,
+    rgeos, 
+    rgdal
 Suggests:
-    rgeos,
     cartography,
     knitr, 
     rmarkdown
