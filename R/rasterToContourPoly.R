@@ -147,7 +147,7 @@ rasterToContourPoly <- function(r, nclass = 8, breaks = NULL, mask = NULL){
       x <- linex[[j]]@coords
       x <- sp::Polygon(coords =  x, hole = F)
       x <- sp::Polygons(srl = list(x), ID = j)
-      Plist[j] <- x
+      Plist[[j]] <- x
     }  
     x <- sp::SpatialPolygons(Srl = Plist)
     x <- rgeos::union(x = x)
@@ -229,7 +229,7 @@ rasterToContourPoly <- function(r, nclass = 8, breaks = NULL, mask = NULL){
 
 
 masker <- function(r){
-  xy <- sp::coordinates(r)[which(!is.na(values(r))),]
+  xy <- sp::coordinates(r)[which(!is.na(raster::values(r))),]
   i <- grDevices::chull(xy)
   b <- xy[c(i,i[1]),]
   mask <- sp::SpatialPolygons(list(sp::Polygons(list(sp::Polygon(b, hole = FALSE)), 
