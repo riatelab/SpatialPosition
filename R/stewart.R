@@ -6,9 +6,11 @@
 #' @param unknownpts sp object (SpatialPointsDataFrame or SpatialPolygonsDataFrame); 
 #' this is the set of unknown units for which the function computes the estimates. 
 #' Not used when \code{resolution} is set up. (optional)
-#' @param matdist matrix; a distance matrix. Row names match the first 
-#' column of the \code{knownpts} object dataframe. Column names match the first column 
-#' of the \code{unknownpts} object dataframe. (optional)
+#' @param matdist matrix; a distance matrix. Row names match the row names
+#' of the \code{knownpts} object dataframe. Column names match the row names 
+#' of the \code{unknownpts} object dataframe. If \code{matdist} is NULL, 
+#' \code{\link{CreateDistMatrix}}
+#' is used to compute Great Circle distances. (optional)
 #' @param varname character; name of the variable in the \code{knownpts} dataframe from which potentials are computed.
 #' Quantitative variable with no negative values. 
 #' @param typefct character; spatial interaction function. Options are "pareto" 
@@ -23,8 +25,6 @@
 #' @param beta numeric; impedance factor for the spatial interaction function.  
 #' @param resolution numeric; resolution of the output SpatialPointsDataFrame
 #'  (in map units). 
-#' @param longlat logical; euclidean distance (FALSE, default) or Great Circle distance (TRUE).
-#' If TRUE inputs are expected in the WGS84 reference system.
 #' @param mask sp object; the spatial extent of this object is used to 
 #' create the regularly spaced SpatialPointsDataFrame output. (optional)
 #' @details If \code{unknownpts} is NULL then \code{resolution} must be used. 
@@ -37,19 +37,18 @@
 #' data(spatData)
 #' mygrid <- CreateGrid(w = spatMask, resolution = 200)
 #' # Create a distance matrix between known points (spatPts) and mygrid
-#' mymat <- CreateDistMatrix(knownpts = spatPts, unknownpts = mygrid, 
-#'                           longlat = FALSE)
+#' mymat <- CreateDistMatrix(knownpts = spatPts, unknownpts = mygrid)
 #' # Compute Stewart potentials from known points (spatPts) on a given 
 #' # grid (mygrid) using a given distance matrix (mymat)
 #' mystewart <- stewart(knownpts = spatPts, unknownpts = mygrid, 
 #'                      matdist = mymat, varname = "Capacite", 
 #'                      typefct = "exponential", span = 1250, 
-#'                      beta = 3, longlat = FALSE, mask = spatMask)
+#'                      beta = 3, mask = spatMask)
 #' # Compute Stewart potentials from known points (spatPts) on a 
 #' # grid defined by its resolution
 #' mystewart2 <- stewart(knownpts = spatPts, varname = "Capacite", 
 #'                       typefct = "exponential", span = 1250, beta = 3, 
-#'                       resolution = 200, longlat = FALSE, mask = spatMask)
+#'                       resolution = 200, mask = spatMask)
 #' # The two methods have the same result
 #' identical(mystewart, mystewart2)
 #' # the function output a SpatialPointsDataFrame
@@ -69,7 +68,6 @@ stewart <- function(knownpts,
                     span,
                     beta,
                     resolution = 2000,
-                    longlat = FALSE, 
                     mask = NULL)
 {
   TestSp(knownpts)
@@ -83,14 +81,12 @@ stewart <- function(knownpts,
       matdist <- UseDistMatrix(matdist =matdist, knownpts = knownpts, 
                                unknownpts =  unknownpts) 
     }else{
-      matdist <- CreateDistMatrix(knownpts = knownpts, unknownpts = unknownpts, 
-                                  longlat = longlat) 
+      matdist <- CreateDistMatrix(knownpts = knownpts, unknownpts = unknownpts)
     }
   } else {
     unknownpts <- CreateGrid(w = if(is.null(mask)){knownpts} else {mask}, 
                              resolution = resolution) 
-    matdist <- CreateDistMatrix(knownpts = knownpts, unknownpts = unknownpts, 
-                                longlat = longlat) 
+    matdist <- CreateDistMatrix(knownpts = knownpts, unknownpts = unknownpts) 
   }
   
   
@@ -120,7 +116,7 @@ stewart <- function(knownpts,
 #' # grid defined by its resolution
 #' mystewart <- stewart(knownpts = spatPts, varname = "Capacite",
 #'                      typefct = "exponential", span = 1000, beta = 3,
-#'                      resolution = 50, longlat = FALSE, mask = spatMask)
+#'                      resolution = 50, mask = spatMask)
 #' # Create a raster of potentials values
 #' mystewartraster <- rasterStewart(x = mystewart, mask = spatMask)
 #' plot(mystewartraster)
@@ -160,7 +156,7 @@ rasterStewart <- function(x, mask = NULL){
 #' # grid defined by its resolution
 #' mystewart <- stewart(knownpts = spatPts, varname = "Capacite",
 #'                      typefct = "exponential", span = 1000, beta = 3,
-#'                      resolution = 50, longlat = FALSE, mask = spatMask)
+#'                      resolution = 50, mask = spatMask)
 #' # Create a raster of potentials values
 #' mystewartraster <- rasterStewart(x = mystewart, mask = spatMask)
 #' # Plot stewart potentials nicely
@@ -203,12 +199,7 @@ plotStewart <- function(x, add = FALSE,
                    fill = rev(col), cex = 0.7, 
                    plot = TRUE, bty = "n", 
                    title = "Potentials")
-  
-  
-  
-  #   plot(x, legend.only=TRUE, col = col, 
-  #        breaks=round(bks,legend.rnd))
-  
+
   return(invisible(bks))
 }
 

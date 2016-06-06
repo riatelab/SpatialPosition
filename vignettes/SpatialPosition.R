@@ -5,7 +5,7 @@ data(spatData)
 # Compute potentials (accessibility)
 globalAccessibility <- stewart(knownpts = spatPts, varname = "Capacite",
                                typefct = "exponential", span = 1000, beta = 3,
-                               resolution = 50, longlat = FALSE, 
+                               resolution = 50,  
                                mask = spatMask)
 
 # Create a raster
@@ -35,7 +35,7 @@ mtext(text = "Potential nb. of beds
 row.names(spatPts)
 catchReilly <- reilly(knownpts = spatPts, varname = "Capacite",
                       typefct = "exponential", span = 750, beta = 2,
-                      resolution = 50, longlat = FALSE, mask = spatMask)
+                      resolution = 50, mask = spatMask)
 
 # Create a raster
 rasterCatch <- rasterReilly(x = catchReilly, mask = spatMask)
@@ -53,7 +53,7 @@ mtext(text = "distance function: exponential, span = 0.75 km, beta = 2",
 ###
 catchHuff <- huff(knownpts = spatPts, varname = "Capacite",
                   typefct = "exponential", span = 750, beta = 2,
-                  resolution = 50, longlat = FALSE, mask = spatMask)
+                  resolution = 50, mask = spatMask)
 
 # Create a raster
 rasterCatch <- rasterHuff(x = catchHuff, mask = spatMask)

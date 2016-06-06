@@ -29,6 +29,6 @@ plot(mygrid, cex = 0.1, pch = ".")
 plot(spatMask, border="red", lwd = 2, add = TRUE)
 }
 \seealso{
-\link{CreateDistMatrix}.
+\link{CreateDistMatrix}
 }
 

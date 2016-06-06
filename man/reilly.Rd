@@ -5,8 +5,7 @@
 \title{Reilly Catchment Areas}
 \usage{
 reilly(knownpts, unknownpts = NULL, matdist = NULL, varname,
-  typefct = "exponential", span, beta, resolution = 2000, longlat = FALSE,
-  mask = NULL)
+  typefct = "exponential", span, beta, resolution = 2000, mask = NULL)
 }
 \arguments{
 \item{knownpts}{sp object (SpatialPointsDataFrame or SpatialPolygonsDataFrame); 
@@ -16,9 +15,11 @@ this is the set of known observations to estimate the catchment areas from.}
 this is the set of unknown units for which the function computes the estimates. 
 Not used when \code{resolution} is set up. (optional)}
 
-\item{matdist}{matrix; a distance matrix. Row names match the first 
-column of the \code{knownpts} object dataframe. Column names match the first column 
-of the \code{unknownpts} object dataframe. (optional)}
+\item{matdist}{matrix; a distance matrix. Row names match the row names
+of the \code{knownpts} object dataframe. Column names match the row names 
+of the \code{unknownpts} object dataframe. If \code{matdist} is NULL, 
+\code{\link{CreateDistMatrix}}
+is used to compute Great Circle distances. (optional)}
 
 \item{varname}{character; name of the variable in the \code{knownpts} dataframe from which values are computed.
 Quantitative variable with no negative values.}
@@ -39,9 +40,6 @@ interaction function equals 0.5.}
 \item{resolution}{numeric; resolution of the output SpatialPointsDataFrame
 (in map units).}
 
-\item{longlat}{logical; euclidean distance (FALSE, default) or Great Circle distance (TRUE).
-If TRUE inputs are expected in the WGS84 reference system.}
-
 \item{mask}{sp object; the spatial extent of this object is used to 
 create the regularly spaced SpatialPointsDataFrame output. (optional)}
 }
@@ -61,20 +59,19 @@ If \code{unknownpts} is NULL then \code{resolution} must be used.
 data(spatData)
 mygrid <- CreateGrid(w = spatMask, resolution = 200)
 # Create a distance matrix between known points (spatPts) and mygrid
-mymat <- CreateDistMatrix(knownpts = spatPts, unknownpts = mygrid, 
-                          longlat = FALSE)
+mymat <- CreateDistMatrix(knownpts = spatPts, unknownpts = mygrid)
 # Compute Reilly catchment areas from known points (spatPts) on a given 
 # grid (mygrid) using a given distance matrix (mymat)
 myreilly2 <- reilly(knownpts = spatPts, unknownpts = mygrid, 
                matdist = mymat, varname = "Capacite", 
                typefct = "exponential", span = 1250, 
-               beta = 3, longlat = FALSE, mask = spatMask)
+               beta = 3, mask = spatMask)
 row.names(spatPts) <- spatPts$CodHop
 # Compute Reilly catchment areas from known points (spatPts) on a 
 # grid defined by its resolution
 myreilly <- reilly(knownpts = spatPts, varname = "Capacite", 
                 typefct = "exponential", span = 1250, beta = 3, 
-                resolution = 200, longlat = FALSE, mask = spatMask)
+                resolution = 200, mask = spatMask)
 # The function output a SpatialPointsDataFrame
 class(myreilly)
 # The OUTPUT field values match knownpts row names

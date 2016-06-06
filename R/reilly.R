@@ -6,9 +6,11 @@
 #' @param unknownpts sp object (SpatialPointsDataFrame or SpatialPolygonsDataFrame); 
 #' this is the set of unknown units for which the function computes the estimates. 
 #' Not used when \code{resolution} is set up. (optional)
-#' @param matdist matrix; a distance matrix. Row names match the first 
-#' column of the \code{knownpts} object dataframe. Column names match the first column 
-#' of the \code{unknownpts} object dataframe. (optional)
+#' @param matdist matrix; a distance matrix. Row names match the row names
+#' of the \code{knownpts} object dataframe. Column names match the row names 
+#' of the \code{unknownpts} object dataframe. If \code{matdist} is NULL, 
+#' \code{\link{CreateDistMatrix}}
+#' is used to compute Great Circle distances. (optional)
 #' @param varname character; name of the variable in the \code{knownpts} dataframe from which values are computed.
 #' Quantitative variable with no negative values. 
 #' @param typefct character; spatial interaction function. Options are "pareto" 
@@ -23,8 +25,6 @@
 #' @param beta numeric; impedance factor for the spatial interaction function.  
 #' @param resolution numeric; resolution of the output SpatialPointsDataFrame
 #'  (in map units). 
-#' @param longlat logical; euclidean distance (FALSE, default) or Great Circle distance (TRUE).
-#' If TRUE inputs are expected in the WGS84 reference system.
 #' @param mask sp object; the spatial extent of this object is used to 
 #' create the regularly spaced SpatialPointsDataFrame output. (optional)
 #' @details If \code{unknownpts} is NULL then \code{resolution} must be used. 
@@ -37,20 +37,19 @@
 #' data(spatData)
 #' mygrid <- CreateGrid(w = spatMask, resolution = 200)
 #' # Create a distance matrix between known points (spatPts) and mygrid
-#' mymat <- CreateDistMatrix(knownpts = spatPts, unknownpts = mygrid, 
-#'                           longlat = FALSE)
+#' mymat <- CreateDistMatrix(knownpts = spatPts, unknownpts = mygrid)
 #' # Compute Reilly catchment areas from known points (spatPts) on a given 
 #' # grid (mygrid) using a given distance matrix (mymat)
 #' myreilly2 <- reilly(knownpts = spatPts, unknownpts = mygrid, 
 #'                matdist = mymat, varname = "Capacite", 
 #'                typefct = "exponential", span = 1250, 
-#'                beta = 3, longlat = FALSE, mask = spatMask)
+#'                beta = 3, mask = spatMask)
 #' row.names(spatPts) <- spatPts$CodHop
 #' # Compute Reilly catchment areas from known points (spatPts) on a 
 #' # grid defined by its resolution
 #' myreilly <- reilly(knownpts = spatPts, varname = "Capacite", 
 #'                 typefct = "exponential", span = 1250, beta = 3, 
-#'                 resolution = 200, longlat = FALSE, mask = spatMask)
+#'                 resolution = 200, mask = spatMask)
 #' # The function output a SpatialPointsDataFrame
 #' class(myreilly)
 #' # The OUTPUT field values match knownpts row names
@@ -67,7 +66,6 @@ reilly <- function(knownpts,
                    span,
                    beta,
                    resolution = 2000,
-                   longlat = FALSE, 
                    mask = NULL)
 {
   TestSp(knownpts)
@@ -81,14 +79,12 @@ reilly <- function(knownpts,
       matdist <- UseDistMatrix(matdist =matdist, knownpts = knownpts, 
                                unknownpts =  unknownpts) 
     }else{
-      matdist <- CreateDistMatrix(knownpts = knownpts, unknownpts = unknownpts, 
-                                  longlat = longlat) 
+      matdist <- CreateDistMatrix(knownpts = knownpts, unknownpts = unknownpts) 
     }
   } else {
     unknownpts <- CreateGrid(w = if(is.null(mask)){knownpts} else {mask}, 
                              resolution = resolution) 
-    matdist <- CreateDistMatrix(knownpts = knownpts, unknownpts = unknownpts, 
-                                longlat = longlat) 
+    matdist <- CreateDistMatrix(knownpts = knownpts, unknownpts = unknownpts) 
   }
   
   
@@ -122,7 +118,7 @@ reilly <- function(knownpts,
 #' # grid defined by its resolution
 #' myreilly <- reilly(knownpts = spatPts, varname = "Capacite",
 #'                    typefct = "exponential", span = 750, beta = 2,
-#'                    resolution = 50, longlat = FALSE, mask = spatMask)
+#'                    resolution = 50, mask = spatMask)
 #' # Create a raster of reilly values
 #' myreillyraster <- rasterReilly(x = myreilly, mask = spatMask)
 #' plot(myreillyraster, col = rainbow(18))
@@ -162,7 +158,7 @@ rasterReilly <- function(x ,mask = NULL){
 #' # grid defined by its resolution
 #' myreilly <- reilly(knownpts = spatPts, varname = "Capacite",
 #'                    typefct = "exponential", span = 750, beta = 2,
-#'                    resolution = 50, longlat = FALSE, mask = spatMask)
+#'                    resolution = 50, mask = spatMask)
 #' # Create a raster of reilly values
 #' myreillyraster <- rasterReilly(x = myreilly, mask = spatMask)
 #' # Plot the raster nicely

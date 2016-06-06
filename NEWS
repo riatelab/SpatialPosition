@@ -1,3 +1,12 @@
+SpatialPosition version 1.1.1 (Release date: 2016-06-06)
+==============
+
+Minor changes:  
+* Check mask size and validity in ratserToContourPoly
+* Better SpatialPolygonsDataFrame output in rasterToContourPoly
+* Default distance computation is in meters using the Great Circle distance (WGS84 ellipsoid) method.
+
+
 SpatialPosition version 1.1 (Release date: 2016-03-18)
 ==============
 
@@ -9,6 +18,7 @@ Major changes:
 Minor changes:  
 * A resolution is set by default in CreateGrid.
 * Vignettes are updated to reflect major changes.
+
 
 
 
