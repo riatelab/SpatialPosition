@@ -120,7 +120,7 @@ stewart <- function(knownpts,
 #' # grid defined by its resolution
 #' mystewart <- stewart(knownpts = spatPts, varname = "Capacite",
 #'                      typefct = "exponential", span = 1000, beta = 3,
-#'                      resolution = 50, mask = spatMask)
+#'                      resolution = 100, mask = spatMask)
 #' # Create a raster of potentials values
 #' mystewartraster <- rasterStewart(x = mystewart, mask = spatMask)
 #' plot(mystewartraster)
@@ -164,7 +164,7 @@ rasterStewart <- function(x, mask = NULL){
 #' # grid defined by its resolution
 #' mystewart <- stewart(knownpts = spatPts, varname = "Capacite",
 #'                      typefct = "exponential", span = 1000, beta = 3,
-#'                      resolution = 50, mask = spatMask)
+#'                      resolution = 100, mask = spatMask)
 #' # Create a raster of potentials values
 #' mystewartraster <- rasterStewart(x = mystewart, mask = spatMask)
 #' # Plot stewart potentials nicely

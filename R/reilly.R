@@ -121,7 +121,7 @@ reilly <- function(knownpts,
 #' # grid defined by its resolution
 #' myreilly <- reilly(knownpts = spatPts, varname = "Capacite",
 #'                    typefct = "exponential", span = 750, beta = 2,
-#'                    resolution = 50, mask = spatMask)
+#'                    resolution = 100, mask = spatMask)
 #' # Create a raster of reilly values
 #' myreillyraster <- rasterReilly(x = myreilly, mask = spatMask)
 #' plot(myreillyraster, col = rainbow(18))
@@ -164,7 +164,7 @@ rasterReilly <- function(x ,mask = NULL){
 #' # grid defined by its resolution
 #' myreilly <- reilly(knownpts = spatPts, varname = "Capacite",
 #'                    typefct = "exponential", span = 750, beta = 2,
-#'                    resolution = 50, mask = spatMask)
+#'                    resolution = 100, mask = spatMask)
 #' # Create a raster of reilly values
 #' myreillyraster <- rasterReilly(x = myreilly, mask = spatMask)
 #' # Plot the raster nicely
