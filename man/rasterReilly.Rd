@@ -9,7 +9,8 @@ rasterReilly(x, mask = NULL)
 \arguments{
 \item{x}{sp object (SpatialPointsDataFrame); output of the \code{reilly} function.}
 
-\item{mask}{sp object (SpatialPolygonsDataFrame); this object is used to clip the raster. (optional)}
+\item{mask}{sp object (SpatialPolygonsDataFrame); this object is used to clip 
+the raster. (optional)}
 }
 \value{
 Raster of catchment areas values.
@@ -36,6 +37,7 @@ plot(myreillyraster, col = rainbow(18))
 head(unique(levels(myreillyraster)[[1]]))
 }
 \seealso{
-\link{reilly}, \link{rasterReilly}, \link{plotReilly}, \link{CreateGrid}, \link{CreateDistMatrix}.
+\link{reilly}, \link{rasterReilly}, \link{plotReilly}, \link{CreateGrid}, 
+\link{CreateDistMatrix}.
 }
 

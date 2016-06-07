@@ -39,7 +39,7 @@ CreateGrid <- function (w, resolution)
   spatGrid <- data.frame(ID = idSeq, 
                          COORDX = spatGrid[, 1], 
                          COORDY = spatGrid[, 2])
-  
+
   spatGrid <- SpatialPointsDataFrame(coords = spatGrid[ , c(2, 3)], 
                                      data = spatGrid, 
                                      proj4string = CRS(proj4string(w)))

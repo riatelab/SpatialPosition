@@ -82,8 +82,7 @@ pot.spdf@data
 
 
 # Compute a SpatialPolygonsDataFrame of a ratio of potentials
-spatPts$dummy <- spatPts$Capacite + round(runif(n = nrow(spatPts), 
-                                                min = -6, max = 6), 0)
+spatPts$dummy <- spatPts$Capacite + c(rep(50, 18))
 pot2.spdf <- quickStewart(spdf = spatPts, 
                           df = spatPts@data, 
                           var = "Capacite", 

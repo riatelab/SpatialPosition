@@ -9,12 +9,14 @@ plotReilly(x, add = FALSE, col = rainbow)
 \arguments{
 \item{x}{raster; output of the \code{\link{rasterReilly}} function.}
 
-\item{add}{logical; if TRUE the raster is added to the current plot, if FALSE the raster is displayed in a new plot.}
+\item{add}{logical; if TRUE the raster is added to the current plot, if FALSE 
+the raster is displayed in a new plot.}
 
 \item{col}{function; color ramp function, such as \code{\link{colorRampPalette}}.}
 }
 \description{
-This function plots the raster produced by the \code{\link{rasterReilly}} function.
+This function plots the raster produced by the 
+\code{\link{rasterReilly}} function.
 }
 \details{
 Display the raster nicely.
@@ -33,6 +35,7 @@ myreillyraster <- rasterReilly(x = myreilly, mask = spatMask)
 plotReilly(x = myreillyraster)
 }
 \seealso{
-\link{reilly}, \link{rasterReilly}, \link{plotReilly}, \link{CreateGrid}, \link{CreateDistMatrix}.
+\link{reilly}, \link{rasterReilly}, \link{plotReilly}, \link{CreateGrid}, 
+\link{CreateDistMatrix}.
 }
 

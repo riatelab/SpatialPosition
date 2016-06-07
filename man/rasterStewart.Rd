@@ -7,9 +7,11 @@
 rasterStewart(x, mask = NULL)
 }
 \arguments{
-\item{x}{sp object (SpatialPointsDataFrame); output of the \code{stewart} function.}
+\item{x}{sp object (SpatialPointsDataFrame); output of the \code{stewart} 
+function.}
 
-\item{mask}{sp object (SpatialPolygonsDataFrame); this object is used to clip the raster. (optional)}
+\item{mask}{sp object (SpatialPolygonsDataFrame); this object is used to clip 
+the raster. (optional)}
 }
 \value{
 Raster of potential values.
@@ -30,6 +32,7 @@ mystewartraster <- rasterStewart(x = mystewart, mask = spatMask)
 plot(mystewartraster)
 }
 \seealso{
-\link{stewart}, \link{quickStewart}, \link{plotStewart}, \link{rasterToContourPoly}, \link{CreateGrid}, \link{CreateDistMatrix}.
+\link{stewart}, \link{quickStewart}, \link{plotStewart}, 
+\link{rasterToContourPoly}, \link{CreateGrid}, \link{CreateDistMatrix}.
 }
 

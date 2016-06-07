@@ -10,7 +10,8 @@ plotStewart(x, add = FALSE, breaks = NULL, typec = "equal", nclass = 5,
 \arguments{
 \item{x}{raster; output of the \code{\link{rasterStewart}} function.}
 
-\item{add}{logical; if TRUE the raster is added to the current plot, if FALSE the raster is displayed in a new plot.}
+\item{add}{logical; if TRUE the raster is added to the current plot, if FALSE 
+the raster is displayed in a new plot.}
 
 \item{breaks}{numeric; vector of break values to map. If used, 
 this parameter overrides \code{typec} and \code{nclass} parameters}
@@ -19,7 +20,8 @@ this parameter overrides \code{typec} and \code{nclass} parameters}
 
 \item{nclass}{numeric (integer), number of classes.}
 
-\item{legend.rnd}{numeric (integer); number of digits used to round the values displayed in the legend.}
+\item{legend.rnd}{numeric (integer); number of digits used to round the values 
+displayed in the legend.}
 
 \item{col}{function; color ramp function, such as \code{\link{colorRampPalette}}.}
 }
@@ -27,7 +29,8 @@ this parameter overrides \code{typec} and \code{nclass} parameters}
 Display the raster nicely and return the list of break values (invisible).
 }
 \description{
-This function plots the raster produced by the \code{\link{rasterStewart}} function.
+This function plots the raster produced by the 
+\code{\link{rasterStewart}} function.
 }
 \examples{
 data(spatData)
@@ -45,6 +48,7 @@ break.values <- plotStewart(x = mystewartraster, add = FALSE, nclass = 5)
 break.values
 }
 \seealso{
-\link{stewart}, \link{rasterStewart}, \link{quickStewart}, \link{rasterToContourPoly}, \link{CreateGrid}, \link{CreateDistMatrix}.
+\link{stewart}, \link{rasterStewart}, \link{quickStewart}, 
+\link{rasterToContourPoly}, \link{CreateGrid}, \link{CreateDistMatrix}.
 }
 

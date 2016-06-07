@@ -5,7 +5,7 @@
 \title{Huff Catchment Areas}
 \usage{
 huff(knownpts, unknownpts = NULL, matdist = NULL, varname,
-  typefct = "exponential", span, beta, resolution = 2000, mask = NULL)
+  typefct = "exponential", span, beta, resolution = NULL, mask = NULL)
 }
 \arguments{
 \item{knownpts}{sp object (SpatialPointsDataFrame or SpatialPolygonsDataFrame); 
@@ -15,14 +15,15 @@ this is the set of known observations to estimate the catchment areas from.}
 this is the set of unknown units for which the function computes the estimates. 
 Not used when \code{resolution} is set up. (optional)}
 
-\item{matdist}{matrix; a distance matrix. Row names match the row names
-of the \code{knownpts} object dataframe. Column names match the row names 
-of the \code{unknownpts} object dataframe. If \code{matdist} is NULL, 
-\code{\link{CreateDistMatrix}}
-is used to compute Great Circle distances. (optional)}
+\item{matdist}{matrix; distance matrix between known observations and unknown 
+units for which the function computes the estimates. Row names match the row 
+names of \code{knownpts} and column names match the row names of 
+\code{unknownpts}. \code{matdist} can contain any distance metric (time 
+distance or euclidean distance for example). If \code{matdist} is NULL, Great 
+Circle distances are used (with \code{\link{CreateDistMatrix}}).(optional)}
 
-\item{varname}{character; name of the variable in the \code{knownpts} dataframe from which values are computed.
-Quantitative variable with no negative values.}
+\item{varname}{character; name of the variable in the \code{knownpts} dataframe 
+from which values are computed. Quantitative variable with no negative values.}
 
 \item{typefct}{character; spatial interaction function. Options are "pareto" 
 (means power law) or "exponential".
@@ -44,7 +45,8 @@ interaction function equals 0.5.}
 create the regularly spaced SpatialPointsDataFrame output. (optional)}
 }
 \value{
-SpatialPointsDataFrame with the computed catchment areas in a new field nammed \code{OUTPUT}
+SpatialPointsDataFrame with the computed catchment areas in a new 
+field named \code{OUTPUT}.
 }
 \description{
 This function computes the catchment areas as defined by D. Huff (1964).
@@ -79,6 +81,7 @@ class(myhuff)
 HUFF D. (1964) Defining and Estimating a Trading Area. Journal of Marketing, 28: 34-38.
 }
 \seealso{
-\link{huff}, \link{rasterHuff}, \link{plotHuff}, \link{CreateGrid}, \link{CreateDistMatrix}.
+\link{huff}, \link{rasterHuff}, \link{plotHuff}, \link{CreateGrid}, 
+\link{CreateDistMatrix}.
 }
 

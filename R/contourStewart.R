@@ -34,7 +34,7 @@
 #' #### Example with type = "line"
 #' mystewart <- stewart(knownpts = spatPts, varname = "Capacite",
 #'                      typefct = "exponential", span = 1000, beta = 3,
-#'                      resolution = 50, longlat = FALSE,
+#'                      resolution = 50,
 #'                      mask = spatMask)
 #' # Create a raster of potentials values
 #' mystewartraster <- rasterStewart(x = mystewart, mask = spatMask)

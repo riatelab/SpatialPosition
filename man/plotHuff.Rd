@@ -9,13 +9,15 @@ plotHuff(x, add = FALSE)
 \arguments{
 \item{x}{raster; output of the \code{\link{rasterHuff}} function.}
 
-\item{add}{logical; if TRUE the raster is added to the current plot, if FALSE the raster is displayed in a new plot.}
+\item{add}{logical; if TRUE the raster is added to the current plot, if FALSE 
+the raster is displayed in a new plot.}
 }
 \value{
 Display the raster nicely.
 }
 \description{
-This function plots the raster produced by the \code{\link{rasterHuff}} function.
+This function plots the raster produced by the 
+\code{\link{rasterHuff}} function.
 }
 \examples{
 data(spatData)
@@ -30,6 +32,7 @@ myhuffraster <- rasterHuff(x = myhuff, mask = spatMask)
 plotHuff(x = myhuffraster)
 }
 \seealso{
-\link{huff}, \link{rasterHuff}, \link{plotHuff}, \link{CreateGrid}, \link{CreateDistMatrix}.
+\link{huff}, \link{rasterHuff}, \link{plotHuff}, \link{CreateGrid}, 
+\link{CreateDistMatrix}.
 }
 

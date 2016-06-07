@@ -41,7 +41,7 @@ contourpoly <- rasterToContourPoly(r = mystewartraster,
                                    nclass = 6,
                                    mask = spatMask)
 # Created breaks
-bks <- unique(c(contourpoly$min, contourpoly$max))
+bks <- sort(unique(c(contourpoly$min, contourpoly$max)))
 # Display the map
 library(cartography)
 opar <- par(mar = c(0,0,1.2,0))

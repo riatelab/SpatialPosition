@@ -5,7 +5,7 @@
 \title{Stewart Potentials}
 \usage{
 stewart(knownpts, unknownpts = NULL, matdist = NULL, varname,
-  typefct = "exponential", span, beta, resolution = 2000, mask = NULL)
+  typefct = "exponential", span, beta, resolution = NULL, mask = NULL)
 }
 \arguments{
 \item{knownpts}{sp object (SpatialPointsDataFrame or SpatialPolygonsDataFrame);
@@ -15,14 +15,15 @@ this is the set of known observations to estimate the potentials from.}
 this is the set of unknown units for which the function computes the estimates. 
 Not used when \code{resolution} is set up. (optional)}
 
-\item{matdist}{matrix; a distance matrix. Row names match the row names
-of the \code{knownpts} object dataframe. Column names match the row names 
-of the \code{unknownpts} object dataframe. If \code{matdist} is NULL, 
-\code{\link{CreateDistMatrix}}
-is used to compute Great Circle distances. (optional)}
+\item{matdist}{matrix; distance matrix between known observations and unknown 
+units for which the function computes the estimates. Row names match the row 
+names of \code{knownpts} and column names match the row names of 
+\code{unknownpts}. \code{matdist} can contain any distance metric (time 
+distance or euclidean distance for example). If \code{matdist} is NULL, Great 
+Circle distances are used (with \code{\link{CreateDistMatrix}}).(optional)}
 
-\item{varname}{character; name of the variable in the \code{knownpts} dataframe from which potentials are computed.
-Quantitative variable with no negative values.}
+\item{varname}{character; name of the variable in the \code{knownpts} dataframe 
+from which potentials are computed. Quantitative variable with no negative values.}
 
 \item{typefct}{character; spatial interaction function. Options are "pareto" 
 (means power law) or "exponential".
@@ -44,13 +45,11 @@ interaction function equals 0.5.}
 create the regularly spaced SpatialPointsDataFrame output. (optional)}
 }
 \value{
-SpatialPointsDataFrame with the computed potentials in a new field nammed \code{OUTPUT}
+SpatialPointsDataFrame with the computed potentials in a new field 
+named \code{OUTPUT}
 }
 \description{
 This function computes the potentials as defined by J.Q. Stewart (1942).
-}
-\details{
-If \code{unknownpts} is NULL then \code{resolution} must be used.
 }
 \examples{
 # Create a SpatialPointsDataFrame grid of spatMask extent and 200 meters 

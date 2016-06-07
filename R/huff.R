@@ -6,13 +6,14 @@
 #' @param unknownpts sp object (SpatialPointsDataFrame or SpatialPolygonsDataFrame); 
 #' this is the set of unknown units for which the function computes the estimates. 
 #' Not used when \code{resolution} is set up. (optional)
-#' @param matdist matrix; a distance matrix. Row names match the row names
-#' of the \code{knownpts} object dataframe. Column names match the row names 
-#' of the \code{unknownpts} object dataframe. If \code{matdist} is NULL, 
-#' \code{\link{CreateDistMatrix}}
-#' is used to compute Great Circle distances. (optional)
-#' @param varname character; name of the variable in the \code{knownpts} dataframe from which values are computed.
-#' Quantitative variable with no negative values. 
+#' @param matdist matrix; distance matrix between known observations and unknown 
+#' units for which the function computes the estimates. Row names match the row 
+#' names of \code{knownpts} and column names match the row names of 
+#' \code{unknownpts}. \code{matdist} can contain any distance metric (time 
+#' distance or euclidean distance for example). If \code{matdist} is NULL, Great 
+#' Circle distances are used (with \code{\link{CreateDistMatrix}}).(optional)
+#' @param varname character; name of the variable in the \code{knownpts} dataframe 
+#' from which values are computed. Quantitative variable with no negative values. 
 #' @param typefct character; spatial interaction function. Options are "pareto" 
 #' (means power law) or "exponential".
 #' If "pareto" the interaction is defined as: (1 + alpha * mDistance) ^ (-beta).
@@ -28,8 +29,10 @@
 #' @param mask sp object; the spatial extent of this object is used to 
 #' create the regularly spaced SpatialPointsDataFrame output. (optional)
 #' @details If \code{unknownpts} is NULL then \code{resolution} must be used. 
-#' @return SpatialPointsDataFrame with the computed catchment areas in a new field nammed \code{OUTPUT}
-#' @seealso \link{huff}, \link{rasterHuff}, \link{plotHuff}, \link{CreateGrid}, \link{CreateDistMatrix}.
+#' @return SpatialPointsDataFrame with the computed catchment areas in a new 
+#' field named \code{OUTPUT}.
+#' @seealso \link{huff}, \link{rasterHuff}, \link{plotHuff}, \link{CreateGrid}, 
+#' \link{CreateDistMatrix}.
 #' @examples 
 #' # Create a SpatialPointsDataFrame grid of spatMask extent and 200 meters 
 #' # resolution
@@ -63,7 +66,7 @@ huff <- function(knownpts,
                  typefct = "exponential", 
                  span,
                  beta,
-                 resolution = 2000,
+                 resolution = NULL,
                  mask = NULL)
 {
   TestSp(knownpts)
@@ -103,9 +106,11 @@ huff <- function(knownpts,
 #' @description This function creates a raster from a regularly spaced 
 #' Huff SpatialPointsDataFrame (output of the \code{\link{huff}} function). 
 #' @param x sp object (SpatialPointsDataFrame); output of the \code{huff} function.
-#' @param mask sp object (SpatialPolygonsDataFrame); this object is used to clip the raster. (optional)
+#' @param mask sp object (SpatialPolygonsDataFrame); this object is used to clip 
+#' the raster. (optional)
 #' @return Raster of catchment areas values.
-#' @seealso \link{huff}, \link{rasterHuff}, \link{plotHuff}, \link{CreateGrid}, \link{CreateDistMatrix}.
+#' @seealso \link{huff}, \link{rasterHuff}, \link{plotHuff}, \link{CreateGrid}, 
+#' \link{CreateDistMatrix}.
 #' @examples 
 #' data(spatData)
 #' # Compute Huff catchment areas from known points (spatPts) on a
@@ -132,11 +137,14 @@ rasterHuff <- function(x, mask = NULL){
 
 #' @title Plot a Huff Raster
 #' @name plotHuff
-#' @description This function plots the raster produced by the \code{\link{rasterHuff}} function.
+#' @description This function plots the raster produced by the 
+#' \code{\link{rasterHuff}} function.
 #' @param x raster; output of the \code{\link{rasterHuff}} function.
-#' @param add logical; if TRUE the raster is added to the current plot, if FALSE the raster is displayed in a new plot.
+#' @param add logical; if TRUE the raster is added to the current plot, if FALSE 
+#' the raster is displayed in a new plot.
 #' @return Display the raster nicely.
-#' @seealso \link{huff}, \link{rasterHuff}, \link{plotHuff}, \link{CreateGrid}, \link{CreateDistMatrix}.
+#' @seealso \link{huff}, \link{rasterHuff}, \link{plotHuff}, \link{CreateGrid}, 
+#' \link{CreateDistMatrix}.
 #' @examples 
 #' data(spatData)
 #' # Compute Huff catchment areas from known points (spatPts) on a

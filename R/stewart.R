@@ -6,13 +6,14 @@
 #' @param unknownpts sp object (SpatialPointsDataFrame or SpatialPolygonsDataFrame); 
 #' this is the set of unknown units for which the function computes the estimates. 
 #' Not used when \code{resolution} is set up. (optional)
-#' @param matdist matrix; a distance matrix. Row names match the row names
-#' of the \code{knownpts} object dataframe. Column names match the row names 
-#' of the \code{unknownpts} object dataframe. If \code{matdist} is NULL, 
-#' \code{\link{CreateDistMatrix}}
-#' is used to compute Great Circle distances. (optional)
-#' @param varname character; name of the variable in the \code{knownpts} dataframe from which potentials are computed.
-#' Quantitative variable with no negative values. 
+#' @param matdist matrix; distance matrix between known observations and unknown 
+#' units for which the function computes the estimates. Row names match the row 
+#' names of \code{knownpts} and column names match the row names of 
+#' \code{unknownpts}. \code{matdist} can contain any distance metric (time 
+#' distance or euclidean distance for example). If \code{matdist} is NULL, Great 
+#' Circle distances are used (with \code{\link{CreateDistMatrix}}).(optional)
+#' @param varname character; name of the variable in the \code{knownpts} dataframe 
+#' from which potentials are computed. Quantitative variable with no negative values. 
 #' @param typefct character; spatial interaction function. Options are "pareto" 
 #' (means power law) or "exponential".
 #' If "pareto" the interaction is defined as: (1 + alpha * mDistance) ^ (-beta).
@@ -27,8 +28,8 @@
 #'  (in map units). 
 #' @param mask sp object; the spatial extent of this object is used to 
 #' create the regularly spaced SpatialPointsDataFrame output. (optional)
-#' @details If \code{unknownpts} is NULL then \code{resolution} must be used. 
-#' @return SpatialPointsDataFrame with the computed potentials in a new field nammed \code{OUTPUT}
+#' @return SpatialPointsDataFrame with the computed potentials in a new field 
+#' named \code{OUTPUT}
 #' @seealso \link{rasterStewart}, \link{plotStewart}, \link{quickStewart},
 #' \link{rasterToContourPoly}, \link{CreateGrid}, \link{CreateDistMatrix}.
 #' @examples 
@@ -67,7 +68,7 @@ stewart <- function(knownpts,
                     typefct = "exponential", 
                     span,
                     beta,
-                    resolution = 2000,
+                    resolution = NULL,
                     mask = NULL)
 {
   TestSp(knownpts)
@@ -106,10 +107,13 @@ stewart <- function(knownpts,
 #' @name rasterStewart
 #' @description This function creates a raster from a regularly spaced 
 #' Stewart SpatialPointsDataFrame (output of the \code{\link{stewart}} function). 
-#' @param x sp object (SpatialPointsDataFrame); output of the \code{stewart} function.
-#' @param mask sp object (SpatialPolygonsDataFrame); this object is used to clip the raster. (optional)
+#' @param x sp object (SpatialPointsDataFrame); output of the \code{stewart} 
+#' function.
+#' @param mask sp object (SpatialPolygonsDataFrame); this object is used to clip 
+#' the raster. (optional)
 #' @return Raster of potential values.
-#' @seealso \link{stewart}, \link{quickStewart}, \link{plotStewart}, \link{rasterToContourPoly}, \link{CreateGrid}, \link{CreateDistMatrix}.
+#' @seealso \link{stewart}, \link{quickStewart}, \link{plotStewart}, 
+#' \link{rasterToContourPoly}, \link{CreateGrid}, \link{CreateDistMatrix}.
 #' @examples
 #' data(spatData)
 #' # Compute Stewart potentials from known points (spatPts) on a
@@ -139,17 +143,21 @@ rasterStewart <- function(x, mask = NULL){
 
 #' @title Plot a Stewart Raster
 #' @name plotStewart
-#' @description This function plots the raster produced by the \code{\link{rasterStewart}} function.
+#' @description This function plots the raster produced by the 
+#' \code{\link{rasterStewart}} function.
 #' @param x raster; output of the \code{\link{rasterStewart}} function.
-#' @param add logical; if TRUE the raster is added to the current plot, if FALSE the raster is displayed in a new plot.
+#' @param add logical; if TRUE the raster is added to the current plot, if FALSE 
+#' the raster is displayed in a new plot.
 #' @param breaks numeric; vector of break values to map. If used, 
 #' this parameter overrides \code{typec} and \code{nclass} parameters 
 #' @param typec character; either "equal" or "quantile", how to discretize the values.
 #' @param nclass numeric (integer), number of classes.
-#' @param legend.rnd numeric (integer); number of digits used to round the values displayed in the legend.
+#' @param legend.rnd numeric (integer); number of digits used to round the values 
+#' displayed in the legend.
 #' @param col function; color ramp function, such as \code{\link{colorRampPalette}}.
 #' @return Display the raster nicely and return the list of break values (invisible).
-#' @seealso \link{stewart}, \link{rasterStewart}, \link{quickStewart}, \link{rasterToContourPoly}, \link{CreateGrid}, \link{CreateDistMatrix}.
+#' @seealso \link{stewart}, \link{rasterStewart}, \link{quickStewart}, 
+#' \link{rasterToContourPoly}, \link{CreateGrid}, \link{CreateDistMatrix}.
 #' @examples 
 #' data(spatData)
 #' # Compute Stewart potentials from known points (spatPts) on a
