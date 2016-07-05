@@ -11,7 +11,7 @@
 #' names of \code{knownpts} and column names match the row names of 
 #' \code{unknownpts}. \code{matdist} can contain any distance metric (time 
 #' distance or euclidean distance for example). If \code{matdist} is NULL, Great 
-#' Circle distances are used (with \code{\link{CreateDistMatrix}}).(optional)
+#' Circle distances are used (with \code{\link{CreateDistMatrix}}). (optional)
 #' @param varname character; name of the variable in the \code{knownpts} dataframe 
 #' from which values are computed. Quantitative variable with no negative values. 
 #' @param typefct character; spatial interaction function. Options are "pareto" 
@@ -25,10 +25,10 @@
 #' interaction function equals 0.5.
 #' @param beta numeric; impedance factor for the spatial interaction function.  
 #' @param resolution numeric; resolution of the output SpatialPointsDataFrame
-#'  (in map units). 
+#'  (in map units). If resolution is not set, the grid will contain around 
+#'  7250 points. (optional)
 #' @param mask sp object; the spatial extent of this object is used to 
 #' create the regularly spaced SpatialPointsDataFrame output. (optional)
-#' @details If \code{unknownpts} is NULL then \code{resolution} must be used. 
 #' @return SpatialPointsDataFrame with the computed catchment areas in a new 
 #' field named \code{OUTPUT}.
 #' @seealso \link{huff}, \link{rasterHuff}, \link{plotHuff}, \link{CreateGrid}, 

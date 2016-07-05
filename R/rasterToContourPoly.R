@@ -216,21 +216,16 @@ rasterToContourPoly <- function(r, nclass = 8, breaks = NULL, mask = NULL){
 
 
 
-
-
-
-
-
-
-
-
-
-
-
 masker <- function(r){
   xy <- sp::coordinates(r)[which(!is.na(raster::values(r))),]
-  i <- grDevices::chull(xy)
-  b <- xy[c(i,i[1]),]
+  bb <- sp::bbox(xy)
+  xseq <- seq(bb[1,1], bb[1,2], length.out = 50)
+  yseq <- seq(bb[2,1], bb[2,2], length.out = 50)
+  b <- data.frame(x = c(xseq, rep(bb[1,2], 50), rev(xseq), rep(bb[1,1], 50)), 
+                  y = c(rep(bb[2,1], 50), yseq, rep(bb[2,2], 50), rev(yseq)))
+  b <- as.matrix(b)
+  # i <- grDevices::chull(xy)
+  # b <- xy[c(i,i[1]),]
   mask <- sp::SpatialPolygons(list(sp::Polygons(list(sp::Polygon(b, hole = FALSE)), 
                                                 ID = "1")), 
                               proj4string = sp::CRS(sp::proj4string(r)))

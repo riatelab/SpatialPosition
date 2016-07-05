@@ -26,8 +26,10 @@
 #' interaction function equals 0.5.
 #' @param beta numeric; impedance factor for the spatial interaction function.  
 #' @param resolution numeric; resolution of the output SpatialPointsDataFrame
-#'  (in map units). 
-#' @param nclass	numeric; a targeted number of classes (default to 8). Not used if breaks is set.
+#'  (in map units). If resolution is not set, the grid will contain around 7250 
+#'  points. (optional)
+#' @param nclass	numeric; a targeted number of classes (default to 8). Not used 
+#' if breaks is set.
 #' @param breaks numeric; a vector of values used to discretize the potentials. 
 #' @param mask SpatialPolygonsDataFrame; mask used to clip contours of potentials.
 #' @return A SpatialPolygonsDataFrame is returned (see \link{rasterToContourPoly} Value). 

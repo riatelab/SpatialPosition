@@ -38,11 +38,13 @@ interaction function equals 0.5.}
 \item{beta}{numeric; impedance factor for the spatial interaction function.}
 
 \item{resolution}{numeric; resolution of the output SpatialPointsDataFrame
-(in map units).}
+(in map units). If resolution is not set, the grid will contain around 7250 
+points. (optional)}
 
 \item{mask}{SpatialPolygonsDataFrame; mask used to clip contours of potentials.}
 
-\item{nclass}{numeric; a targeted number of classes (default to 8). Not used if breaks is set.}
+\item{nclass}{numeric; a targeted number of classes (default to 8). Not used 
+if breaks is set.}
 
 \item{breaks}{numeric; a vector of values used to discretize the potentials.}
 }

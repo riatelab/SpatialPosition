@@ -4,7 +4,8 @@
 #' from the extent of a given sp object and a given resolution.
 #' @param w sp object; the spatial extent of this object is used to 
 #' create the regular SpatialPointsDataFrame.
-#' @param resolution numeric; resolution of the grid (in map units). 
+#' @param resolution numeric; resolution of the grid (in map units). If 
+#' resolution is not set, the grid will contain around 7250 points. (optional)
 #' @return The output of the function is a SpatialPointsDataFrame of regularly
 #' spaced points with the same extent as \code{w}. 
 #' @seealso \link{CreateDistMatrix}
@@ -39,7 +40,7 @@ CreateGrid <- function (w, resolution)
   spatGrid <- data.frame(ID = idSeq, 
                          COORDX = spatGrid[, 1], 
                          COORDY = spatGrid[, 2])
-
+  
   spatGrid <- SpatialPointsDataFrame(coords = spatGrid[ , c(2, 3)], 
                                      data = spatGrid, 
                                      proj4string = CRS(proj4string(w)))
