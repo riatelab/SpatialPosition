@@ -5,7 +5,8 @@
 \title{Huff Catchment Areas}
 \usage{
 huff(knownpts, unknownpts = NULL, matdist = NULL, varname,
-  typefct = "exponential", span, beta, resolution = NULL, mask = NULL)
+  typefct = "exponential", span, beta, resolution = NULL, mask = NULL,
+  bypassctrl = FALSE)
 }
 \arguments{
 \item{knownpts}{sp object (SpatialPointsDataFrame or SpatialPolygonsDataFrame); 
@@ -44,6 +45,8 @@ interaction function equals 0.5.}
 
 \item{mask}{sp object; the spatial extent of this object is used to 
 create the regularly spaced SpatialPointsDataFrame output. (optional)}
+
+\item{bypassctrl}{passed on to the \code{bypassctrl} argument of the \code{\link{CreateDistMatrix}} function.}
 }
 \value{
 SpatialPointsDataFrame with the computed catchment areas in a new 
