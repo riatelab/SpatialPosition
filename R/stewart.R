@@ -29,6 +29,7 @@
 #'  points. (optional)
 #' @param mask sp object; the spatial extent of this object is used to 
 #' create the regularly spaced SpatialPointsDataFrame output. (optional)
+#' @param bypassctrl passed on to the \code{bypassctrl} argument of the \code{\link{CreateDistMatrix}} function. 
 #' @return SpatialPointsDataFrame with the computed potentials in a new field 
 #' named \code{OUTPUT}
 #' @seealso \link{rasterStewart}, \link{plotStewart}, \link{quickStewart},
@@ -70,7 +71,8 @@ stewart <- function(knownpts,
                     span,
                     beta,
                     resolution = NULL,
-                    mask = NULL)
+                    mask = NULL,
+                    bypassctrl = FALSE)
 {
   TestSp(knownpts)
   if (!is.null(unknownpts)){  
@@ -83,12 +85,12 @@ stewart <- function(knownpts,
       matdist <- UseDistMatrix(matdist =matdist, knownpts = knownpts, 
                                unknownpts =  unknownpts) 
     }else{
-      matdist <- CreateDistMatrix(knownpts = knownpts, unknownpts = unknownpts)
+      matdist <- CreateDistMatrix(knownpts = knownpts, unknownpts = unknownpts, bypassctrl = bypassctrl)
     }
   } else {
     unknownpts <- CreateGrid(w = if(is.null(mask)){knownpts} else {mask}, 
                              resolution = resolution) 
-    matdist <- CreateDistMatrix(knownpts = knownpts, unknownpts = unknownpts) 
+    matdist <- CreateDistMatrix(knownpts = knownpts, unknownpts = unknownpts, bypassctrl = bypassctrl) 
   }
   
   
