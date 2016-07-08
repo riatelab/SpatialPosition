@@ -5,7 +5,7 @@
 #' @param w sp object; the spatial extent of this object is used to 
 #' create the regular SpatialPointsDataFrame.
 #' @param resolution numeric; resolution of the grid (in map units). If 
-#' resolution is not set, the grid will contain around 7250 points. (optional)
+#' resolution is not set, the grid will contain around 7500 points. (optional)
 #' @return The output of the function is a SpatialPointsDataFrame of regularly
 #' spaced points with the same extent as \code{w}. 
 #' @seealso \link{CreateDistMatrix}
@@ -57,12 +57,15 @@ CreateGrid <- function (w, resolution)
 #' @param bypassctrl logical; bypass the distance matrix size control (see Details).
 #' @details The function returns a full matrix of distances in meters using the 
 #' Great Circle distance (WGS84 ellipsoid) method. This is a wrapper
-#' for the \code{\link{spDists}} function. \cr.
+#' for the \code{\link{spDists}} function. \cr
 #' 
-#' If the matrix to compute is too large (more than 100,000,000 cells or more than 10,000,000 origins or destinations) 
-#' the function sends a confirmation message to warn users about the amount of RAM mobilized. 
+#' If the matrix to compute is too large (more than 100,000,000 cells, more than 
+#' 10,000,000 origins or more than 10,000,000 destinations) 
+#' the function sends a confirmation message to warn users about the amount of 
+#' RAM mobilized. 
 #' Use \code{bypassctrl} = TRUE to skip this control.
-#' @return A distance matrix, row names are \code{knownpts} row names, column names are \code{unknownpts} row names.
+#' @return A distance matrix, row names are \code{knownpts} row names, column 
+#' names are \code{unknownpts} row names.
 #' @seealso \link{CreateGrid}
 #' @examples 
 #' # Create a SpatialPointsDataFrame grid of spatMask extent and 200 meters 

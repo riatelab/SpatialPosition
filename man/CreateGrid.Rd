@@ -11,7 +11,7 @@ CreateGrid(w, resolution)
 create the regular SpatialPointsDataFrame.}
 
 \item{resolution}{numeric; resolution of the grid (in map units). If 
-resolution is not set, the grid will contain around 7250 points. (optional)}
+resolution is not set, the grid will contain around 7500 points. (optional)}
 }
 \value{
 The output of the function is a SpatialPointsDataFrame of regularly

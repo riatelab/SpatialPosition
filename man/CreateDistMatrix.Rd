@@ -14,7 +14,8 @@ CreateDistMatrix(knownpts, unknownpts, bypassctrl = FALSE)
 \item{bypassctrl}{logical; bypass the distance matrix size control (see Details).}
 }
 \value{
-A distance matrix, row names are \code{knownpts} row names, column names are \code{unknownpts} row names.
+A distance matrix, row names are \code{knownpts} row names, column 
+names are \code{unknownpts} row names.
 }
 \description{
 This function creates a distance matrix between two 
@@ -23,10 +24,12 @@ sp objects (SpatialPointsDataFrame or SpatialPolygonsDataFrame).
 \details{
 The function returns a full matrix of distances in meters using the 
 Great Circle distance (WGS84 ellipsoid) method. This is a wrapper
-for the \code{\link{spDists}} function. \cr.
+for the \code{\link{spDists}} function. \cr
 
-If the matrix to compute is too large (more than 100,000,000 cells or more than 10,000,000 origins or destinations) 
-the function sends a confirmation message to warn users about the amount of RAM mobilized. 
+If the matrix to compute is too large (more than 100,000,000 cells, more than 
+10,000,000 origins or more than 10,000,000 destinations) 
+the function sends a confirmation message to warn users about the amount of 
+RAM mobilized. 
 Use \code{bypassctrl} = TRUE to skip this control.
 }
 \examples{

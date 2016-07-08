@@ -6,7 +6,7 @@
 \usage{
 quickStewart(spdf, df, spdfid = NULL, dfid = NULL, var, var2 = NULL,
   typefct = "exponential", span, beta, resolution = NULL, mask = NULL,
-  nclass = 8, breaks = NULL)
+  nclass = 8, breaks = NULL, bypassctrl = FALSE)
 }
 \arguments{
 \item{spdf}{a SpatialPolygonsDataFrame.}
@@ -47,6 +47,9 @@ points. (optional)}
 if breaks is set.}
 
 \item{breaks}{numeric; a vector of values used to discretize the potentials.}
+
+\item{bypassctrl}{logical; bypass the distance matrix size control (see 
+\code{\link{CreateDistMatrix}} Details).}
 }
 \value{
 A SpatialPolygonsDataFrame is returned (see \link{rasterToContourPoly} Value).

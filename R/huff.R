@@ -29,7 +29,8 @@
 #'  7250 points. (optional)
 #' @param mask sp object; the spatial extent of this object is used to 
 #' create the regularly spaced SpatialPointsDataFrame output. (optional)
-#' @param bypassctrl passed on to the \code{bypassctrl} argument of the \code{\link{CreateDistMatrix}} function. 
+#' @param bypassctrl logical; bypass the distance matrix size control (see 
+#' \code{\link{CreateDistMatrix}} Details).
 #' @return SpatialPointsDataFrame with the computed catchment areas in a new 
 #' field named \code{OUTPUT}.
 #' @seealso \link{huff}, \link{rasterHuff}, \link{plotHuff}, \link{CreateGrid}, 

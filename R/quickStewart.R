@@ -32,6 +32,8 @@
 #' if breaks is set.
 #' @param breaks numeric; a vector of values used to discretize the potentials. 
 #' @param mask SpatialPolygonsDataFrame; mask used to clip contours of potentials.
+#' @param bypassctrl logical; bypass the distance matrix size control (see 
+#' \code{\link{CreateDistMatrix}} Details).
 #' @return A SpatialPolygonsDataFrame is returned (see \link{rasterToContourPoly} Value). 
 #' @details 
 #' If var2 is provided the ratio between the potentials of var (numerator) 
@@ -83,7 +85,8 @@ quickStewart <- function(spdf, df, spdfid = NULL, dfid = NULL, var,
                          typefct = "exponential", span, 
                          beta, resolution = NULL, 
                          mask = NULL, 
-                         nclass = 8, breaks = NULL){
+                         nclass = 8, breaks = NULL, 
+                         bypassctrl = FALSE){
   # IDs  
   if (is.null(spdfid)){spdfid <- names(spdf@data)[1]}
   if (is.null(dfid)){dfid <- names(df)[1]}
@@ -100,7 +103,8 @@ quickStewart <- function(spdf, df, spdfid = NULL, dfid = NULL, var,
                  span = span, 
                  beta = beta, 
                  resolution = resolution, 
-                 mask = mask)
+                 mask = mask, 
+                 bypassctrl = bypassctrl)
   
   if(!is.null(var2)){
     pot2 <- stewart(knownpts = spdf, 
@@ -109,7 +113,8 @@ quickStewart <- function(spdf, df, spdfid = NULL, dfid = NULL, var,
                     span = span, 
                     beta = beta, 
                     resolution = resolution, 
-                    mask = mask)
+                    mask = mask, 
+                    bypassctrl = bypassctrl)
     ras <- rasterStewart(pot) / rasterStewart(pot2)
   }else{
     ras <- rasterStewart(pot)

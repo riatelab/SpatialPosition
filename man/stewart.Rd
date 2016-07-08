@@ -46,7 +46,8 @@ points. (optional)}
 \item{mask}{sp object; the spatial extent of this object is used to 
 create the regularly spaced SpatialPointsDataFrame output. (optional)}
 
-\item{bypassctrl}{passed on to the \code{bypassctrl} argument of the \code{\link{CreateDistMatrix}} function.}
+\item{bypassctrl}{logical; bypass the distance matrix size control (see 
+\code{\link{CreateDistMatrix}} Details).}
 }
 \value{
 SpatialPointsDataFrame with the computed potentials in a new field 
