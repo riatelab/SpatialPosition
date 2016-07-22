@@ -201,7 +201,7 @@ rasterToContourPoly <- function(r, nclass = 8, breaks = NULL, mask = NULL){
     y <- rgeos::gDifference(final[final$center==df[i,3],],
                             final[final$center==df[i-1,3],], byid = F, 
                             id = as.character(df[i,4]))
-    z <- rbind(z, y)
+    if(!is.null(y)){ z <- rbind(z, y)}
   }
   dfx <- data.frame(id = sapply(methods::slot(z, "polygons"), 
                                 methods::slot, "ID"))

@@ -33,7 +33,7 @@ data(nuts2006)
 # Compute the GDP per capita variable
 nuts3.df$gdpcap <- nuts3.df$gdppps2008 * 1000000 / nuts3.df$pop2008
 
-# Discretize of the variable
+# Discretize the variable
 bv <- quantile(nuts3.df$gdpcap, seq(from = 0, to = 1, length.out = 9))
 
 # Draw the map
@@ -101,6 +101,9 @@ pot <- data.frame(id = nuts3.df$id,
                   gdpcap = gdppot$OUTPUT * 1000000 / poppot$OUTPUT, 
                   stringsAsFactors = FALSE)
 
+# Discretize the variable
+bv2 <- c(min(pot$gdpcap), bv[2:8], max(pot$gdpcap))
+
 # Draw the map
 par <- par(mar = c(0,0,1.2,0))
 
@@ -112,7 +115,7 @@ plot(world.spdf, col = "#f5f5f3ff", border = "#a9b3b4ff", add = TRUE)
 choroLayer(spdf = nuts3.spdf, df = pot, 
            var = "gdpcap", 
            legend.pos = "topright",
-           breaks = bv, col = pal, 
+           breaks = bv2, col = pal, 
            border = NA,
            legend.title.txt = "Potential\nGDP per capita",
            legend.values.rnd = -2, add = TRUE)
@@ -168,6 +171,9 @@ pot.spdf <- rasterToContourPoly(r = ras,
                                 breaks = bv, 
                                 mask = nuts0.spdf)
 
+# Get breaks values
+bv3 <- sort(c(unique(pot.spdf$min), max(pot.spdf$max)), decreasing = FALSE)
+
 # Draw the map
 par <- par(mar = c(0,0,1.2,0))
 
@@ -178,8 +184,8 @@ plot(world.spdf, col = "#f5f5f3ff", border = "#a9b3b4ff", add = TRUE)
 # Map the potential GDP per Capita
 choroLayer(spdf = pot.spdf, df = pot.spdf@data, var = "center", 
            legend.pos = "topright",
-           breaks = bv, col = pal, add=T, 
-           border = "grey90", lwd = 0.2,
+           breaks = bv3, col = pal, add=T, 
+           border = NA, lwd = 0.2,
            legend.title.txt = "Potential\nGDP per capita",
            legend.values.rnd = -2)
 plot(nuts0.spdf, add=T, lwd = 0.5, border = "grey30")
