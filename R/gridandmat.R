@@ -20,6 +20,8 @@
 #' @export
 CreateGrid <- function (w, resolution)
 {
+  # w <- wo
+  # resolution <- 5000000
   TestSp(w)
   boundingBox <- bbox(w)
   if(is.null(resolution)){
@@ -29,14 +31,37 @@ CreateGrid <- function (w, resolution)
   rounder <- boundingBox %% resolution
   boundingBox[,1] <- boundingBox[,1] - rounder[,1]
   boundingBox[,2] <- boundingBox[,2] + resolution - rounder[,2]
-  boxCoordX <- seq(from = boundingBox[1,1] - resolution*10, 
-                   to = boundingBox[1,2]+resolution*10, 
+  boxCoordX <- seq(from = boundingBox[1,1] - resolution * 10, 
+                   to = boundingBox[1,2]+resolution * 10, 
                    by = resolution)
   boxCoordY <- seq(from = boundingBox[2,1] - resolution * 10, 
-                   to = boundingBox[2,2] + resolution*10, 
+                   to = boundingBox[2,2] + resolution * 10, 
                    by = resolution)
+  
+  
+  
+  # pref <- SpatialPoints(coords = data.frame(x = c(-179.9999,179.9999), 
+  #                                           y =  c(89.9999,30) ), 
+  #                       proj4string = CRS("+init=epsg:4326"))
+  # plot(sp::spTransform(pref, proj4string(w)))
+  # plot(w, add=T, lwd = 20)
+  # 12655907
+  # 6852500
+  # wor <- spTransform(wo, spatMask@proj4string)
+  # plot(wor)
+  # points(0,0, cex = 10)
+  # plot(sp::spTransform(pref, proj4string(wor)), add=T)
+  # 
+  # a <- raster::extent(sp::spTransform(pref, proj4string(w)))
+  # 
+  # boxCoordY <- boxCoordY[boxCoordY >= a[3] & boxCoordY <= a[4]]
+  
+  
+  
   spatGrid <- expand.grid(boxCoordX, boxCoordY)
+  
   idSeq <- seq(1, nrow(spatGrid), 1)
+  
   spatGrid <- data.frame(ID = idSeq, 
                          COORDX = spatGrid[, 1], 
                          COORDY = spatGrid[, 2])
@@ -44,6 +69,27 @@ CreateGrid <- function (w, resolution)
   spatGrid <- SpatialPointsDataFrame(coords = spatGrid[ , c(2, 3)], 
                                      data = spatGrid, 
                                      proj4string = CRS(proj4string(w)))
+  
+  result <- tryCatch({
+    x <- spTransform(spatGrid, "+init=epsg:4326")
+    TRUE
+  }, warning = function(war) {
+    return(FALSE)
+  }, error = function(err) {
+    return(FALSE)
+  }, finally = {
+  })
+  
+  if (result==FALSE){
+    pref <- SpatialPoints(coords = data.frame(x = c(-179.9999,179.9999),
+                                              y =  c(89.9999,-89.9999) ),
+                          proj4string = CRS("+init=epsg:4326"))
+    a <- raster::extent(sp::spTransform(pref, proj4string(w)))
+    b <- raster::extent(spatGrid)
+    e <- c(b[1], b[2], a[3], a[4])
+    spatGrid <- raster::crop(spatGrid, e)
+  }
+
   return(spatGrid)
 }
 

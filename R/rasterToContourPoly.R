@@ -90,7 +90,7 @@ rasterToContourPoly <- function(r, nclass = 8, breaks = NULL, mask = NULL){
     options(warn=0)
     # mask too big or not valid
     if(!rgeos::gWithin(mask, masker(r)) || !rgeos::gIsValid(mask)){
-      textx <- "'mask' is not smaller than 'r' or does not have a valid geometry.\nThe contour SpatialPolygonsDataFrame is build without mask."
+      textx <- "'mask' is not smaller than 'r' or does not have a valid geometry.\nThe contour SpatialPolygonsDataFrame is built without mask."
       warning(textx, call. = FALSE)
       mask <- NULL
     }else{
