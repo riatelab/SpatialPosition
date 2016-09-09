@@ -89,7 +89,7 @@ CreateGrid <- function (w, resolution)
     e <- c(b[1], b[2], a[3], a[4])
     spatGrid <- raster::crop(spatGrid, e)
   }
-
+  
   return(spatGrid)
 }
 
@@ -164,15 +164,21 @@ CreateDistMatrix  <- function(knownpts,
     }
   }
   
+  if(methods::is(knownpts, "SpatialPolygons")){
+    knownpts <- rgeos::gCentroid(spgeom = knownpts, byid = T)
+  }
+  if(methods::is(unknownpts, "SpatialPolygons")){
+    unknownpts <- rgeos::gCentroid(spgeom = unknownpts, byid = T)
+  }
+  
   if(sp::is.projected(knownpts)){
     knownpts <- sp::spTransform(knownpts,"+init=epsg:4326")
     unknownpts <- sp::spTransform(unknownpts,"+init=epsg:4326")
   }
   
-  
   matDist <- spDists(x = knownpts, y = unknownpts, longlat = TRUE) * 1000
-  
   dimnames(matDist) <- list(row.names(knownpts), row.names(unknownpts))
+  
   return(round(matDist, digits = 8))
 }
 
