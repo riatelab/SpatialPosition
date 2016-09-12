@@ -19,7 +19,10 @@ Imports:
     graphics,
     methods,
     rgeos, 
-    rgdal
+    rgdal,
+    parallel,
+    doParallel, 
+    foreach
 Suggests:
     cartography,
     knitr, 
