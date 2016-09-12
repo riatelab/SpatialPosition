@@ -165,10 +165,18 @@ CreateDistMatrix  <- function(knownpts,
   }
   
   if(methods::is(knownpts, "SpatialPolygons")){
-    knownpts <- rgeos::gCentroid(spgeom = knownpts, byid = T)
+    # knownpts <- rgeos::gCentroid(spgeom = knownpts, byid = T)
+    knownpts <- SpatialPointsDataFrame(coordinates(knownpts), 
+                                       data = knownpts@data, 
+                                       proj4string = knownpts@proj4string)
+    
+    
   }
   if(methods::is(unknownpts, "SpatialPolygons")){
-    unknownpts <- rgeos::gCentroid(spgeom = unknownpts, byid = T)
+    # unknownpts <- rgeos::gCentroid(spgeom = unknownpts, byid = T)
+    unknownpts <- SpatialPointsDataFrame(coordinates(unknownpts), 
+                                         data = unknownpts@data, 
+                                         proj4string = unknownpts@proj4string)
   }
   
   if(sp::is.projected(knownpts)){
