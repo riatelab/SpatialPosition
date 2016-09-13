@@ -37,27 +37,7 @@ CreateGrid <- function (w, resolution)
   boxCoordY <- seq(from = boundingBox[2,1] - resolution * 10, 
                    to = boundingBox[2,2] + resolution * 10, 
                    by = resolution)
-  
-  
-  
-  # pref <- SpatialPoints(coords = data.frame(x = c(-179.9999,179.9999), 
-  #                                           y =  c(89.9999,30) ), 
-  #                       proj4string = CRS("+init=epsg:4326"))
-  # plot(sp::spTransform(pref, proj4string(w)))
-  # plot(w, add=T, lwd = 20)
-  # 12655907
-  # 6852500
-  # wor <- spTransform(wo, spatMask@proj4string)
-  # plot(wor)
-  # points(0,0, cex = 10)
-  # plot(sp::spTransform(pref, proj4string(wor)), add=T)
-  # 
-  # a <- raster::extent(sp::spTransform(pref, proj4string(w)))
-  # 
-  # boxCoordY <- boxCoordY[boxCoordY >= a[3] & boxCoordY <= a[4]]
-  
-  
-  
+
   spatGrid <- expand.grid(boxCoordX, boxCoordY)
   
   idSeq <- seq(1, nrow(spatGrid), 1)
@@ -165,7 +145,6 @@ CreateDistMatrix  <- function(knownpts,
   }
   
   if(methods::is(knownpts, "SpatialPolygons")){
-    # knownpts <- rgeos::gCentroid(spgeom = knownpts, byid = T)
     knownpts <- SpatialPointsDataFrame(coordinates(knownpts), 
                                        data = knownpts@data, 
                                        proj4string = knownpts@proj4string)
@@ -173,7 +152,6 @@ CreateDistMatrix  <- function(knownpts,
     
   }
   if(methods::is(unknownpts, "SpatialPolygons")){
-    # unknownpts <- rgeos::gCentroid(spgeom = unknownpts, byid = T)
     unknownpts <- SpatialPointsDataFrame(coordinates(unknownpts), 
                                          data = unknownpts@data, 
                                          proj4string = unknownpts@proj4string)
