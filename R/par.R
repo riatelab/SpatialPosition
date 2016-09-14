@@ -26,8 +26,8 @@
 #' create the regularly spaced SpatialPointsDataFrame output. (optional)
 #' @param cl numeric; number of clusters. By default cl is determined using 
 #' \code{parallel::detectCores()}.
-#' @param size numeric; parStewart split unknownpts in chunks, size indicated the 
-#' size of each chunks.  
+#' @param size numeric; parStewart splits unknownpts in chunks, size indicates 
+#' the size of each chunks.  
 #' @details The parallel implementation splits potentials computations along 
 #' chunks of unknownpts (or chunks of the grid defined using resolution). It only 
 #' uses Great Cercle distances (with \code{\link{CreateDistMatrix}}). 
