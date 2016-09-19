@@ -75,7 +75,7 @@ parStewart <- function(knownpts, unknownpts = NULL,
                        varname,
                        typefct = "exponential",
                        span, beta, resolution = NULL,
-                       mask = NULL, cl = 2, size = 100){
+                       mask = NULL, cl = NULL, size = 100){
   
   # if (!requireNamespace("parallel", quietly = TRUE)) {
   #   stop("'foreach' package needed for this function to work. Please install it.",

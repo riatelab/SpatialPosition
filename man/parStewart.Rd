@@ -5,7 +5,7 @@
 \title{Stewart Potentials Parallel}
 \usage{
 parStewart(knownpts, unknownpts = NULL, varname, typefct = "exponential",
-  span, beta, resolution = NULL, mask = NULL, cl = 2, size = 100)
+  span, beta, resolution = NULL, mask = NULL, cl = NULL, size = 100)
 }
 \arguments{
 \item{knownpts}{sp object (SpatialPointsDataFrame or SpatialPolygonsDataFrame);
@@ -41,8 +41,8 @@ create the regularly spaced SpatialPointsDataFrame output. (optional)}
 \item{cl}{numeric; number of clusters. By default cl is determined using 
 \code{parallel::detectCores()}.}
 
-\item{size}{numeric; parStewart split unknownpts in chunks, size indicated the 
-size of each chunks.}
+\item{size}{numeric; parStewart splits unknownpts in chunks, size indicates 
+the size of each chunks.}
 }
 \value{
 A Spatial*DataFrame with the computed potentials in a new field 
