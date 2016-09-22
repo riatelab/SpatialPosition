@@ -134,7 +134,7 @@ stewart <- function(knownpts,
 rasterStewart <- function(x, mask = NULL){
   gridded(x) <- TRUE
   r <- raster(x)
-  rasterx <- rasterize(x, r, field = 'OUTPUT')
+  rasterx <- rasterize(x[!is.na(x$OUTPUT),], r, field = 'OUTPUT')
   if(!is.null(mask)){
     TestSp(mask)
     rasterx <- mask(rasterx, mask = mask)
