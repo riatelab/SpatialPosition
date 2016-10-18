@@ -19,11 +19,11 @@ Imports:
     graphics,
     methods,
     rgeos, 
-    rgdal,
+    rgdal
+Suggests:
     parallel,
     doParallel, 
-    foreach
-Suggests:
+    foreach,
     cartography,
     knitr, 
     rmarkdown

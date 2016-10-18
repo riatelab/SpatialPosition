@@ -69,7 +69,6 @@
 #' }
 #' @import sp
 #' @import raster
-#' @import foreach
 #' @export
 parStewart <- function(knownpts, unknownpts = NULL,
                        varname,
@@ -77,18 +76,18 @@ parStewart <- function(knownpts, unknownpts = NULL,
                        span, beta, resolution = NULL,
                        mask = NULL, cl = NULL, size = 100){
   
-  # if (!requireNamespace("parallel", quietly = TRUE)) {
-  #   stop("'foreach' package needed for this function to work. Please install it.",
-  #        call. = FALSE)
-  # }
-  # if (!requireNamespace("foreach", quietly = TRUE)) {
-  #   stop("'foreach' package needed for this function to work. Please install it.",
-  #        call. = FALSE)
-  # }
-  # if (!requireNamespace("doParallel", quietly = TRUE)) {
-  #   stop("'foreach' package needed for this function to work. Please install it.",
-  #        call. = FALSE)
-  # }
+  if (!requireNamespace("parallel", quietly = TRUE)) {
+    stop("'foreach' package needed for this function to work. Please install it.",
+         call. = FALSE)
+  }
+  if (!requireNamespace("foreach", quietly = TRUE)) {
+    stop("'foreach' package needed for this function to work. Please install it.",
+         call. = FALSE)
+  }
+  if (!requireNamespace("doParallel", quietly = TRUE)) {
+    stop("'foreach' package needed for this function to work. Please install it.",
+         call. = FALSE)
+  }
   # 
   # print(search)
   # if(!'package:doParallel' %in% search()){
@@ -99,7 +98,7 @@ parStewart <- function(knownpts, unknownpts = NULL,
   # }
   # print(search)
   
-
+  
   if (is.null(unknownpts)){
     unknownpts <- CreateGrid(w = if(is.null(mask)){knownpts} else {mask},
                              resolution = resolution)
@@ -143,20 +142,27 @@ parStewart <- function(knownpts, unknownpts = NULL,
     ml[[i]] <- unknownpts2[(sequence[i]):(sequence[i+1]-1),]
   }
 
-  ls <- foreach::foreach(i = ml, .packages = c('SpatialPosition'),
-                         .combine = rbind, .inorder = TRUE) %dopar% {
-                           mat <- CreateDistMatrix(knownpts = knownpts,
-                                                   unknownpts = i,
-                                                   bypassctrl = TRUE)
-                           st <- stewart(knownpts = knownpts,
-                                         unknownpts = i,
-                                         matdist = mat,
-                                         typefct = typefct,
-                                         span = span, beta = beta,
-                                         varname = varname)
-                         }
+  
+  ls <- foreach::`%dopar%`(foreach::foreach(i = ml, 
+                                            .packages = c('SpatialPosition'),
+                                            .combine = rbind, .inorder = TRUE), 
+                           {
+                             mat <- CreateDistMatrix(knownpts = knownpts,
+                                                     unknownpts = i,
+                                                     bypassctrl = TRUE)
+                             st <- stewart(knownpts = knownpts,
+                                           unknownpts = i,
+                                           matdist = mat,
+                                           typefct = typefct,
+                                           span = span, beta = beta,
+                                           varname = varname)
+                           })
+  
   
   parallel::stopCluster(cl)
   unknownpts$OUTPUT <- ls$OUTPUT
   return(unknownpts)
 }
+
+
+
