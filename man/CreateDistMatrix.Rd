@@ -48,4 +48,3 @@ dim(mymat)
 \seealso{
 \link{CreateGrid}
 }
-

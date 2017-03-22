@@ -51,4 +51,3 @@ break.values
 \link{stewart}, \link{rasterStewart}, \link{quickStewart}, 
 \link{rasterToContourPoly}, \link{CreateGrid}, \link{CreateDistMatrix}.
 }
-

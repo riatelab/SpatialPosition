@@ -65,4 +65,3 @@ par(opar)
 \link{stewart}, \link{rasterStewart}, \link{plotStewart}, 
 \link{quickStewart}, \link{CreateGrid}, \link{CreateDistMatrix}.
 }
-

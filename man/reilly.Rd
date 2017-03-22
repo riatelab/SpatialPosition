@@ -87,4 +87,3 @@ REILLY, W. J. (1931) The law of retail gravitation, W. J. Reilly, New York.
 \link{reilly}, \link{rasterReilly}, \link{plotReilly}, \link{CreateGrid}, 
 \link{CreateDistMatrix}.
 }
-

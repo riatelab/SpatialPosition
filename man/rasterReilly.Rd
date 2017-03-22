@@ -40,4 +40,3 @@ head(unique(levels(myreillyraster)[[1]]))
 \link{reilly}, \link{rasterReilly}, \link{plotReilly}, \link{CreateGrid}, 
 \link{CreateDistMatrix}.
 }
-

@@ -94,4 +94,3 @@ if(require(cartography)){
 \seealso{
 \link{stewart}.
 }
-

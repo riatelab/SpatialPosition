@@ -158,7 +158,6 @@ parStewart <- function(knownpts, unknownpts = NULL,
                                            varname = varname)
                            })
   
-  
   parallel::stopCluster(cl)
   unknownpts$OUTPUT <- ls$OUTPUT
   return(unknownpts)

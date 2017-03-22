@@ -81,4 +81,3 @@ class(mystewart)
 # Computed values
 summary(mystewart$OUTPUT)
 }
-

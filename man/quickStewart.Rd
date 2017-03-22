@@ -107,4 +107,3 @@ if(require("cartography")){
 \link{stewart}, \link{rasterStewart}, \link{plotStewart}, 
 \link{rasterToContourPoly}, \link{CreateGrid}, \link{CreateDistMatrix}.
 }
-

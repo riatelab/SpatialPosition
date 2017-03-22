@@ -86,4 +86,3 @@ HUFF D. (1964) Defining and Estimating a Trading Area. Journal of Marketing, 28:
 \link{huff}, \link{rasterHuff}, \link{plotHuff}, \link{CreateGrid}, 
 \link{CreateDistMatrix}.
 }
-
