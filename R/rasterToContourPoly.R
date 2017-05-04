@@ -50,36 +50,54 @@
 #' }
 #' @export
 rasterToContourPoly <- function(r, nclass = 8, breaks = NULL, mask = NULL){
-  if (!requireNamespace("rgeos", quietly = TRUE)) {
-    stop("'rgeos' package needed for this function to work. Please install it.",
-         call. = FALSE)
-  }
-  if(!'package:rgeos' %in% search()){
-    attachNamespace('rgeos')
-  }
-  
+  breaks <- get_bks(r = r, nclass =  nclass, breaks = breaks)
+  res <- get_mask(r, mask)
+  res2 <- adjust_bks(r = res$r, breaks = breaks)
+  res3 <- get_poly(r = res2$r, breaks = res2$breaks, finalBreaks = res2$finalBreaks)
+  res4 <- add_hole(res3)
+  result <- mask_clip(res4, res$mask)
+  return(result)
+}
+
+
+
+
+# build a mask around the raster
+masker <- function(r){
+  xy <- sp::coordinates(r)[which(!is.na(raster::values(r))),]
+  bb <- sp::bbox(xy)
+  xseq <- seq(bb[1,1], bb[1,2], length.out = 50)
+  yseq <- seq(bb[2,1], bb[2,2], length.out = 50)
+  b <- data.frame(x = c(xseq, rep(bb[1,2], 50), rev(xseq), rep(bb[1,1], 50)), 
+                  y = c(rep(bb[2,1], 50), yseq, rep(bb[2,2], 50), rev(yseq)))
+  b <- as.matrix(b)
+  mask <- sp::SpatialPolygons(list(sp::Polygons(list(sp::Polygon(b, hole = FALSE)), 
+                                                ID = "1")), 
+                              proj4string = sp::CRS(sp::proj4string(r)))
+  return(mask)
+}
+
+
+# adjust breaks to fit the raster
+get_bks <- function(r, nclass = 8, breaks = NULL){
   # get initial min and max values
   rmin <- raster::cellStats(r, min, na.rm = TRUE)
   rmax <- raster::cellStats(r, max, na.rm = TRUE)
   
-  # default breaks and nclass
   if(is.null(breaks)){
     breaks <- seq(from = rmin, 
                   to = rmax, 
                   length.out = (nclass+1))
-  }else{
-    breaks <- c(rmin, breaks[breaks > rmin & breaks < rmax], rmax)
-    breaks <- unique(breaks)
-    breaks <- sort(breaks)
   }
-  
-  # get raster resolution and projection  
+  breaks <- sort(unique(c(rmin, breaks[breaks > rmin & breaks < rmax], rmax)))
+  return(breaks)
+} 
+
+# build a mask around the raster
+get_mask <- function(r, mask){
   myres <- raster::res(r)[1]
-  myproj <- sp::CRS(sp::proj4string(r))
-  
-  
-  # extent or mask the raster around the mask
   if(!is.null(mask)){
+    bmask <- TRUE
     # Dissolve the mask
     mask <- rgeos::gUnaryUnion(mask)
     # Is the mask valid
@@ -89,67 +107,64 @@ rasterToContourPoly <- function(r, nclass = 8, breaks = NULL, mask = NULL){
     }
     options(warn=0)
     # mask too big or not valid
-    if(!rgeos::gWithin(mask, masker(r)) || !rgeos::gIsValid(mask)){
-      textx <- "'mask' is not smaller than 'r' or does not have a valid geometry.\nThe contour SpatialPolygonsDataFrame is built without mask."
+    if(!rgeos::gIsValid(mask)){
+      textx <- "'mask' does not have a valid geometry.\nThe contour SpatialPolygonsDataFrame is built without mask."
       warning(textx, call. = FALSE)
-      mask <- NULL
-    }else{
-      maskbuff <- rgeos::gBuffer(mask, byid = FALSE, width = 5 * myres )
-      r <- raster::mask(r, maskbuff, updatevalue = -1)
+      bmask <- FALSE
     }
+  }else{
+    bmask <- FALSE
   }
-  
-  if (is.null(mask)){
-    mask <- masker(r)
-    maskbuff <- rgeos::gBuffer(mask, byid = FALSE, width = 5 * myres )
-    r <- raster::extend(r, maskbuff, value=-1)
-  }
-  
-  # adjust breaks if necessary
+  maskr <- masker(r)
+  r <- raster::extend(r, 
+                      rgeos::gBuffer(maskr, byid = FALSE, width =  2 * myres ), 
+                      value = -1)
+  if(!bmask){mask <- maskr}
+  return(list(r = r, mask = mask))
+}
+
+# adjust breaks to take intoccount 0 and NA values
+adjust_bks <- function(r, breaks){
+  # adjust breaks if necessary (adapted to mask)
   rmin <- min(r[r!=-1])
   rmax <- max(r[r!=-1])
-  breaks <- c(rmin, breaks[breaks > rmin & breaks < rmax], rmax)
-  breaks <- unique(breaks)
-  breaks <- sort(breaks)
+  breaks <- sort(unique(c(rmin, breaks[breaks > rmin & breaks < rmax], rmax)))
   finalBreaks <- breaks
-  # zero level problem
+  
+  # deal with 0
   if(breaks[1] <= 0){
-    zv <- TRUE
     breaks <- breaks + 1
     r <- r + 1
-  }else{
-    zv <- FALSE
   }
-  nclass <- length(breaks)-1
-  breaks <- breaks[-(nclass+1)]
+  
+  # remove top break
+  breaks <- breaks[-(length(breaks))]
   
   # deal with NAs
   r[is.na(r)] <- 0
   
+  return(list(breaks = breaks, finalBreaks = finalBreaks, r = r))
+}
+
+# get polygons out of the raster 
+get_poly <- function(r, breaks, finalBreaks){
   # test breaks
   if(length(breaks)<2){stop("breaks values do not fit the raster values", 
                             call. = FALSE)}
-  
   # build the contour lines polygones
   cl <- rasterToContour(r, levels = breaks)
   cl$level <- as.numeric(as.character(cl$level))
   SPlist <- list()
   SPlevels <- character()
   for (i in cl$level){ 
-    linex <- cl[cl@data$level == i,]
-    linex <- linex@lines
-    linex <- linex[[1]]
-    linex <- linex@Lines
-    Plist <- NULL
+    linex <- cl[cl@data$level == i,]@lines[[1]]@Lines
     Plist <- list()
     for (j in 1:length(linex)){
-      x <- linex[[j]]@coords
-      x <- sp::Polygon(coords =  x, hole = F)
-      x <- sp::Polygons(srl = list(x), ID = j)
-      Plist[[j]] <- x
+      Plist[[j]] <- sp::Polygons(srl = list(sp::Polygon(coords = linex[[j]]@coords, 
+                                                        hole = F)), ID = j)
     }  
-    x <- sp::SpatialPolygons(Srl = Plist)
-    x <- rgeos::union(x = x)
+    x <- rgeos::union(x = sp::SpatialPolygons(Srl = Plist))
+    
     if (class(x) != "SpatialPolygonsDataFrame"){
       x <- sp::SpatialPolygonsDataFrame(Sr = x, 
                                         data = data.frame(
@@ -158,18 +173,17 @@ rasterToContourPoly <- function(r, nclass = 8, breaks = NULL, mask = NULL){
       x <- x[x@data$count < 2,]
       x@data <- data.frame(level = rep(i, dim(x)[1]))
     }
-    SPlist <- c(SPlist , x@polygons  )
-    SPlevels <- c(SPlevels,x@data$level)
+    SPlist <- c(SPlist , x@polygons)
+    SPlevels <- c(SPlevels, x@data$level)
   }
+  
   for (i in 1:length(SPlist)){
     SPlist[[i]]@ID <- as.character(i)
   }
-  x <- sp::SpatialPolygons(Srl = SPlist, proj4string = myproj)
-  x <- sp::SpatialPolygonsDataFrame(Sr = x, 
+  x <- sp::SpatialPolygonsDataFrame(Sr = sp::SpatialPolygons(Srl = SPlist, 
+                                                             proj4string = r@crs), 
                                     data = data.frame(levels = SPlevels))
-  
-  bks <- data.frame(b =c(breaks, rmax), t = finalBreaks)
-  
+  bks <- data.frame(b =c(breaks, max(r[r!=-1])), t = finalBreaks)
   # manage attributes data of the contour spdf
   x@data <- data.frame(id = paste("id_",row.names(x),sep=""),
                        min = bks[match(x$levels, bks[,1]),2], 
@@ -178,17 +192,11 @@ rasterToContourPoly <- function(r, nclass = 8, breaks = NULL, mask = NULL){
                        stringsAsFactors = FALSE)
   x$center <- (x$min+x$max) / 2 
   row.names(x) <- x$id
-  
-  # clip the contour spdf with the mask
-  final <- rgeos::gIntersection(spgeom1 = x, spgeom2 = mask, byid = TRUE, 
-                                id = row.names(x))
-  df <- data.frame(id = sapply(methods::slot(final, "polygons"), 
-                               methods::slot, "ID"))
-  row.names(df) <- df$id
-  final <- sp::SpatialPolygonsDataFrame(Sr = final, data = df)
-  final@data <- data.frame(id = final$id, x[match(final$id, x$id),2:4])
-  final@plotOrder <- 1:nrow(final)
-  
+  return(x)
+}
+
+# add holes into polygons overlaid 
+add_hole <- function(final){
   # ring correction
   df <- unique(final@data[,2:4])
   df$id <- 1:nrow(df)
@@ -197,6 +205,7 @@ rasterToContourPoly <- function(r, nclass = 8, breaks = NULL, mask = NULL){
   z <- rgeos::gIntersection(final[final$center==df[1,3],],
                             final[final$center==df[1,3],], byid = F,
                             id = as.character(df[1,4]))
+  
   for(i in 2:nrow(df)){
     y <- rgeos::gDifference(final[final$center==df[i,3],],
                             final[final$center==df[i-1,3],], byid = F, 
@@ -211,23 +220,16 @@ rasterToContourPoly <- function(r, nclass = 8, breaks = NULL, mask = NULL){
   return(z)
 }
 
-
-
-
-
-
-masker <- function(r){
-  xy <- sp::coordinates(r)[which(!is.na(raster::values(r))),]
-  bb <- sp::bbox(xy)
-  xseq <- seq(bb[1,1], bb[1,2], length.out = 50)
-  yseq <- seq(bb[2,1], bb[2,2], length.out = 50)
-  b <- data.frame(x = c(xseq, rep(bb[1,2], 50), rev(xseq), rep(bb[1,1], 50)), 
-                  y = c(rep(bb[2,1], 50), yseq, rep(bb[2,2], 50), rev(yseq)))
-  b <- as.matrix(b)
-  # i <- grDevices::chull(xy)
-  # b <- xy[c(i,i[1]),]
-  mask <- sp::SpatialPolygons(list(sp::Polygons(list(sp::Polygon(b, hole = FALSE)), 
-                                                ID = "1")), 
-                              proj4string = sp::CRS(sp::proj4string(r)))
-  return(mask)
+# clip polygons with the mask
+mask_clip <- function(x, mask){
+  # clip the contour spdf with the mask
+  final <- rgeos::gIntersection(spgeom1 = x, spgeom2 = mask, byid = TRUE,
+                                id = row.names(x))
+  df <- data.frame(id = sapply(methods::slot(final, "polygons"),
+                               methods::slot, "ID"))
+  row.names(df) <- df$id
+  final <- sp::SpatialPolygonsDataFrame(Sr = final, data = df)
+  final@data <- data.frame(id = final$id, x[match(final$id, x$id),2:4])
+  final@plotOrder <- 1:nrow(final)
+  return(final)
 }

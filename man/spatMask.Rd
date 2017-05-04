@@ -7,4 +7,3 @@
 \description{
 A SpatialPolygonsDataFrame of the Paris perimeter.
 }
-

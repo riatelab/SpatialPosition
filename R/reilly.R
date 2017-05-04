@@ -10,8 +10,8 @@
 #' units for which the function computes the estimates. Row names match the row 
 #' names of \code{knownpts} and column names match the row names of 
 #' \code{unknownpts}. \code{matdist} can contain any distance metric (time 
-#' distance or euclidean distance for example). If \code{matdist} is NULL, Great 
-#' Circle distances are used (with \code{\link{CreateDistMatrix}}). (optional)
+#' distance or euclidean distance for example). If \code{matdist} is NULL, the distance 
+#' matrix is built with \code{\link{CreateDistMatrix}}. (optional)
 #' @param varname character; name of the variable in the \code{knownpts} dataframe 
 #' from which values are computed. Quantitative variable with no negative values. 
 #' @param typefct character; spatial interaction function. Options are "pareto" 
@@ -31,6 +31,8 @@
 #' create the regularly spaced SpatialPointsDataFrame output. (optional)
 #' @param bypassctrl logical; bypass the distance matrix size control (see 
 #' \code{\link{CreateDistMatrix}} Details).
+#' @param longlat	logical; if FALSE, Euclidean distance, if TRUE Great Circle 
+#' (WGS84 ellipsoid) distance.
 #' @return SpatialPointsDataFrame with the computed catchment areas in a new 
 #' field named \code{OUTPUT}. Values match the row names of \code{knownpts}.
 #' @seealso \link{reilly}, \link{rasterReilly}, \link{plotReilly}, \link{CreateGrid}, 
@@ -71,7 +73,8 @@ reilly <- function(knownpts,
                    beta,
                    resolution = NULL,
                    mask = NULL,
-                   bypassctrl = FALSE)
+                   bypassctrl = FALSE, 
+                   longlat = TRUE)
 {
   TestSp(knownpts)
   if (!is.null(unknownpts)){  
@@ -84,12 +87,14 @@ reilly <- function(knownpts,
       matdist <- UseDistMatrix(matdist =matdist, knownpts = knownpts, 
                                unknownpts =  unknownpts) 
     }else{
-      matdist <- CreateDistMatrix(knownpts = knownpts, unknownpts = unknownpts, bypassctrl = bypassctrl) 
+      matdist <- CreateDistMatrix(knownpts = knownpts, unknownpts = unknownpts, 
+                                  bypassctrl = bypassctrl, longlat = longlat) 
     }
   } else {
     unknownpts <- CreateGrid(w = if(is.null(mask)){knownpts} else {mask}, 
                              resolution = resolution) 
-    matdist <- CreateDistMatrix(knownpts = knownpts, unknownpts = unknownpts, bypassctrl = bypassctrl) 
+    matdist <- CreateDistMatrix(knownpts = knownpts, unknownpts = unknownpts, 
+                                bypassctrl = bypassctrl, longlat = longlat) 
   }
   
   

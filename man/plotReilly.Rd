@@ -38,4 +38,3 @@ plotReilly(x = myreillyraster)
 \link{reilly}, \link{rasterReilly}, \link{plotReilly}, \link{CreateGrid}, 
 \link{CreateDistMatrix}.
 }
-

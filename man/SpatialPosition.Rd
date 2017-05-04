@@ -22,4 +22,3 @@ A Stewart potentials use case:\cr
 \link{rasterReilly}, \link{plotReilly}, 
 \link{CreateGrid}, \link{CreateDistMatrix}.
 }
-

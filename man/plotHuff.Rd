@@ -34,4 +34,3 @@ plotHuff(myhuffraster)
 \link{huff}, \link{rasterHuff}, \link{plotHuff}, \link{CreateGrid}, 
 \link{CreateDistMatrix}.
 }
-

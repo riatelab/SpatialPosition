@@ -1,9 +1,9 @@
 Package: SpatialPosition
 Title: Spatial Position Models
-Version: 1.1.9000
-Date: 2016-06-07
+Version: 1.2.0
+Date: 2017-05-09
 Authors@R: c(
-      person("Timothée", "Giraud", email = "timothee.giraud@ums-riate.fr", role = c("cre","aut")),
+      person("Timothée", "Giraud", email = "timothee.giraud@cnrs.fr", role = c("cre","aut")),
       person("Hadrien", "Commenges", email = "hcommenges@parisgeo.cnrs.fr", role = c("aut")), 
       person("Joël", "Boulier", email = "joel.boulier@univ-paris1.fr", role = c("ctb")))
 Description: Computes spatial position models: Stewart potentials, Reilly
@@ -21,6 +21,9 @@ Imports:
     rgeos, 
     rgdal
 Suggests:
+    parallel,
+    doParallel, 
+    foreach,
     cartography,
     knitr, 
     rmarkdown
@@ -28,4 +31,4 @@ URL: https://github.com/Groupe-ElementR/SpatialPosition
 BugReports: https://github.com/Groupe-ElementR/SpatialPosition/issues
 VignetteBuilder: knitr
 Encoding: UTF-8
-RoxygenNote: 5.0.1
+RoxygenNote: 6.0.1

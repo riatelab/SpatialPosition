@@ -31,32 +31,12 @@ CreateGrid <- function (w, resolution)
   rounder <- boundingBox %% resolution
   boundingBox[,1] <- boundingBox[,1] - rounder[,1]
   boundingBox[,2] <- boundingBox[,2] + resolution - rounder[,2]
-  boxCoordX <- seq(from = boundingBox[1,1] - resolution * 10, 
-                   to = boundingBox[1,2]+resolution * 10, 
+  boxCoordX <- seq(from = boundingBox[1,1] - resolution * 2, 
+                   to = boundingBox[1,2]+resolution * 2, 
                    by = resolution)
-  boxCoordY <- seq(from = boundingBox[2,1] - resolution * 10, 
-                   to = boundingBox[2,2] + resolution * 10, 
+  boxCoordY <- seq(from = boundingBox[2,1] - resolution * 2, 
+                   to = boundingBox[2,2] + resolution * 2, 
                    by = resolution)
-  
-  
-  
-  # pref <- SpatialPoints(coords = data.frame(x = c(-179.9999,179.9999), 
-  #                                           y =  c(89.9999,30) ), 
-  #                       proj4string = CRS("+init=epsg:4326"))
-  # plot(sp::spTransform(pref, proj4string(w)))
-  # plot(w, add=T, lwd = 20)
-  # 12655907
-  # 6852500
-  # wor <- spTransform(wo, spatMask@proj4string)
-  # plot(wor)
-  # points(0,0, cex = 10)
-  # plot(sp::spTransform(pref, proj4string(wor)), add=T)
-  # 
-  # a <- raster::extent(sp::spTransform(pref, proj4string(w)))
-  # 
-  # boxCoordY <- boxCoordY[boxCoordY >= a[3] & boxCoordY <= a[4]]
-  
-  
   
   spatGrid <- expand.grid(boxCoordX, boxCoordY)
   
@@ -89,7 +69,7 @@ CreateGrid <- function (w, resolution)
     e <- c(b[1], b[2], a[3], a[4])
     spatGrid <- raster::crop(spatGrid, e)
   }
-
+  
   return(spatGrid)
 }
 
@@ -101,8 +81,10 @@ CreateGrid <- function (w, resolution)
 #' @param knownpts sp object; rows of the distance matrix.
 #' @param unknownpts sp object; columns of the distance matrix.
 #' @param bypassctrl logical; bypass the distance matrix size control (see Details).
-#' @details The function returns a full matrix of distances in meters using the 
-#' Great Circle distance (WGS84 ellipsoid) method. This is a wrapper
+#' @param longlat	logical; if FALSE, Euclidean distance, if TRUE Great Circle 
+#' (WGS84 ellipsoid) distance.
+#' @details The function returns a full matrix of distances in meters. 
+#' This is a wrapper
 #' for the \code{\link{spDists}} function. \cr
 #' 
 #' If the matrix to compute is too large (more than 100,000,000 cells, more than 
@@ -119,8 +101,7 @@ CreateGrid <- function (w, resolution)
 #' data(spatData)
 #' mygrid <- CreateGrid(w = spatMask, resolution = 200)
 #' # Create a distance matrix between known spatPts and mygrid
-#' mymat <- CreateDistMatrix(knownpts = spatPts, unknownpts = mygrid, 
-#'                           bypassctrl = FALSE)
+#' mymat <- CreateDistMatrix(knownpts = spatPts, unknownpts = mygrid)
 #' mymat[1:5,1:5]
 #' nrow(spatPts)
 #' nrow(mygrid)
@@ -130,7 +111,8 @@ CreateGrid <- function (w, resolution)
 #' @export
 CreateDistMatrix  <- function(knownpts, 
                               unknownpts, 
-                              bypassctrl = FALSE)
+                              bypassctrl = FALSE, 
+                              longlat = TRUE)
 {
   TestSp(knownpts)
   TestSp(unknownpts)
@@ -164,16 +146,34 @@ CreateDistMatrix  <- function(knownpts,
     }
   }
   
-  if(sp::is.projected(knownpts)){
-    knownpts <- sp::spTransform(knownpts,"+init=epsg:4326")
-    unknownpts <- sp::spTransform(unknownpts,"+init=epsg:4326")
+  if(methods::is(knownpts, "SpatialPolygons")){
+    knownpts <- SpatialPointsDataFrame(coordinates(knownpts), 
+                                       data = knownpts@data, 
+                                       proj4string = knownpts@proj4string)
+    
+    
+  }
+  if(methods::is(unknownpts, "SpatialPolygons")){
+    unknownpts <- SpatialPointsDataFrame(coordinates(unknownpts), 
+                                         data = unknownpts@data, 
+                                         proj4string = unknownpts@proj4string)
   }
   
-  
-  matDist <- spDists(x = knownpts, y = unknownpts, longlat = TRUE) * 1000
+  if(sp::is.projected(knownpts)){
+    if(longlat){
+      knownpts <- sp::spTransform(knownpts,"+init=epsg:4326")
+      unknownpts <- sp::spTransform(unknownpts,"+init=epsg:4326")
+      matDist <- sp::spDists(x = knownpts, y = unknownpts, longlat = TRUE) * 1000
+      print("unproj")
+    }else{
+      matDist <- sp::spDists(x = knownpts, y = unknownpts, longlat = FALSE)
+      print("proj")
+    }
+  }else{
+    matDist <- sp::spDists(x = knownpts, y = unknownpts, longlat = TRUE) * 1000
+  }
   
   dimnames(matDist) <- list(row.names(knownpts), row.names(unknownpts))
+  
   return(round(matDist, digits = 8))
 }
-
-

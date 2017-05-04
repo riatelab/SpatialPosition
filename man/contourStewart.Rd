@@ -100,4 +100,3 @@ par(opar)
 \seealso{
 \link{rasterToContourPoly}.
 }
-
