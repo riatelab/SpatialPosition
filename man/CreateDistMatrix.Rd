@@ -4,7 +4,7 @@
 \alias{CreateDistMatrix}
 \title{Create a Distance Matrix Between Two Sp Objects}
 \usage{
-CreateDistMatrix(knownpts, unknownpts, bypassctrl = FALSE)
+CreateDistMatrix(knownpts, unknownpts, bypassctrl = FALSE, longlat = TRUE)
 }
 \arguments{
 \item{knownpts}{sp object; rows of the distance matrix.}
@@ -12,6 +12,9 @@ CreateDistMatrix(knownpts, unknownpts, bypassctrl = FALSE)
 \item{unknownpts}{sp object; columns of the distance matrix.}
 
 \item{bypassctrl}{logical; bypass the distance matrix size control (see Details).}
+
+\item{longlat}{logical; if FALSE, Euclidean distance, if TRUE Great Circle 
+(WGS84 ellipsoid) distance.}
 }
 \value{
 A distance matrix, row names are \code{knownpts} row names, column 
@@ -22,8 +25,8 @@ This function creates a distance matrix between two
 sp objects (SpatialPointsDataFrame or SpatialPolygonsDataFrame).
 }
 \details{
-The function returns a full matrix of distances in meters using the 
-Great Circle distance (WGS84 ellipsoid) method. This is a wrapper
+The function returns a full matrix of distances in meters. 
+This is a wrapper
 for the \code{\link{spDists}} function. \cr
 
 If the matrix to compute is too large (more than 100,000,000 cells, more than 
@@ -38,8 +41,7 @@ Use \code{bypassctrl} = TRUE to skip this control.
 data(spatData)
 mygrid <- CreateGrid(w = spatMask, resolution = 200)
 # Create a distance matrix between known spatPts and mygrid
-mymat <- CreateDistMatrix(knownpts = spatPts, unknownpts = mygrid, 
-                          bypassctrl = FALSE)
+mymat <- CreateDistMatrix(knownpts = spatPts, unknownpts = mygrid)
 mymat[1:5,1:5]
 nrow(spatPts)
 nrow(mygrid)

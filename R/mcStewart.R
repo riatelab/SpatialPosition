@@ -1,5 +1,5 @@
 #' @title Stewart Potentials Parallel
-#' @name parStewart
+#' @name mcStewart
 #' @description This function computes steawart potentials using parallel 
 #' computation. 
 #' @param knownpts sp object (SpatialPointsDataFrame or SpatialPolygonsDataFrame);
@@ -27,7 +27,9 @@
 #' @param cl numeric; number of clusters. By default cl is determined using 
 #' \code{parallel::detectCores()}.
 #' @param size numeric; parStewart splits unknownpts in chunks, size indicates 
-#' the size of each chunks.  
+#' the size of each chunks.
+#' @param longlat	logical; if FALSE, Euclidean distance, if TRUE Great Circle 
+#' (WGS84 ellipsoid) distance.
 #' @details The parallel implementation splits potentials computations along 
 #' chunks of unknownpts (or chunks of the grid defined using resolution). It only 
 #' uses Great Cercle distances (with \code{\link{CreateDistMatrix}}). 
@@ -46,7 +48,7 @@
 #'   )
 #'   
 #'   t2 <- system.time(
-#'     s2 <- parStewart(knownpts = nuts3.spdf, resolution = 40000, 
+#'     s2 <- mcStewart(knownpts = nuts3.spdf, resolution = 40000, 
 #'                      varname = "pop2008",
 #'                      typefct = "exponential", span = 100000,
 #'                      beta = 3, mask = nuts3.spdf, cl = 3, size = 500)
@@ -70,11 +72,12 @@
 #' @import sp
 #' @import raster
 #' @export
-parStewart <- function(knownpts, unknownpts = NULL,
-                       varname,
-                       typefct = "exponential",
-                       span, beta, resolution = NULL,
-                       mask = NULL, cl = NULL, size = 100){
+mcStewart <- function(knownpts, unknownpts = NULL,
+                      varname,
+                      typefct = "exponential",
+                      span, beta, resolution = NULL,
+                      mask = NULL, cl = NULL, size = 100, 
+                      longlat = TRUE){
   
   if (!requireNamespace("parallel", quietly = TRUE)) {
     stop("'foreach' package needed for this function to work. Please install it.",
@@ -88,16 +91,6 @@ parStewart <- function(knownpts, unknownpts = NULL,
     stop("'foreach' package needed for this function to work. Please install it.",
          call. = FALSE)
   }
-  # 
-  # print(search)
-  # if(!'package:doParallel' %in% search()){
-  #   attachNamespace('doParallel')
-  # }
-  # if(!'package:foreach' %in% search()){
-  #   attachNamespace('foreach')
-  # }
-  # print(search)
-  
   
   if (is.null(unknownpts)){
     unknownpts <- CreateGrid(w = if(is.null(mask)){knownpts} else {mask},
@@ -119,10 +112,10 @@ parStewart <- function(knownpts, unknownpts = NULL,
   }
   
   # force wgs84
-  if(sp::is.projected(knownpts)){
-    knownpts <- sp::spTransform(knownpts,"+init=epsg:4326")
-    unknownpts2 <- sp::spTransform(unknownpts2,"+init=epsg:4326")
-  }
+  # if(sp::is.projected(knownpts)){
+  #   knownpts <- sp::spTransform(knownpts,"+init=epsg:4326")
+  #   unknownpts2 <- sp::spTransform(unknownpts2,"+init=epsg:4326")
+  # }
   
   # launch multiple cores
   if (is.null(cl)){
@@ -130,7 +123,6 @@ parStewart <- function(knownpts, unknownpts = NULL,
   }
   cl <- parallel::makeCluster(cl)
   doParallel::registerDoParallel(cl)
-  
   
   # sequence to split unknowpts
   sequence <- unique(c(seq(1,nrow(unknownpts2), size),nrow(unknownpts2)+1))
@@ -141,7 +133,6 @@ parStewart <- function(knownpts, unknownpts = NULL,
   for  (i in 1:lseq){
     ml[[i]] <- unknownpts2[(sequence[i]):(sequence[i+1]-1),]
   }
-
   
   ls <- foreach::`%dopar%`(foreach::foreach(i = ml, 
                                             .packages = c('SpatialPosition'),
@@ -149,7 +140,8 @@ parStewart <- function(knownpts, unknownpts = NULL,
                            {
                              mat <- CreateDistMatrix(knownpts = knownpts,
                                                      unknownpts = i,
-                                                     bypassctrl = TRUE)
+                                                     bypassctrl = TRUE, 
+                                                     longlat = longlat)
                              st <- stewart(knownpts = knownpts,
                                            unknownpts = i,
                                            matdist = mat,
@@ -157,7 +149,6 @@ parStewart <- function(knownpts, unknownpts = NULL,
                                            span = span, beta = beta,
                                            varname = varname)
                            })
-  
   parallel::stopCluster(cl)
   unknownpts$OUTPUT <- ls$OUTPUT
   return(unknownpts)

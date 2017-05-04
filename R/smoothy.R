@@ -1,6 +1,7 @@
 #' @title Stewart Smooth
-#' @name spatsmooth
-#' @description This function.
+#' @name smoothy
+#' @description This function computes a distance weighted mean that could be 
+#' considered as a higly cutomizable IDW.  
 #' @param knownpts sp object (SpatialPointsDataFrame or SpatialPolygonsDataFrame);
 #' this is the set of known observations to estimate the potentials from.
 #' @param unknownpts sp object (SpatialPointsDataFrame or SpatialPolygonsDataFrame); 
@@ -10,8 +11,8 @@
 #' units for which the function computes the estimates. Row names match the row 
 #' names of \code{knownpts} and column names match the row names of 
 #' \code{unknownpts}. \code{matdist} can contain any distance metric (time 
-#' distance or euclidean distance for example). If \code{matdist} is NULL, Great 
-#' Circle distances are used (with \code{\link{CreateDistMatrix}}). (optional)
+#' distance or euclidean distance for example). If \code{matdist} is NULL, the distance 
+#' matrix is built with \code{\link{CreateDistMatrix}}. (optional)
 #' @param varname character; name of the variable in the \code{knownpts} dataframe 
 #' from which potentials are computed. Quantitative variable with no negative values. 
 #' @param typefct character; spatial interaction function. Options are "pareto" 
@@ -31,6 +32,8 @@
 #' create the regularly spaced SpatialPointsDataFrame output. (optional)
 #' @param bypassctrl logical; bypass the distance matrix size control (see 
 #' \code{\link{CreateDistMatrix}} Details).
+#' @param longlat	logical; if FALSE, Euclidean distance, if TRUE Great Circle 
+#' (WGS84 ellipsoid) distance.
 #' @return SpatialPointsDataFrame with the computed potentials in a new field 
 #' named \code{OUTPUT}
 #' @examples 
@@ -42,13 +45,13 @@
 #' mymat <- CreateDistMatrix(knownpts = spatPts, unknownpts = mygrid)
 #' # Compute Stewart potentials from known points (spatPts) on a given 
 #' # grid (mygrid) using a given distance matrix (mymat)
-#' mystewart <- spatsmooth(knownpts = spatPts, unknownpts = mygrid, 
+#' mystewart <- smoothy(knownpts = spatPts, unknownpts = mygrid, 
 #'                      matdist = mymat, varname = "Capacite", 
 #'                      typefct = "exponential", span = 1250, 
 #'                      beta = 3, mask = spatMask)
 #' # Compute Stewart potentials from known points (spatPts) on a 
 #' # grid defined by its resolution
-#' mystewart2 <- spatsmooth(knownpts = spatPts, varname = "Capacite", 
+#' mystewart2 <- smoothy(knownpts = spatPts, varname = "Capacite", 
 #'                       typefct = "exponential", span = 1250, beta = 3, 
 #'                       resolution = 200, mask = spatMask)
 #' # The two methods have the same result
@@ -60,16 +63,16 @@
 #' @import sp
 #' @import raster
 #' @export
-spatsmooth <- function(knownpts,
-                       unknownpts = NULL,
-                       matdist = NULL,
-                       varname,
-                       typefct = "exponential", 
-                       span,
-                       beta,
-                       resolution = NULL,
-                       mask = NULL,
-                       bypassctrl = FALSE)
+smoothy <- function(knownpts,
+                    unknownpts = NULL,
+                    matdist = NULL,
+                    varname,
+                    typefct = "exponential", 
+                    span,
+                    beta,
+                    resolution = NULL,
+                    mask = NULL,
+                    bypassctrl = FALSE, longlat = TRUE)
 {
   TestSp(knownpts)
   if (!is.null(unknownpts)){  
@@ -82,12 +85,14 @@ spatsmooth <- function(knownpts,
       matdist <- UseDistMatrix(matdist =matdist, knownpts = knownpts, 
                                unknownpts =  unknownpts) 
     }else{
-      matdist <- CreateDistMatrix(knownpts = knownpts, unknownpts = unknownpts, bypassctrl = bypassctrl)
+      matdist <- CreateDistMatrix(knownpts = knownpts, unknownpts = unknownpts,
+                                  bypassctrl = bypassctrl, longlat = longlat)
     }
   } else {
     unknownpts <- CreateGrid(w = if(is.null(mask)){knownpts} else {mask}, 
                              resolution = resolution) 
-    matdist <- CreateDistMatrix(knownpts = knownpts, unknownpts = unknownpts, bypassctrl = bypassctrl) 
+    matdist <- CreateDistMatrix(knownpts = knownpts, unknownpts = unknownpts, 
+                                bypassctrl = bypassctrl, longlat = longlat) 
   }
   
   matdens <- ComputeInteractDensity(matdist = matdist, typefct = typefct,
