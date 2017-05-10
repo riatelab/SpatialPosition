@@ -5,7 +5,7 @@
 \title{Stewart Potentials Parallel}
 \usage{
 mcStewart(knownpts, unknownpts = NULL, varname, typefct = "exponential",
-  span, beta, resolution = NULL, mask = NULL, cl = NULL, size = 100,
+  span, beta, resolution = NULL, mask = NULL, cl = NULL, size = 1000,
   longlat = TRUE)
 }
 \arguments{
@@ -42,7 +42,7 @@ create the regularly spaced SpatialPointsDataFrame output. (optional)}
 \item{cl}{numeric; number of clusters. By default cl is determined using 
 \code{parallel::detectCores()}.}
 
-\item{size}{numeric; parStewart splits unknownpts in chunks, size indicates 
+\item{size}{numeric; mcStewart splits unknownpts in chunks, size indicates 
 the size of each chunks.}
 
 \item{longlat}{logical; if FALSE, Euclidean distance, if TRUE Great Circle 
@@ -53,7 +53,7 @@ A Spatial*DataFrame with the computed potentials in a new field
 named \code{OUTPUT} is returned.
 }
 \description{
-This function computes steawart potentials using parallel 
+This function computes Stewart potentials using parallel 
 computation.
 }
 \details{

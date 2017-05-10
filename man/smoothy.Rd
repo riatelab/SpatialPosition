@@ -57,8 +57,9 @@ SpatialPointsDataFrame with the computed potentials in a new field
 named \code{OUTPUT}
 }
 \description{
-This function computes a distance weighted mean that could be 
-considered as a higly cutomizable IDW.
+This function computes a distance weighted mean. It offers the 
+same parameters as \code{\link{stewart}}: user defined distance matrix, user 
+defined impedance function (power or exponential), user defined exponent.
 }
 \examples{
 # Create a SpatialPointsDataFrame grid of spatMask extent and 200 meters 

@@ -1,7 +1,8 @@
 #' @title Stewart Smooth
 #' @name smoothy
-#' @description This function computes a distance weighted mean that could be 
-#' considered as a higly cutomizable IDW.  
+#' @description This function computes a distance weighted mean. It offers the 
+#' same parameters as \code{\link{stewart}}: user defined distance matrix, user 
+#' defined impedance function (power or exponential), user defined exponent.
 #' @param knownpts sp object (SpatialPointsDataFrame or SpatialPolygonsDataFrame);
 #' this is the set of known observations to estimate the potentials from.
 #' @param unknownpts sp object (SpatialPointsDataFrame or SpatialPolygonsDataFrame); 
@@ -60,6 +61,7 @@
 #' class(mystewart)
 #' # Computed values
 #' summary(mystewart$OUTPUT)
+#' @seealso \link{stewart}.
 #' @import sp
 #' @import raster
 #' @export

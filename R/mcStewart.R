@@ -1,6 +1,6 @@
 #' @title Stewart Potentials Parallel
 #' @name mcStewart
-#' @description This function computes steawart potentials using parallel 
+#' @description This function computes Stewart potentials using parallel 
 #' computation. 
 #' @param knownpts sp object (SpatialPointsDataFrame or SpatialPolygonsDataFrame);
 #' this is the set of known observations to estimate the potentials from.
@@ -26,7 +26,7 @@
 #' create the regularly spaced SpatialPointsDataFrame output. (optional)
 #' @param cl numeric; number of clusters. By default cl is determined using 
 #' \code{parallel::detectCores()}.
-#' @param size numeric; parStewart splits unknownpts in chunks, size indicates 
+#' @param size numeric; mcStewart splits unknownpts in chunks, size indicates 
 #' the size of each chunks.
 #' @param longlat	logical; if FALSE, Euclidean distance, if TRUE Great Circle 
 #' (WGS84 ellipsoid) distance.
@@ -76,7 +76,7 @@ mcStewart <- function(knownpts, unknownpts = NULL,
                       varname,
                       typefct = "exponential",
                       span, beta, resolution = NULL,
-                      mask = NULL, cl = NULL, size = 100, 
+                      mask = NULL, cl = NULL, size = 1000, 
                       longlat = TRUE){
   
   if (!requireNamespace("parallel", quietly = TRUE)) {
