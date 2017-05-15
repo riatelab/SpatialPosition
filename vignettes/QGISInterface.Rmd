@@ -1,0 +1,75 @@
+---
+title: "Calling the `SpatialPosition` package from within QGIS"
+author: "Hadrien Commenges & Timothée Giraud"
+date: "`r Sys.Date()`"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Calling SpatialPosition from within QGIS}
+  %\VignetteEngine{knitr::rmarkdown}
+  \usepackage[utf8]{inputenc}
+---
+
+## The QGIS Toolbox
+
+Quantum GIS or QGIS is a free desktop Geographic Information System software first released in 2002. In 2013 (release 2.0) [the Sextante plugin was integrated in the QGIS default install](https://en.wikipedia.org/wiki/QGIS) as a **processing toolbox** with a set of geoalgorithms from several providers (QGIS itself, GRASS, R, etc.). The [processing toolbox](http://docs.qgis.org/2.14/en/docs/user_manual/processing/index.html) provides pre-implemented scripts but it is also possible to edit user-defined scripts. This tutorial details the steps to set up a R script and use the `SpatialPosition` package from within QGIS.
+
+## Install and set up instructions
+
+**Basic install and activation**
+
+- install a recent version of QGIS: http://qgis.org/
+- install a recent version of R: https://cran.r-project.org/
+- R: with the user interface go to `install packages` and install the `SpatialPosition` package (or use the `install.packages()` function)
+- QGIS: go to `Processing` and check the `Toolbox` button
+- QGIS: go to `Processing > Options > Providers > R Scripts` and check `activate`
+
+**Two ways to add the script**
+
+*Option 1 - Copying the `rsx` file*
+
+- copy-paste the following script in a text editor
+- save the script with a `.rsx` extension, for example `SpatialPosition.Rsx`
+- paste the file `SpatialPosition.rsx` into the `R scripts folder` (the path is given in `Options > Providers > R Scripts`)
+
+*Option 2 - Creating a new script*
+
+- QGIS: in the `Toolbox` panel choose `Advanced interface`
+- QGIS: go to `Toolbox > R Scripts > Tools` and open `Create a new R script`
+- copy-paste the following script in the script editor and save
+
+## Using the script
+
+The new script appear in `QGIS > Toolbox > R Scripts > Tools > User R scripts`. If you want to make it appear in an existing or a user-defined category (for example a category called "Spatial statistics") you can add a line in the header such as `##Spatial statistics=group`.
+
+The new script appear in `QGIS > Toolbox > R Scripts > Tools > User R scripts`. If you want to make it appear in an existing or a user-defined category (for example a category called "Spatial statistics") you can add a line in the header such as `##Spatial statistics=group`.
+
+The main arguments of the `stewart()` function are available. The function (exponential) and the beta parameter (3) are hard coded, you may edit the script if you want to change this default behavior. 
+
+- layer: vector, polygon or points
+- mask: vector, polygon for clipping the resulting raster
+- field: numeric variable for computing the potentials
+- resolution: size of the cells. It is recommended to start with a low resolution (meaning a big integer) to avoid useless heavy computation
+- span: distance where the density of probability of the spatial interaction function equals 0.5
+- output: raster layer with potentials values
+
+## SpatialPosition QGIS-R script
+
+<pre><code>
+##Layer=vector
+##Mask=vector
+##Field=Field Layer
+##Resolution=number 500
+##Span=number 2000
+##Output=output raster
+library("sp")
+library("raster")
+library("SpatialPosition")
+proj4string(Layer) <- CRS("+init=epsg:2154")
+proj4string(Mask) <- CRS("+init=epsg:2154")
+resGrid <- CreateGrid(w = Mask, resolution = Resolution)
+matDist <- CreateDistMatrix(knownpts = Layer, unknownpts = resGrid, bypassctrl = TRUE)
+vecStewart <- stewart(knownpts = Layer, unknownpts = resGrid, matdist = matDist, varname = Field, span = Span, mask = Mask, resolution = Resolution, typefct = "exponential", beta = 3)
+Output <- rasterStewart(x = vecStewart, mask = Mask)
+</code></pre>
+
+
