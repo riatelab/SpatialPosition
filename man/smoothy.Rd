@@ -86,3 +86,6 @@ class(mystewart)
 # Computed values
 summary(mystewart$OUTPUT)
 }
+\seealso{
+\link{stewart}.
+}

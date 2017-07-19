@@ -164,10 +164,8 @@ CreateDistMatrix  <- function(knownpts,
       knownpts <- sp::spTransform(knownpts,"+init=epsg:4326")
       unknownpts <- sp::spTransform(unknownpts,"+init=epsg:4326")
       matDist <- sp::spDists(x = knownpts, y = unknownpts, longlat = TRUE) * 1000
-      print("unproj")
     }else{
       matDist <- sp::spDists(x = knownpts, y = unknownpts, longlat = FALSE)
-      print("proj")
     }
   }else{
     matDist <- sp::spDists(x = knownpts, y = unknownpts, longlat = TRUE) * 1000
