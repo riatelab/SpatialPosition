@@ -2,10 +2,18 @@
 SpatialPosition version 1.1.2 (Release date: )
 ==============
 
+Major changes:
+* Introduce mcStewart to compute stewart potentiels using parallel processing
+* Introduce smoothy to compute distance weighted mean.
+* Introduce a vignette on how to SpatialPosition with QGIS. 
+
+
 Minor changes:  
+* (Re)introduce a longlat param in stewart, mcStewart, huff and reilly to select between eucliean and great circles distances. 
+* Add a bypassctrl param in stewart, huff and reilly to allow computations on large datasets
 * Describe default grid resolution
 * More points in the default mask of raster poly
-
+* Rewrite of CreateGrid and rasterToContourPoly functions
 
 SpatialPosition version 1.1.1 (Release date: 2016-06-07)
 ==============

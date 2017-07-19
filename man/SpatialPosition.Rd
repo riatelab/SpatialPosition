@@ -16,9 +16,15 @@ An introduction to the package conceptual background and usage: \cr
 A Stewart potentials use case:\cr
  - \code{vignette(topic = "StewartExample")}.
 }
+\references{
+COMMENGES H., GIRAUD, T., LAMBERT, N. (2016) "ESPON FIT: Functional Indicators for Spatial-Aware Policy-Making", 
+Cartographica: The International Journal for Geographic Information and Geovisualization, 51(3): 127-136.
+}
 \seealso{
-\link{stewart}, \link{rasterStewart}, \link{plotStewart},  \link{quickStewart}, 
-\link{rasterToContourPoly}, \link{huff}, \link{rasterHuff}, \link{plotHuff},\link{reilly}, 
+\link{stewart}, \link{rasterStewart}, \link{plotStewart},  
+\link{quickStewart}, \link{mcStewart}, \link{smoothy},
+\link{rasterToContourPoly}, \link{huff}, \link{rasterHuff}, \link{plotHuff},
+\link{reilly}, 
 \link{rasterReilly}, \link{plotReilly}, 
 \link{CreateGrid}, \link{CreateDistMatrix}.
 }
