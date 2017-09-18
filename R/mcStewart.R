@@ -102,6 +102,8 @@ mcStewart <- function(knownpts, unknownpts = NULL,
       unknownpts2 <- SpatialPointsDataFrame(coordinates(unknownpts),
                                             data = unknownpts@data,
                                             proj4string = unknownpts@proj4string)
+    }else{
+      unknownpts2 <- unknownpts
     }
   }
   # SpatialPolygons to SpatialPoints
