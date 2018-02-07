@@ -80,7 +80,7 @@ mcStewart <- function(knownpts, unknownpts = NULL,
                       longlat = TRUE){
   
   if (!requireNamespace("parallel", quietly = TRUE)) {
-    stop("'foreach' package needed for this function to work. Please install it.",
+    stop("'parallel' package needed for this function to work. Please install it.",
          call. = FALSE)
   }
   if (!requireNamespace("foreach", quietly = TRUE)) {
@@ -88,7 +88,7 @@ mcStewart <- function(knownpts, unknownpts = NULL,
          call. = FALSE)
   }
   if (!requireNamespace("doParallel", quietly = TRUE)) {
-    stop("'foreach' package needed for this function to work. Please install it.",
+    stop("'doParallel' package needed for this function to work. Please install it.",
          call. = FALSE)
   }
   
