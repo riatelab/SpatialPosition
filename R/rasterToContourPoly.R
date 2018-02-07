@@ -163,7 +163,7 @@ get_poly <- function(r, breaks, finalBreaks){
       Plist[[j]] <- sp::Polygons(srl = list(sp::Polygon(coords = linex[[j]]@coords, 
                                                         hole = F)), ID = j)
     }  
-    x <- rgeos::union(x = sp::SpatialPolygons(Srl = Plist))
+    x <- raster::union(x = sp::SpatialPolygons(Srl = Plist))
     
     if (class(x) != "SpatialPolygonsDataFrame"){
       x <- sp::SpatialPolygonsDataFrame(Sr = x, 
