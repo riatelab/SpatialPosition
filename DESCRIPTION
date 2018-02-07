@@ -1,7 +1,7 @@
 Package: SpatialPosition
 Title: Spatial Position Models
-Version: 1.2.0
-Date: 2017-09-06
+Version: 1.2.1.9000
+Date: 2018-02-06
 Authors@R: c(
       person("Timothée", "Giraud", email = "timothee.giraud@cnrs.fr", role = c("cre","aut")),
       person("Hadrien", "Commenges", email = "hcommenges@parisgeo.cnrs.fr", role = c("aut")), 
