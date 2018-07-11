@@ -76,9 +76,9 @@ reilly <- function(knownpts,
                    bypassctrl = FALSE, 
                    longlat = TRUE)
 {
-  TestSp(knownpts)
+  knownpts <- TestSp(knownpts)
   if (!is.null(unknownpts)){  
-    TestSp(unknownpts)
+    unknownpts <- TestSp(unknownpts)
     if(identicalCRS(knownpts,unknownpts) == FALSE){
       stop(paste("Inputs (",quote(knownpts), " and ",quote(unknownpts),
                  ") do not use the same projection", sep = ""),call. = FALSE)
@@ -91,7 +91,7 @@ reilly <- function(knownpts,
                                   bypassctrl = bypassctrl, longlat = longlat) 
     }
   } else {
-    unknownpts <- CreateGrid(w = if(is.null(mask)){knownpts} else {mask}, 
+    unknownpts <- CreateGrid(w = if(is.null(mask)){knownpts} else {TestSp(mask)}, 
                              resolution = resolution) 
     matdist <- CreateDistMatrix(knownpts = knownpts, unknownpts = unknownpts, 
                                 bypassctrl = bypassctrl, longlat = longlat) 
@@ -147,10 +147,8 @@ rasterReilly <- function(x ,mask = NULL){
   x$OUTPUT2 <- as.numeric(x$OUTPUT2)
   rasterx <- rasterize(x, r, field = 'OUTPUT2')
   if(!is.null(mask)){
-    TestSp(mask)
-    rasterx <- mask(rasterx, mask = mask)
+    rasterx <- mask(rasterx, mask = TestSp(mask))
   }
-  ratify(rasterx)
   levels(rasterx) <- data.frame(ID = x$OUTPUT2, idarea = x$OUTPUT)
   return(rasterx)
 }

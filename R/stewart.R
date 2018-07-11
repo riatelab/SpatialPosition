@@ -78,9 +78,9 @@ stewart <- function(knownpts,
                     bypassctrl = FALSE, 
                     longlat = TRUE)
 {
-  TestSp(knownpts)
+  knownpts <- TestSp(knownpts)
   if (!is.null(unknownpts)){  
-    TestSp(unknownpts)
+    unknownpts <- TestSp(unknownpts)
     if(identicalCRS(knownpts,unknownpts) == FALSE){
       stop(paste("Inputs (",quote(knownpts), " and ",quote(unknownpts),
                  ") do not use the same projection", sep = ""),call. = FALSE)
@@ -93,7 +93,7 @@ stewart <- function(knownpts,
                                   bypassctrl = bypassctrl, longlat = longlat)
     }
   } else {
-    unknownpts <- CreateGrid(w = if(is.null(mask)){knownpts} else {mask}, 
+    unknownpts <- CreateGrid(w = if(is.null(mask)){knownpts} else {TestSp(mask)}, 
                              resolution = resolution) 
     matdist <- CreateDistMatrix(knownpts = knownpts, unknownpts = unknownpts, 
                                 bypassctrl = bypassctrl, longlat = longlat) 
@@ -141,8 +141,7 @@ rasterStewart <- function(x, mask = NULL){
   r <- raster(x)
   rasterx <- rasterize(x[!is.na(x$OUTPUT),], r, field = 'OUTPUT')
   if(!is.null(mask)){
-    TestSp(mask)
-    rasterx <- mask(rasterx, mask = mask)
+    rasterx <- mask(rasterx, mask = TestSp(mask))
   }
   return(rasterx)
 }

@@ -20,9 +20,7 @@
 #' @export
 CreateGrid <- function (w, resolution)
 {
-  # w <- wo
-  # resolution <- 5000000
-  TestSp(w)
+  w <- TestSp(w)
   boundingBox <- bbox(w)
   if(is.null(resolution)){
     resolution <- sqrt(((boundingBox[1,2] - boundingBox[1,1]) * 
@@ -114,8 +112,8 @@ CreateDistMatrix  <- function(knownpts,
                               bypassctrl = FALSE, 
                               longlat = TRUE)
 {
-  TestSp(knownpts)
-  TestSp(unknownpts)
+  knownpts <- TestSp(knownpts)
+  unknownpts <- TestSp(unknownpts)
   if(identicalCRS(knownpts,unknownpts) == FALSE){
     stop(paste("Inputs (",quote(knownpts), " and ",quote(unknownpts),
                ") do not use the same projection", sep = ""),call. = FALSE)

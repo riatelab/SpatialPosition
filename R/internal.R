@@ -49,7 +49,10 @@ ComputeHuff <- function(unknownpts, matopport)
 }
 
 TestSp <- function(x){
-  if (substr(class(x),1,7) != "Spatial"){
+  if(is(x, "sf")){
+    x <- as(x, "Spatial")
+  }
+  if (!is(x, "Spatial")){
     stop(paste("Your input (",quote(x),") is not a spatial object.", sep=""),
          call. = F)
   }
@@ -60,4 +63,6 @@ TestSp <- function(x){
         ") does not have a valid coordinate reference system.", sep=""),
       call. = F)
   }
+  return(x)
 }
+

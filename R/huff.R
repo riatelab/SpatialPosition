@@ -75,27 +75,26 @@ huff <- function(knownpts,
                  bypassctrl = FALSE, 
                  longlat = TRUE)
 {
-  TestSp(knownpts)
+  knownpts <- TestSp(knownpts)
   if (!is.null(unknownpts)){  
-    TestSp(unknownpts)
+    unknownpts <- TestSp(unknownpts)
     if(identicalCRS(knownpts,unknownpts) == FALSE){
       stop(paste("Inputs (",quote(knownpts), " and ",quote(unknownpts),
                  ") do not use the same projection", sep = ""),call. = FALSE)
     }
     if (!is.null(matdist)){
-      matdist <- UseDistMatrix(matdist =matdist, knownpts = knownpts, 
+      matdist <- UseDistMatrix(matdist = matdist, knownpts = knownpts, 
                                unknownpts =  unknownpts) 
     }else{
       matdist <- CreateDistMatrix(knownpts = knownpts, unknownpts = unknownpts, 
                                   bypassctrl = bypassctrl, longlat = longlat) 
     }
   } else {
-    unknownpts <- CreateGrid(w = if(is.null(mask)){knownpts} else {mask}, 
+    unknownpts <- CreateGrid(w = if(is.null(mask)){knownpts} else {TestSp(mask)}, 
                              resolution = resolution) 
     matdist <- CreateDistMatrix(knownpts = knownpts, unknownpts = unknownpts, 
                                 bypassctrl = bypassctrl, longlat = longlat) 
   }
-  
   
   matdens <- ComputeInteractDensity(matdist = matdist, typefct = typefct,
                                     beta = beta, span = span)
@@ -103,8 +102,7 @@ huff <- function(knownpts,
   matopport <- ComputeOpportunity(knownpts = knownpts, matdens = matdens, 
                                   varname = varname)
   
-  unknownpts <- ComputeHuff(unknownpts = unknownpts, 
-                            matopport = matopport)
+  unknownpts <- ComputeHuff(unknownpts = unknownpts, matopport = matopport)
   
   return(unknownpts)
 }
@@ -137,8 +135,7 @@ rasterHuff <- function(x, mask = NULL){
   r <- raster(x)
   rasterx <- rasterize(x, r, field = 'OUTPUT')
   if(!is.null(mask)){
-    TestSp(mask)
-    rasterx <- mask(rasterx, mask = mask)
+    rasterx <- mask(rasterx, mask = TestSp(mask))
   }
   return(rasterx)
 }

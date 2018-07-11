@@ -76,9 +76,9 @@ smoothy <- function(knownpts,
                     mask = NULL,
                     bypassctrl = FALSE, longlat = TRUE)
 {
-  TestSp(knownpts)
+  knownpts <- TestSp(knownpts)
   if (!is.null(unknownpts)){  
-    TestSp(unknownpts)
+    unknownpts <- TestSp(unknownpts)
     if(identicalCRS(knownpts,unknownpts) == FALSE){
       stop(paste("Inputs (",quote(knownpts), " and ",quote(unknownpts),
                  ") do not use the same projection", sep = ""),call. = FALSE)
@@ -91,7 +91,7 @@ smoothy <- function(knownpts,
                                   bypassctrl = bypassctrl, longlat = longlat)
     }
   } else {
-    unknownpts <- CreateGrid(w = if(is.null(mask)){knownpts} else {mask}, 
+    unknownpts <- CreateGrid(w = if(is.null(mask)){knownpts} else {TestSp(mask)}, 
                              resolution = resolution) 
     matdist <- CreateDistMatrix(knownpts = knownpts, unknownpts = unknownpts, 
                                 bypassctrl = bypassctrl, longlat = longlat) 
@@ -105,7 +105,6 @@ smoothy <- function(knownpts,
   
   unknownpts <- ComputeSmooth(unknownpts = unknownpts, matdens = matdens,
                               matopport = matopport)
-  unknownpts@data
   return(unknownpts)
 }
 
