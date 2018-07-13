@@ -2,14 +2,14 @@
 % Please edit documentation in R/gridandmat.R
 \name{CreateDistMatrix}
 \alias{CreateDistMatrix}
-\title{Create a Distance Matrix Between Two Sp Objects}
+\title{Create a Distance Matrix Between Two Spatial Objects}
 \usage{
 CreateDistMatrix(knownpts, unknownpts, bypassctrl = FALSE, longlat = TRUE)
 }
 \arguments{
-\item{knownpts}{sp object; rows of the distance matrix.}
+\item{knownpts}{sp or sf object; rows of the distance matrix.}
 
-\item{unknownpts}{sp object; columns of the distance matrix.}
+\item{unknownpts}{sp or sf object; columns of the distance matrix.}
 
 \item{bypassctrl}{logical; bypass the distance matrix size control (see Details).}
 
@@ -22,7 +22,7 @@ names are \code{unknownpts} row names.
 }
 \description{
 This function creates a distance matrix between two 
-sp objects (SpatialPointsDataFrame or SpatialPolygonsDataFrame).
+spatial objects (sp or sf objects).
 }
 \details{
 The function returns a full matrix of distances in meters. 
