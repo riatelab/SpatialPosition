@@ -2,9 +2,10 @@
 % Please edit documentation in R/rasterToContourPoly.R
 \name{rasterToContourPoly}
 \alias{rasterToContourPoly}
-\title{Create a SpatialPolygonsDataFrame from a Raster}
+\title{Create Spatial Polygons Contours from a Raster}
 \usage{
-rasterToContourPoly(r, nclass = 8, breaks = NULL, mask = NULL)
+rasterToContourPoly(r, nclass = 8, breaks = NULL, mask = NULL,
+  sf = FALSE)
 }
 \arguments{
 \item{r}{raster; the raster must contain only positive values.}
@@ -13,20 +14,21 @@ rasterToContourPoly(r, nclass = 8, breaks = NULL, mask = NULL)
 
 \item{breaks}{numeric; a vector of break values.}
 
-\item{mask}{SpatialPolygonsDataFrame; mask used to clip contour shapes. 
+\item{mask}{SpatialPolygonsDataFrame or sf POLYGON data.frame; mask used to 
+clip contour shapes. 
 The mask should have a smaller extent than r.}
+
+\item{sf}{boolean; if TRUE, the output is an sf POLYGON data.frame}
 }
 \value{
-The ouput of the function is a SpatialPolygonsDataFrame. 
-The data frame of the outputed SpatialPolygonsDataFrame contains four fields: 
+If sf is FALSE, the ouput of the function is a SpatialPolygonsDataFrame. 
+If sf is TRUE the output is an sf POLYGON data.frame.
+The data frame contains four fields: 
 id (id of each polygon), min and max (minimum and maximum breaks of the polygon), 
-center (central values of classes)
+center (central values of classes).
 }
 \description{
-This function creates a contour SpatialPolygonsDataFrame from a raster.
-}
-\details{
-This function uses the rgeos package.
+This function creates spatial polygons of contours from a raster.
 }
 \examples{
 data("spatData")

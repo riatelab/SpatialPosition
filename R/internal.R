@@ -73,3 +73,8 @@ projError <- function(x,y){
   }
 }
 
+
+# import stuffs
+#' @importFrom methods as
+#' @importFrom sf st_as_sf
+NULL

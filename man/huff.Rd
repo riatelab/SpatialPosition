@@ -9,10 +9,10 @@ huff(knownpts, unknownpts = NULL, matdist = NULL, varname,
   bypassctrl = FALSE, longlat = TRUE)
 }
 \arguments{
-\item{knownpts}{sp object (SpatialPointsDataFrame or SpatialPolygonsDataFrame); 
+\item{knownpts}{sp or sf object; 
 this is the set of known observations to estimate the catchment areas from.}
 
-\item{unknownpts}{sp object (SpatialPointsDataFrame or SpatialPolygonsDataFrame); 
+\item{unknownpts}{sp or sf object; 
 this is the set of unknown units for which the function computes the estimates. 
 Not used when \code{resolution} is set up. (optional)}
 
@@ -39,12 +39,11 @@ interaction function equals 0.5.}
 
 \item{beta}{numeric; impedance factor for the spatial interaction function.}
 
-\item{resolution}{numeric; resolution of the output SpatialPointsDataFrame
-(in map units). If resolution is not set, the grid will contain around 
-7250 points. (optional)}
+\item{resolution}{numeric; resolution of the output grid (in map units). 
+If resolution is not set, the grid will contain around 7250 points. (optional)}
 
-\item{mask}{sp object; the spatial extent of this object is used to 
-create the regularly spaced SpatialPointsDataFrame output. (optional)}
+\item{mask}{sp or sf object; the spatial extent of this object is used to 
+create the regularly spaced points output. (optional)}
 
 \item{bypassctrl}{logical; bypass the distance matrix size control (see 
 \code{\link{CreateDistMatrix}} Details).}
@@ -53,8 +52,11 @@ create the regularly spaced SpatialPointsDataFrame output. (optional)}
 (WGS84 ellipsoid) distance.}
 }
 \value{
-SpatialPointsDataFrame with the computed catchment areas in a new 
+Point object with the computed catchment areas in a new 
 field named \code{OUTPUT}.
+If \code{knownpts} is an sp object, the output is a 
+SpatialPointsDataFrame; if \code{knownpts} is an sf object, the output is an 
+sf POINT data.frame.
 }
 \description{
 This function computes the catchment areas as defined by D. Huff (1964).

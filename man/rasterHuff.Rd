@@ -7,9 +7,9 @@
 rasterHuff(x, mask = NULL)
 }
 \arguments{
-\item{x}{sp object (SpatialPointsDataFrame); output of the \code{huff} function.}
+\item{x}{sp or sf object;; output of the \code{huff} function.}
 
-\item{mask}{sp object (SpatialPolygonsDataFrame); this object is used to clip 
+\item{mask}{sp or sf object; this object is used to clip 
 the raster. (optional)}
 }
 \value{
@@ -17,7 +17,7 @@ Raster of catchment areas values.
 }
 \description{
 This function creates a raster from a regularly spaced 
-Huff SpatialPointsDataFrame (output of the \code{\link{huff}} function).
+Huff grid (output of the \code{\link{huff}} function).
 }
 \examples{
 data(spatData)

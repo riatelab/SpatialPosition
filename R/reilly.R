@@ -106,8 +106,7 @@ reilly <- function(knownpts,
                                     beta = beta, span = span)
   matopport <- ComputeOpportunity(knownpts = knownpts, matdens = matdens, 
                                   varname = varname)
-  unknownpts <- ComputeReilly(unknownpts = unknownpts, 
-                              matopport = matopport)
+  unknownpts <- ComputeReilly(unknownpts = unknownpts,matopport = matopport)
   if(sfsp){unknownpts <- st_as_sf(unknownpts)}
   return(unknownpts)
 }

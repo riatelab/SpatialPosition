@@ -43,7 +43,7 @@ interaction function equals 0.5.}
 If resolution is not set, the grid will contain around 7250 points. (optional)}
 
 \item{mask}{sp or sf object; the spatial extent of this object is used to 
-create the regularly spaced point output. (optional)}
+create the regularly spaced points output. (optional)}
 
 \item{bypassctrl}{logical; bypass the distance matrix size control (see 
 \code{\link{CreateDistMatrix}} Details).}
