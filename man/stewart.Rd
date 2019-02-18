@@ -50,6 +50,8 @@ create the regularly spaced points output. (optional)}
 
 \item{longlat}{logical; if FALSE, Euclidean distance, if TRUE Great Circle 
 (WGS84 ellipsoid) distance.}
+
+\item{returnclass}{"sp" or "sf"; class of the object returned.}
 }
 \value{
 Point object with the computed potentials in a new field 

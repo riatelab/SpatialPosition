@@ -2,7 +2,6 @@
 UseDistMatrix <- function(matdist, knownpts, unknownpts){
   i <- factor(row.names(knownpts), levels = row.names(knownpts))
   j <- factor(row.names(unknownpts), levels = row.names(unknownpts))
-  print(i)
   matdist <- matdist[levels(i), levels(j)]
   return(round(matdist, digits = 8))
 }

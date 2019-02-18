@@ -26,8 +26,6 @@ CreateGrid <- function (w, resolution)
   # test sf
   if(methods::is(w, "Spatial")){w <- sf::st_as_sf(w)}
   
-  w <- st_as_sf(spatPts)
-  
   boundingBox <- sf::st_bbox(w)
   if(is.null(resolution)){
     resolution <- sqrt(((boundingBox[3] - boundingBox[1]) * 
@@ -159,18 +157,17 @@ CreateDistMatrix  <- function(knownpts,
   
   
   
-  if(!st_is_longlat(knownpts)){
+  if(!sf::st_is_longlat(knownpts)){
     if(longlat){
       knownpts <- sf::st_transform(knownpts, 4326)
       unknownpts <- sf::st_transform(unknownpts, 4326)
     }
   }
-  x <- st_distance(knownpts, unknownpts)
+  x <- sf::st_distance(knownpts, unknownpts)
+  mat = as.vector(x)
+  dim(mat) = dim(x)
   
-  y = as.vector(x)
-  dim(y) = dim(x)
+  dimnames(mat) <- list(row.names(knownpts), row.names(unknownpts))
   
-  dimnames(y) <- list(row.names(knownpts), row.names(unknownpts))
-  
-  return(round(y, digits = 2))
+  return(round(mat, digits = 2))
 }

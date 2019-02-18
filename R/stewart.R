@@ -32,7 +32,7 @@
 #' (WGS84 ellipsoid) distance.
 #' @param bypassctrl logical; bypass the distance matrix size control (see 
 #' \code{\link{CreateDistMatrix}} Details).
-#' @returnclass "sp" or "sf"; class of the object returned.
+#' @param returnclass "sp" or "sf"; class of the object returned.
 #' @return Point object with the computed potentials in a new field 
 #' named \code{OUTPUT}. If \code{knownpts} or \code{unknownpts} are sp objects, 
 #' the output is a 
