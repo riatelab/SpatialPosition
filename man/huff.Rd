@@ -5,8 +5,8 @@
 \title{Huff Catchment Areas}
 \usage{
 huff(knownpts, unknownpts = NULL, matdist = NULL, varname,
-  typefct = "exponential", span, beta, resolution = NULL, mask = NULL,
-  bypassctrl = FALSE, longlat = TRUE)
+  typefct = "exponential", span, beta, resolution = NULL,
+  mask = NULL, bypassctrl = FALSE, longlat = TRUE)
 }
 \arguments{
 \item{knownpts}{sp or sf object; 

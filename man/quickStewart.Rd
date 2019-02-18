@@ -5,8 +5,8 @@
 \title{Create a SpatialPolygonsDataFrame of Potentials Contours}
 \usage{
 quickStewart(spdf, df, spdfid = NULL, dfid = NULL, var, var2 = NULL,
-  typefct = "exponential", span, beta, resolution = NULL, mask = NULL,
-  nclass = 8, breaks = NULL, bypassctrl = FALSE)
+  typefct = "exponential", span, beta, resolution = NULL,
+  mask = NULL, nclass = 8, breaks = NULL, bypassctrl = FALSE)
 }
 \arguments{
 \item{spdf}{a SpatialPolygonsDataFrame.}

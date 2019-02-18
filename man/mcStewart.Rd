@@ -4,9 +4,9 @@
 \alias{mcStewart}
 \title{Stewart Potentials Parallel}
 \usage{
-mcStewart(knownpts, unknownpts = NULL, varname, typefct = "exponential",
-  span, beta, resolution = NULL, mask = NULL, cl = NULL, size = 1000,
-  longlat = TRUE)
+mcStewart(knownpts, unknownpts = NULL, varname,
+  typefct = "exponential", span, beta, resolution = NULL,
+  mask = NULL, cl = NULL, size = 1000, longlat = TRUE)
 }
 \arguments{
 \item{knownpts}{sp object (SpatialPointsDataFrame or SpatialPolygonsDataFrame);
