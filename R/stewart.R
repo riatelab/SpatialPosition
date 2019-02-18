@@ -10,7 +10,7 @@
 #' units for which the function computes the estimates. Row names match the row 
 #' names of \code{knownpts} and column names match the row names of 
 #' \code{unknownpts}. \code{matdist} can contain any distance metric (time 
-#' distance or euclidean distance for example). If \code{matdist} is NULL, the distance 
+#' distance or euclidean distance for example). If \code{matdist} is missing, the distance 
 #' matrix is built with \code{\link{CreateDistMatrix}}. (optional)
 #' @param varname character; name of the variable in the \code{knownpts} dataframe 
 #' from which potentials are computed. Quantitative variable with no negative values. 
@@ -32,9 +32,12 @@
 #' (WGS84 ellipsoid) distance.
 #' @param bypassctrl logical; bypass the distance matrix size control (see 
 #' \code{\link{CreateDistMatrix}} Details).
+#' @returnclass "sp" or "sf"; class of the object returned.
 #' @return Point object with the computed potentials in a new field 
-#' named \code{OUTPUT}. If \code{knownpts} is an sp object, the output is a 
-#' SpatialPointsDataFrame; if \code{knownpts} is an sf object, the output is an 
+#' named \code{OUTPUT}. If \code{knownpts} or \code{unknownpts} are sp objects, 
+#' the output is a 
+#' SpatialPointsDataFrame; if \code{knownpts} or \code{unknownpts} are sf objects, 
+#' the output is an 
 #' sf POINT data.frame.
 #' @seealso \link{rasterStewart}, \link{plotStewart}, \link{quickStewart},
 #' \link{rasterToContourPoly}, \link{CreateGrid}, \link{CreateDistMatrix}.
@@ -64,28 +67,29 @@
 #' summary(mystewart$OUTPUT)
 #' @references 
 #' STEWART J.Q. (1942) "Measure of the influence of a population at a distance", Sociometry, 5(1): 63-71.  
-#' @import sp
-#' @import raster
 #' @export
 stewart <- function(knownpts,
-                    unknownpts = NULL,
-                    matdist = NULL,
+                    unknownpts,
+                    matdist,
                     varname,
                     typefct = "exponential", 
                     span,
                     beta,
-                    resolution = NULL,
-                    mask = NULL,
+                    resolution,
+                    mask,
                     bypassctrl = FALSE, 
-                    longlat = TRUE)
-{
+                    longlat = TRUE, 
+                    returnclass = "sf"){
   # test sf
-  sfsp <- is(knownpts, "sf")
-  if(sfsp){knownpts <- as(knownpts, "Spatial")}
+  if(methods::is(knownpts, "Spatial")){
+    knownpts <- sf::st_as_sf(knownpts)
+  }
   
-  if (!is.null(unknownpts)){  
-    if(is(unknownpts, "sf")){unknownpts <- as(unknownpts, "Spatial")}
-    if (!is.null(matdist)){
+  if (!missing(unknownpts)){  
+    
+    if(is(unknownpts, "Spatial")){unknownpts <- sf::st_as_sf(unknownpts)}
+    
+    if (!missing(matdist)){
       matdist <- UseDistMatrix(matdist = matdist, knownpts = knownpts, 
                                unknownpts =  unknownpts) 
     }else{
@@ -93,11 +97,10 @@ stewart <- function(knownpts,
                                   bypassctrl = bypassctrl, longlat = longlat)
     }
   } else {
-    if(is.null(mask)){
+    if(missing(mask)){
       mask <- knownpts
     } else {
-      if(is(mask, "sf")){mask <- as(mask, "Spatial")}
-      projError(mask)
+      if(is(mask, "Spatial")){unknownpts <- sf::st_as_sf(mask)}
     }
     unknownpts <- CreateGrid(w = mask, resolution = resolution) 
     matdist <- CreateDistMatrix(knownpts = knownpts, unknownpts = unknownpts, 
@@ -109,7 +112,8 @@ stewart <- function(knownpts,
                                   varname = varname)
   unknownpts <- ComputePotentials(unknownpts = unknownpts, 
                                   matopport = matopport)
-  if(sfsp){unknownpts <- st_as_sf(unknownpts)}
+  
+  if(returnclass=="sp"){unknownpts <- methods::as(unknownpts, "Spatial")}
   return(unknownpts)
 }
 

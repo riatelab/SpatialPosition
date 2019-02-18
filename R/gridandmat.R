@@ -24,64 +24,54 @@
 CreateGrid <- function (w, resolution)
 {
   # test sf
-  sfsp <- is(w, "sf")
-  if(sfsp){
-    w <- as(w, "Spatial")
-  }
+  if(methods::is(w, "Spatial")){w <- sf::st_as_sf(w)}
   
-  # valid sp
-  projError(w)
+  w <- st_as_sf(spatPts)
   
-  boundingBox <- bbox(w)
+  boundingBox <- sf::st_bbox(w)
   if(is.null(resolution)){
-    resolution <- sqrt(((boundingBox[1,2] - boundingBox[1,1]) * 
-                          (boundingBox[2,2] - boundingBox[2,1]))/4000)
+    resolution <- sqrt(((boundingBox[3] - boundingBox[1]) * 
+                          (boundingBox[4] - boundingBox[2]))/4000)
   }
   rounder <- boundingBox %% resolution
-  boundingBox[,1] <- boundingBox[,1] - rounder[,1]
-  boundingBox[,2] <- boundingBox[,2] + resolution - rounder[,2]
-  boxCoordX <- seq(from = boundingBox[1,1] - resolution * 2, 
-                   to = boundingBox[1,2]+resolution * 2, 
+  boundingBox[c(1,3)] <- boundingBox[c(1,3)] - rounder[c(1,3)]
+  boundingBox[c(2,4)] <- boundingBox[c(2,4)] + resolution - rounder[c(2,4)]
+  boxCoordX <- seq(from = boundingBox[1] - resolution * 2, 
+                   to = boundingBox[3]+resolution * 2, 
                    by = resolution)
-  boxCoordY <- seq(from = boundingBox[2,1] - resolution * 2, 
-                   to = boundingBox[2,2] + resolution * 2, 
+  boxCoordY <- seq(from = boundingBox[2] - resolution * 2, 
+                   to = boundingBox[4] + resolution * 2, 
                    by = resolution)
   
   spatGrid <- expand.grid(boxCoordX, boxCoordY)
-  
-  idSeq <- seq(1, nrow(spatGrid), 1)
-  
-  spatGrid <- data.frame(ID = idSeq, 
+  spatGrid <- data.frame(ID = 1:nrow(spatGrid),
                          COORDX = spatGrid[, 1], 
                          COORDY = spatGrid[, 2])
+  spatGrid <- st_as_sf(spatGrid, coords = c("COORDX", "COORDY"), crs = sf::st_crs(w), remove = FALSE)
   
-  spatGrid <- SpatialPointsDataFrame(coords = spatGrid[ , c(2, 3)], 
-                                     data = spatGrid, 
-                                     proj4string = CRS(proj4string(w)))
-  
-  result <- tryCatch({
-    x <- spTransform(spatGrid, "+init=epsg:4326")
-    TRUE
-  }, warning = function(war) {
-    return(FALSE)
-  }, error = function(err) {
-    return(FALSE)
-  }, finally = {
-  })
-  
-  if (result==FALSE){
-    pref <- SpatialPoints(coords = data.frame(x = c(-179.9999,179.9999),
-                                              y =  c(89.9999,-89.9999) ),
-                          proj4string = CRS("+init=epsg:4326"))
-    a <- raster::extent(sp::spTransform(pref, proj4string(w)))
-    b <- raster::extent(spatGrid)
-    e <- c(b[1], b[2], a[3], a[4])
-    spatGrid <- raster::crop(spatGrid, e)
-  }
-  
-  if(sfsp){
-    spatGrid <- sf::st_as_sf(spatGrid)
-  }
+  # result <- tryCatch({
+  #   x <- spTransform(spatGrid, "+init=epsg:4326")
+  #   TRUE
+  # }, warning = function(war) {
+  #   return(FALSE)
+  # }, error = function(err) {
+  #   return(FALSE)
+  # }, finally = {
+  # })
+  # 
+  # if (result==FALSE){
+  #   pref <- SpatialPoints(coords = data.frame(x = c(-179.9999,179.9999),
+  #                                             y =  c(89.9999,-89.9999) ),
+  #                         proj4string = CRS("+init=epsg:4326"))
+  #   a <- raster::extent(sp::spTransform(pref, proj4string(w)))
+  #   b <- raster::extent(spatGrid)
+  #   e <- c(b[1], b[2], a[3], a[4])
+  #   spatGrid <- raster::crop(spatGrid, e)
+  # }
+  # 
+  # if(sfsp){
+  #   spatGrid <- sf::st_as_sf(spatGrid)
+  # }
   
   return(spatGrid)
 }
@@ -128,15 +118,9 @@ CreateDistMatrix  <- function(knownpts,
                               longlat = TRUE)
 {
   # test sf
-  if(is(knownpts, "sf")){
-    knownpts <- as(knownpts, "Spatial")
-  }
-  if(is(unknownpts,"sf")){
-    unknownpts <- as(unknownpts, "Spatial")
-  }
+  if(methods::is(knownpts, "Spatial")){knownpts <- sf::st_as_sf(knownpts)}
+  if(methods::is(unknownpts, "Spatial")){unknownpts <- sf::st_as_sf(unknownpts)}
   
-  # correct proj
-  projError(knownpts, unknownpts)
   
   if (bypassctrl == FALSE){
     nk <- nrow(knownpts)
@@ -163,33 +147,30 @@ CreateDistMatrix  <- function(knownpts,
       }
     }
   }
+
   
-  if(methods::is(knownpts, "SpatialPolygons")){
-    knownpts <- SpatialPointsDataFrame(coordinates(knownpts), 
-                                       data = knownpts@data, 
-                                       proj4string = knownpts@proj4string)
-    
-    
+  # polygon mngmnt
+  if(!methods::is(sf::st_geometry(knownpts), "sfc_POINT")){
+    st_geometry(knownpts) <- st_centroid(st_geometry(knownpts))
   }
-  if(methods::is(unknownpts, "SpatialPolygons")){
-    unknownpts <- SpatialPointsDataFrame(coordinates(unknownpts), 
-                                         data = unknownpts@data, 
-                                         proj4string = unknownpts@proj4string)
+  if(!methods::is(sf::st_geometry(unknownpts), "sfc_POINT")){
+    st_geometry(unknownpts) <- st_centroid(st_geometry(unknownpts))
   }
   
-  if(sp::is.projected(knownpts)){
+  
+  
+  if(!st_is_longlat(knownpts)){
     if(longlat){
-      knownpts <- sp::spTransform(knownpts,"+init=epsg:4326")
-      unknownpts <- sp::spTransform(unknownpts,"+init=epsg:4326")
-      matDist <- sp::spDists(x = knownpts, y = unknownpts, longlat = TRUE) * 1000
-    }else{
-      matDist <- sp::spDists(x = knownpts, y = unknownpts, longlat = FALSE)
+      knownpts <- sf::st_transform(knownpts, 4326)
+      unknownpts <- sf::st_transform(unknownpts, 4326)
     }
-  }else{
-    matDist <- sp::spDists(x = knownpts, y = unknownpts, longlat = TRUE) * 1000
   }
+  x <- st_distance(knownpts, unknownpts)
   
-  dimnames(matDist) <- list(row.names(knownpts), row.names(unknownpts))
+  y = as.vector(x)
+  dim(y) = dim(x)
   
-  return(round(matDist, digits = 8))
+  dimnames(y) <- list(row.names(knownpts), row.names(unknownpts))
+  
+  return(round(y, digits = 2))
 }

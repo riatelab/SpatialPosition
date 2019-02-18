@@ -2,6 +2,7 @@
 UseDistMatrix <- function(matdist, knownpts, unknownpts){
   i <- factor(row.names(knownpts), levels = row.names(knownpts))
   j <- factor(row.names(unknownpts), levels = row.names(unknownpts))
+  print(i)
   matdist <- matdist[levels(i), levels(j)]
   return(round(matdist, digits = 8))
 }
@@ -23,13 +24,13 @@ ComputeInteractDensity <- function(matdist, typefct, beta, span)
 
 ComputeOpportunity <- function(knownpts, matdens, varname = varname)
 {
-  matOpport <- knownpts@data[, varname] * matdens
+  matOpport <- knownpts[[varname]] * matdens
   return(round(matOpport, digits = 8))
 }
 
 ComputePotentials <- function(unknownpts, matopport)
 {
-  unknownpts@data$OUTPUT <- apply(matopport, 2, sum, na.rm = TRUE)
+  unknownpts$OUTPUT <- apply(matopport, 2, sum, na.rm = TRUE)
   return(unknownpts)
 }
 

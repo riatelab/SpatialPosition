@@ -4,9 +4,9 @@
 \alias{stewart}
 \title{Stewart Potentials}
 \usage{
-stewart(knownpts, unknownpts = NULL, matdist = NULL, varname,
-  typefct = "exponential", span, beta, resolution = NULL,
-  mask = NULL, bypassctrl = FALSE, longlat = TRUE)
+stewart(knownpts, unknownpts, matdist, varname, typefct = "exponential",
+  span, beta, resolution, mask, bypassctrl = FALSE, longlat = TRUE,
+  returnclass = "sf")
 }
 \arguments{
 \item{knownpts}{sp or sf object; this is the set of known observations to 
@@ -20,7 +20,7 @@ up. (optional)}
 units for which the function computes the estimates. Row names match the row 
 names of \code{knownpts} and column names match the row names of 
 \code{unknownpts}. \code{matdist} can contain any distance metric (time 
-distance or euclidean distance for example). If \code{matdist} is NULL, the distance 
+distance or euclidean distance for example). If \code{matdist} is missing, the distance 
 matrix is built with \code{\link{CreateDistMatrix}}. (optional)}
 
 \item{varname}{character; name of the variable in the \code{knownpts} dataframe 
@@ -53,8 +53,10 @@ create the regularly spaced points output. (optional)}
 }
 \value{
 Point object with the computed potentials in a new field 
-named \code{OUTPUT}. If \code{knownpts} is an sp object, the output is a 
-SpatialPointsDataFrame; if \code{knownpts} is an sf object, the output is an 
+named \code{OUTPUT}. If \code{knownpts} or \code{unknownpts} are sp objects, 
+the output is a 
+SpatialPointsDataFrame; if \code{knownpts} or \code{unknownpts} are sf objects, 
+the output is an 
 sf POINT data.frame.
 }
 \description{
