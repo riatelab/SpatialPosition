@@ -31,21 +31,24 @@ isobander <- function(x, nclass = 8, breaks = NULL, mask = NULL){
   lev_low = breaks[1:(length(breaks)-1)]
   lev_high = breaks[2:length(breaks)]
   raw <- isoband::isobands(x = as.numeric(rownames(m)), 
-                       y = as.numeric(colnames(m)), z = t(m), 
-                       levels_low = lev_low,
-                       levels_high = c(lev_high[-length(lev_high)], vmax + 1e-10))
+                           y = as.numeric(colnames(m)), z = t(m), 
+                           levels_low = lev_low,
+                           levels_high = c(lev_high[-length(lev_high)], vmax + 1e-10))
   
   bands <- isoband::iso_to_sfg(raw)
   res <- sf::st_sf(id = 1:length(bands), 
-                      min = lev_low, 
-                      max = lev_high,
-                      geometry = sf::st_sfc(bands), 
-                      crs = sf::st_crs(x))
+                   min = lev_low, 
+                   max = lev_high,
+                   geometry = sf::st_sfc(bands), 
+                   crs = sf::st_crs(x))
   res$center = res$min +(res$max - res$min) / 2
   
   
   if(!missing(mask)){
-      res <- sf::st_intersection(x = res, y = mask)
+    options(warn=-1)
+    res <- st_cast(sf::st_intersection(x = res, y = sf::st_union(mask)))
+    options(warn=0)
+    
   }
   
   return(res)
