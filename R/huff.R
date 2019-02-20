@@ -121,7 +121,8 @@ huff <- function(knownpts,
 #' @return Raster of catchment areas values.
 #' @seealso \link{huff}, \link{rasterHuff}, \link{plotHuff}, \link{CreateGrid}, 
 #' \link{CreateDistMatrix}.
-#' @examples 
+#' @examples
+#' library(raster) 
 #' data(spatData)
 #' # Compute Huff catchment areas from known points (spatPts) on a
 #' # grid defined by its resolution

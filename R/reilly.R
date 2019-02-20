@@ -125,6 +125,7 @@ reilly <- function(knownpts,
 #' @seealso \link{reilly}, \link{rasterReilly}, \link{plotReilly}, \link{CreateGrid}, 
 #' \link{CreateDistMatrix}.
 #' @examples 
+#' library(raster)
 #' data(spatData)
 #' row.names(spatPts) <- spatPts$CodHop
 #' # Compute Reilly catchment areas from known points (spatPts) on a

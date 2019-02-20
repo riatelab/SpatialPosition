@@ -7,6 +7,9 @@
 #' @param breaks numeric; a vector of break values. 
 #' @param mask sf POLYGON data.frame; mask used to 
 #' clip contour shapes. 
+#' @param xcoords character; name of the X coordinates field in x.
+#' @param ycoords character; name of the Y coordinates field in x.
+#' @param var character; name of the OUTPUT field in x.
 #' @return The output is an sf POLYGON data.frame.
 #' The data frame contains four fields: 
 #' id (id of each polygon), min and max (minimum and maximum breaks of the polygon), 

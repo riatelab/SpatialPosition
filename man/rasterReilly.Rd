@@ -23,6 +23,7 @@ This function creates a raster from a regularly spaced
 Reilly grid (output of the \code{\link{reilly}} function).
 }
 \examples{
+library(raster)
 data(spatData)
 row.names(spatPts) <- spatPts$CodHop
 # Compute Reilly catchment areas from known points (spatPts) on a

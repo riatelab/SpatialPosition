@@ -16,6 +16,12 @@ isoStewart(x, nclass = 8, breaks, mask, xcoords = "COORDX",
 
 \item{mask}{sf POLYGON data.frame; mask used to 
 clip contour shapes.}
+
+\item{xcoords}{character; name of the X coordinates field in x.}
+
+\item{ycoords}{character; name of the Y coordinates field in x.}
+
+\item{var}{character; name of the OUTPUT field in x.}
 }
 \value{
 The output is an sf POLYGON data.frame.

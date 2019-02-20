@@ -21,6 +21,7 @@ This function creates a raster from a regularly spaced
 Stewart points grid (output of the \code{\link{stewart}} function).
 }
 \examples{
+library(raster)
 data(spatData)
 # Compute Stewart potentials from known points (spatPts) on a
 # grid defined by its resolution

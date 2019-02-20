@@ -20,6 +20,7 @@ This function creates a raster from a regularly spaced
 Huff grid (output of the \code{\link{huff}} function).
 }
 \examples{
+library(raster) 
 data(spatData)
 # Compute Huff catchment areas from known points (spatPts) on a
 # grid defined by its resolution

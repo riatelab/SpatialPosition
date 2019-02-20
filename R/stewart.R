@@ -119,6 +119,7 @@ stewart <- function(knownpts,unknownpts, matdist, varname,
 #' @seealso \link{stewart}, \link{quickStewart}, \link{plotStewart}, 
 #' \link{rasterToContourPoly}, \link{CreateGrid}, \link{CreateDistMatrix}.
 #' @examples
+#' library(raster)
 #' data(spatData)
 #' # Compute Stewart potentials from known points (spatPts) on a
 #' # grid defined by its resolution
