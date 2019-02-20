@@ -168,6 +168,7 @@ rasterHuff <- function(x, mask = NULL){
 #' myhuffraster <- rasterHuff(x = myhuff, mask = spatMask)
 #' plotHuff(myhuffraster)
 #' @import raster
+#' @import sp
 #' @export
 plotHuff <- function(x, add = FALSE){
   bks <- seq(from = cellStats(x, min), 

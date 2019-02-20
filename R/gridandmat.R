@@ -14,20 +14,21 @@
 #' @examples 
 #' # Create a SpatialPointsDataFrame grid of spatMask extent and 200 meters 
 #' # resolution
+#' library(sp)
 #' data(spatData)
 #' mygrid <- CreateGrid(w = spatMask, resolution = 200)
 #' plot(mygrid, cex = 0.1, pch = ".")
 #' plot(spatMask, border="red", lwd = 2, add = TRUE)
-#' @import sp
+#' @importFrom sf st_as_sf st_crs st_bbox
 #' @importFrom methods is
 #' @export
 CreateGrid <- function (w, resolution)
 {
   # test sf
-  if(methods::is(w, "Spatial")){w <- sf::st_as_sf(w)}
+  if(is(w, "Spatial")){w <- st_as_sf(w)}
   
-  boundingBox <- sf::st_bbox(w)
-  if(is.null(resolution)){
+  boundingBox <- st_bbox(w)
+  if(missing(resolution)){
     resolution <- sqrt(((boundingBox[3] - boundingBox[1]) * 
                           (boundingBox[4] - boundingBox[2]))/4000)
   }
@@ -45,7 +46,8 @@ CreateGrid <- function (w, resolution)
   spatGrid <- data.frame(ID = 1:nrow(spatGrid),
                          COORDX = spatGrid[, 1], 
                          COORDY = spatGrid[, 2])
-  spatGrid <- st_as_sf(spatGrid, coords = c("COORDX", "COORDY"), crs = sf::st_crs(w), remove = FALSE)
+  spatGrid <- st_as_sf(spatGrid, coords = c("COORDX", "COORDY"),
+                       crs = st_crs(w), remove = FALSE)
   
   # result <- tryCatch({
   #   x <- spTransform(spatGrid, "+init=epsg:4326")
@@ -107,8 +109,8 @@ CreateGrid <- function (w, resolution)
 #' nrow(spatPts)
 #' nrow(mygrid)
 #' dim(mymat)
-#' @import sp
-#' @import rgdal
+#' @importFrom sf st_centroid st_geometry st_geometry<- st_as_sf st_is_longlat st_distance st_transform
+#' @importFrom methods is
 #' @export
 CreateDistMatrix  <- function(knownpts, 
                               unknownpts, 
@@ -116,8 +118,8 @@ CreateDistMatrix  <- function(knownpts,
                               longlat = TRUE)
 {
   # test sf
-  if(methods::is(knownpts, "Spatial")){knownpts <- sf::st_as_sf(knownpts)}
-  if(methods::is(unknownpts, "Spatial")){unknownpts <- sf::st_as_sf(unknownpts)}
+  if(is(knownpts, "Spatial")){knownpts <- st_as_sf(knownpts)}
+  if(is(unknownpts, "Spatial")){unknownpts <- st_as_sf(unknownpts)}
   
   
   if (bypassctrl == FALSE){
@@ -136,11 +138,11 @@ CreateDistMatrix  <- function(knownpts,
         if (z == "y"){
           cat("Ok, YOLO!")
         } else {
-          stop("Computation aborted. Matrix would probably be too big.",
+          stop("Computation aborted. Matrix would probably be too large.",
                call. = F)
         }
       } else {
-        stop("Computation aborted. Matrix would probably be too big.", 
+        stop("Computation aborted. Matrix would probably be too large.", 
              call. = F)
       }
     }
@@ -148,22 +150,22 @@ CreateDistMatrix  <- function(knownpts,
 
   
   # polygon mngmnt
-  if(!methods::is(sf::st_geometry(knownpts), "sfc_POINT")){
+  if(!is(st_geometry(knownpts), "sfc_POINT")){
     st_geometry(knownpts) <- st_centroid(st_geometry(knownpts))
   }
-  if(!methods::is(sf::st_geometry(unknownpts), "sfc_POINT")){
+  if(!is(st_geometry(unknownpts), "sfc_POINT")){
     st_geometry(unknownpts) <- st_centroid(st_geometry(unknownpts))
   }
   
   
   
-  if(!sf::st_is_longlat(knownpts)){
+  if(!st_is_longlat(knownpts)){
     if(longlat){
-      knownpts <- sf::st_transform(knownpts, 4326)
-      unknownpts <- sf::st_transform(unknownpts, 4326)
+      knownpts <- st_transform(knownpts, 4326)
+      unknownpts <- st_transform(unknownpts, 4326)
     }
   }
-  x <- sf::st_distance(knownpts, unknownpts)
+  x <- st_distance(knownpts, unknownpts)
   mat = as.vector(x)
   dim(mat) = dim(x)
   

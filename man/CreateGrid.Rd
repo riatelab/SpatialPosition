@@ -26,6 +26,7 @@ from the extent of a given spatial object and a given resolution.
 \examples{
 # Create a SpatialPointsDataFrame grid of spatMask extent and 200 meters 
 # resolution
+library(sp)
 data(spatData)
 mygrid <- CreateGrid(w = spatMask, resolution = 200)
 plot(mygrid, cex = 0.1, pch = ".")

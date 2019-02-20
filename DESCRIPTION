@@ -1,6 +1,6 @@
 Package: SpatialPosition
 Title: Spatial Position Models
-Version: 1.2.1.9000
+Version: 2.0.0
 Date: 2018-02-06
 Authors@R: c(
       person("Timothée", "Giraud", email = "timothee.giraud@cnrs.fr", role = c("cre","aut")),
@@ -18,7 +18,6 @@ Imports:
     graphics,
     methods,
     rgeos, 
-    rgdal, 
     isoband, 
     raster
 Suggests:

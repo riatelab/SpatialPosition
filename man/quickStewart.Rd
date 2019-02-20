@@ -4,11 +4,13 @@
 \alias{quickStewart}
 \title{Create a SpatialPolygonsDataFrame of Potentials Contours}
 \usage{
-quickStewart(spdf, df, spdfid = NULL, dfid = NULL, var, var2 = NULL,
-  typefct = "exponential", span, beta, resolution = NULL,
-  mask = NULL, nclass = 8, breaks = NULL, bypassctrl = FALSE)
+quickStewart(x, spdf, df, spdfid = NULL, dfid = NULL, var, var2,
+  typefct = "exponential", span, beta, resolution, mask, nclass = 8,
+  breaks, bypassctrl = FALSE)
 }
 \arguments{
+\item{x}{sf object.}
+
 \item{spdf}{a SpatialPolygonsDataFrame.}
 
 \item{df}{a data frame that contains the values to compute}
@@ -74,22 +76,18 @@ pot.spdf <- quickStewart(spdf = spatPts,
                          var = "Capacite", 
                          span = 1000, 
                          beta = 2, mask = spatMask)
-plot(pot.spdf)
 # cartography
 if(require("cartography")){
   breaks <- sort(c(unique(pot.spdf$min), max(pot.spdf$max)), decreasing = FALSE)
-  cartography::choroLayer(spdf = pot.spdf, df = pot.spdf@data,
+  cartography::choroLayer(x = pot.spdf, 
                           var = "center", breaks = breaks, 
                           legend.pos = "topleft",
                           legend.title.txt = "Nb. of Beds")
 }
-pot.spdf@data
-
 
 # Compute a SpatialPolygonsDataFrame of a ratio of potentials
 spatPts$dummy <- spatPts$Capacite + c(rep(50, 18))
-pot2.spdf <- quickStewart(spdf = spatPts, 
-                          df = spatPts@data, 
+pot2.spdf <- quickStewart(x = spatPts, 
                           var = "Capacite", 
                           var2 = "dummy",
                           span = 1000, 
@@ -97,7 +95,7 @@ pot2.spdf <- quickStewart(spdf = spatPts,
 # cartography
 if(require("cartography")){
   breaks <- sort(c(unique(pot2.spdf$min), max(pot2.spdf$max)), decreasing = FALSE)
-  cartography::choroLayer(spdf = pot2.spdf, df = pot2.spdf@data,
+  cartography::choroLayer(x = pot2.spdf,
                           var = "center", breaks = breaks, 
                           legend.pos = "topleft",legend.values.rnd = 3,
                           legend.title.txt = "Nb. of Beds")

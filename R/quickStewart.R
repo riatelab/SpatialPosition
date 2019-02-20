@@ -6,6 +6,7 @@
 #' Providing only the main parameters of these functions, it simplifies a lot the computation of potentials. 
 #' This function creates a SpatialPolygonsDataFrame of potential values. 
 #' It also allows to compute directly the ratio between the potentials of two variables. 
+#' @param x sf object. 
 #' @param spdf a SpatialPolygonsDataFrame.
 #' @param df a data frame that contains the values to compute
 #' @param spdfid name of the identifier field in spdf, default to the first column 
@@ -52,22 +53,18 @@
 #'                          var = "Capacite", 
 #'                          span = 1000, 
 #'                          beta = 2, mask = spatMask)
-#' plot(pot.spdf)
 #' # cartography
 #' if(require("cartography")){
 #'   breaks <- sort(c(unique(pot.spdf$min), max(pot.spdf$max)), decreasing = FALSE)
-#'   cartography::choroLayer(spdf = pot.spdf, df = pot.spdf@data,
+#'   cartography::choroLayer(x = pot.spdf, 
 #'                           var = "center", breaks = breaks, 
 #'                           legend.pos = "topleft",
 #'                           legend.title.txt = "Nb. of Beds")
 #' }
-#' pot.spdf@data
-#' 
 #' 
 #' # Compute a SpatialPolygonsDataFrame of a ratio of potentials
 #' spatPts$dummy <- spatPts$Capacite + c(rep(50, 18))
-#' pot2.spdf <- quickStewart(spdf = spatPts, 
-#'                           df = spatPts@data, 
+#' pot2.spdf <- quickStewart(x = spatPts, 
 #'                           var = "Capacite", 
 #'                           var2 = "dummy",
 #'                           span = 1000, 
@@ -75,29 +72,34 @@
 #' # cartography
 #' if(require("cartography")){
 #'   breaks <- sort(c(unique(pot2.spdf$min), max(pot2.spdf$max)), decreasing = FALSE)
-#'   cartography::choroLayer(spdf = pot2.spdf, df = pot2.spdf@data,
+#'   cartography::choroLayer(x = pot2.spdf,
 #'                           var = "center", breaks = breaks, 
 #'                           legend.pos = "topleft",legend.values.rnd = 3,
 #'                           legend.title.txt = "Nb. of Beds")
 #' }
-quickStewart <- function(spdf, df, spdfid = NULL, dfid = NULL, var, 
-                         var2 = NULL, 
+quickStewart <- function(x, spdf, df, spdfid = NULL, dfid = NULL, var, 
+                         var2, 
                          typefct = "exponential", span, 
-                         beta, resolution = NULL, 
-                         mask = NULL, 
-                         nclass = 8, breaks = NULL, 
+                         beta, resolution, 
+                         mask, 
+                         nclass = 8, breaks, 
                          bypassctrl = FALSE){
   # IDs  
+  if(!missing(spdf)){
   if (is.null(spdfid)){spdfid <- names(spdf@data)[1]}
   if (is.null(dfid)){dfid <- names(df)[1]}
-  
   # Join
   spdf@data <- data.frame(spdf@data[,spdfid], 
                           df[match(spdf@data[,spdfid], df[,dfid]),])
   spdf <- spdf[!is.na(spdf@data[,dfid]),]
   
+    x <- st_as_sf(spdf)
+  
+  }
+  
+  
    # pot computation
-  pot <- stewart(knownpts = spdf, 
+  pot <- stewart(knownpts = x, 
                  varname = var, 
                  typefct = typefct, 
                  span = span, 
@@ -106,8 +108,8 @@ quickStewart <- function(spdf, df, spdfid = NULL, dfid = NULL, var,
                  mask = mask, 
                  bypassctrl = bypassctrl)
   
-  if(!is.null(var2)){
-    pot2 <- stewart(knownpts = spdf, 
+  if(!missing(var2)){
+    pot2 <- stewart(knownpts = x, 
                     varname = var2, 
                     typefct = typefct, 
                     span = span, 
@@ -115,15 +117,14 @@ quickStewart <- function(spdf, df, spdfid = NULL, dfid = NULL, var,
                     resolution = resolution, 
                     mask = mask, 
                     bypassctrl = bypassctrl)
-    ras <- rasterStewart(pot) / rasterStewart(pot2)
-  }else{
-    ras <- rasterStewart(pot)
+
+    pot$OUTPUT   <- pot$OUTPUT / pot2$OUTPUT
   }
 
   # Spdf creation
-  pot.spdf <- rasterToContourPoly(r =  ras,
+  pot <- isoStewart(x =  pot,
                                   nclass = nclass, 
                                   breaks = breaks, 
                                   mask = mask)
-  return(pot.spdf)
+  return(pot)
 }

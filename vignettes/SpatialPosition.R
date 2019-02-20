@@ -1,29 +1,29 @@
-## ---- fig.width=5, fig.height=5------------------------------------------
+## ---- fig.width=7, fig.height=5------------------------------------------
 library(SpatialPosition)
+library(sp)
+library(sf)
 data(spatData)
 
 # Compute potentials (accessibility)
-globalAccessibility <- stewart(knownpts = spatPts, varname = "Capacite",
-                               typefct = "exponential", span = 1000, beta = 3,
-                               resolution = 50,  
-                               mask = spatMask)
+potentials <- stewart(
+  knownpts = spatPts, 
+  varname = "Capacite",
+  typefct = "exponential", 
+  span = 1000, 
+  beta = 3,
+  resolution = 50,
+  mask = spatMask
+)
 
-# Create a raster
-rasterAccessibility <- rasterStewart(x = globalAccessibility, mask = spatMask)
+isopotentials <- isoStewart(x = potentials, mask = st_as_sf(spatMask))
 
-# Plot the raster
+lab <- paste0(round(isopotentials$min,0),' to ', 
+              round(isopotentials$max,0))
 par(mar = c(4,2,2,1))
-
-plotStewart(x = rasterAccessibility, add = FALSE, nclass = 6)
-
-# The function returns break values
-breakValues <- plotStewart(x = rasterAccessibility, add = FALSE, nclass = 6)
-
-# Create contour lines and add them to the plot
-contLines <- rasterToContour(x = rasterAccessibility, levels = breakValues)
-plot(contLines, add = TRUE)
-plot(spatMask, add = TRUE)
-
+plot(st_geometry(isopotentials), col = heat.colors(8))
+legend(x = "topright", legend = lab, fill = heat.colors(8), 
+       cex = 0.7, title = "Potentials")
+  
 mtext("Global Accessibility to Public Hospitals", side = 3,cex = 1.5)
 mtext(text = "Potential nb. of beds
       distance function: exponential, span = 1 km, beta = 3",

@@ -56,10 +56,8 @@ create the regularly spaced points output. (optional)}
 \value{
 Point object with the computed potentials in a new field 
 named \code{OUTPUT}. If \code{knownpts} or \code{unknownpts} are sp objects, 
-the output is a 
-SpatialPointsDataFrame; if \code{knownpts} or \code{unknownpts} are sf objects, 
-the output is an 
-sf POINT data.frame.
+the output is a SpatialPointsDataFrame; if \code{knownpts} or 
+\code{unknownpts} are sf objects, the output is an sf POINT data.frame.
 }
 \description{
 This function computes the potentials as defined by J.Q. Stewart (1942).

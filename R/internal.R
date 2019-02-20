@@ -35,7 +35,7 @@ ComputePotentials <- function(unknownpts, matopport)
 
 ComputeReilly <- function(unknownpts, matopport)
 {
-  unknownpts@data$OUTPUT <- row.names(matopport)[apply(matopport, 2, which.max)]
+  unknownpts$OUTPUT <- row.names(matopport)[apply(matopport, 2, which.max)]
   return(unknownpts)
 }
 
@@ -44,14 +44,14 @@ ComputeHuff <- function(unknownpts, matopport)
   sumCol <- colSums(x = matopport, na.rm = TRUE)
   matOpportPct <- 100 * t(t(matopport) / sumCol)
   matOpportPct[is.na(matOpportPct) | is.infinite(matOpportPct)] <- 0
-  unknownpts@data$OUTPUT <- apply(matOpportPct, 2, max, na.rm = TRUE)
+  unknownpts$OUTPUT <- apply(matOpportPct, 2, max, na.rm = TRUE)
   return(unknownpts)
 }
 
 
 ComputeSmooth<- function(unknownpts, matopport, matdens)
 {
-  unknownpts@data$OUTPUT <- apply(matopport, 2, sum, na.rm = TRUE) / colSums(matdens)
+  unknownpts$OUTPUT <- apply(matopport, 2, sum, na.rm = TRUE) / colSums(matdens)
   return(unknownpts)
 }
 
@@ -74,7 +74,3 @@ projError <- function(x,y){
 }
 
 
-# import stuffs
-#' @importFrom methods as
-#' @importFrom sf st_as_sf
-NULL
