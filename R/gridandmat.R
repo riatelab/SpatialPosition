@@ -1,15 +1,13 @@
-#' @title Create a Regularly Spaced Points Grid
+#' @title Create a Regularly Spaced SpatialPointsDataFrame
 #' @name CreateGrid
-#' @description This function creates a regular grid of points 
-#' from the extent of a given spatial object and a given resolution.
-#' @param w sp or sf object; the spatial extent of this object is used to 
-#' create the regular grid.
+#' @description This function creates a regular grid of SpatialPointsDataFrame 
+#' from the extent of a given sp object and a given resolution.
+#' @param w sp object; the spatial extent of this object is used to 
+#' create the regular SpatialPointsDataFrame.
 #' @param resolution numeric; resolution of the grid (in map units). If 
 #' resolution is not set, the grid will contain around 7500 points. (optional)
-#' @return The output of the function is a regularly spaced points grid with the 
-#' extent of \code{w}. If \code{w} is an sp object, the output is a 
-#' SpatialPointsDataFrame; if \code{w} is an sf object, the output is an sf 
-#' POINT data.frame.
+#' @return The output of the function is a SpatialPointsDataFrame of regularly
+#' spaced points with the same extent as \code{w}. 
 #' @seealso \link{CreateDistMatrix}
 #' @examples 
 #' # Create a SpatialPointsDataFrame grid of spatMask extent and 200 meters 
@@ -19,19 +17,12 @@
 #' plot(mygrid, cex = 0.1, pch = ".")
 #' plot(spatMask, border="red", lwd = 2, add = TRUE)
 #' @import sp
-#' @importFrom methods is
 #' @export
 CreateGrid <- function (w, resolution)
 {
-  # test sf
-  sfsp <- is(w, "sf")
-  if(sfsp){
-    w <- as(w, "Spatial")
-  }
-  
-  # valid sp
-  projError(w)
-  
+  # w <- wo
+  # resolution <- 5000000
+  TestSp(w)
   boundingBox <- bbox(w)
   if(is.null(resolution)){
     resolution <- sqrt(((boundingBox[1,2] - boundingBox[1,1]) * 
@@ -79,20 +70,16 @@ CreateGrid <- function (w, resolution)
     spatGrid <- raster::crop(spatGrid, e)
   }
   
-  if(sfsp){
-    spatGrid <- sf::st_as_sf(spatGrid)
-  }
-  
   return(spatGrid)
 }
 
 
-#' @title Create a Distance Matrix Between Two Spatial Objects
+#' @title Create a Distance Matrix Between Two Sp Objects
 #' @name CreateDistMatrix
 #' @description This function creates a distance matrix between two 
-#' spatial objects (sp or sf objects).
-#' @param knownpts sp or sf object; rows of the distance matrix.
-#' @param unknownpts sp or sf object; columns of the distance matrix.
+#' sp objects (SpatialPointsDataFrame or SpatialPolygonsDataFrame).
+#' @param knownpts sp object; rows of the distance matrix.
+#' @param unknownpts sp object; columns of the distance matrix.
 #' @param bypassctrl logical; bypass the distance matrix size control (see Details).
 #' @param longlat	logical; if FALSE, Euclidean distance, if TRUE Great Circle 
 #' (WGS84 ellipsoid) distance.
@@ -127,17 +114,12 @@ CreateDistMatrix  <- function(knownpts,
                               bypassctrl = FALSE, 
                               longlat = TRUE)
 {
-  # test sf
-  if(is(knownpts, "sf")){
-    knownpts <- as(knownpts, "Spatial")
+  TestSp(knownpts)
+  TestSp(unknownpts)
+  if(identicalCRS(knownpts,unknownpts) == FALSE){
+    stop(paste("Inputs (",quote(knownpts), " and ",quote(unknownpts),
+               ") do not use the same projection", sep = ""),call. = FALSE)
   }
-  if(is(unknownpts,"sf")){
-    unknownpts <- as(unknownpts, "Spatial")
-  }
-  
-  # correct proj
-  projError(knownpts, unknownpts)
-  
   if (bypassctrl == FALSE){
     nk <- nrow(knownpts)
     nu <- nrow(unknownpts)

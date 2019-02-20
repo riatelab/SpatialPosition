@@ -1,9 +1,9 @@
 #' @title Reilly Catchment Areas
 #' @name reilly
 #' @description This function computes the catchment areas as defined by W.J. Reilly (1931).
-#' @param knownpts sp or sf object; 
+#' @param knownpts sp object (SpatialPointsDataFrame or SpatialPolygonsDataFrame); 
 #' this is the set of known observations to estimate the catchment areas from.
-#' @param unknownpts sp or sf object; 
+#' @param unknownpts sp object (SpatialPointsDataFrame or SpatialPolygonsDataFrame); 
 #' this is the set of unknown units for which the function computes the estimates. 
 #' Not used when \code{resolution} is set up. (optional)
 #' @param matdist matrix; distance matrix between known observations and unknown 
@@ -24,19 +24,17 @@
 #' @param span numeric; distance where the density of probability of the spatial 
 #' interaction function equals 0.5.
 #' @param beta numeric; impedance factor for the spatial interaction function.  
-#' @param resolution numeric; resolution of the output grid (in map units). 
-#' If resolution is not set, the grid will contain around 7250 points. (optional)
-#' @param mask sp or sf object; the spatial extent of this object is used to 
-#' create the regularly spaced points output. (optional)
+#' @param resolution numeric; resolution of the output SpatialPointsDataFrame
+#'  (in map units). If resolution is not set, the grid will contain around 7250 
+#'  points. (optional)
+#' @param mask sp object; the spatial extent of this object is used to 
+#' create the regularly spaced SpatialPointsDataFrame output. (optional)
 #' @param bypassctrl logical; bypass the distance matrix size control (see 
 #' \code{\link{CreateDistMatrix}} Details).
 #' @param longlat	logical; if FALSE, Euclidean distance, if TRUE Great Circle 
 #' (WGS84 ellipsoid) distance.
-#' @return Point object with the computed catchment areas in a new 
+#' @return SpatialPointsDataFrame with the computed catchment areas in a new 
 #' field named \code{OUTPUT}. Values match the row names of \code{knownpts}.
-#' If \code{knownpts} is an sp object, the output is a 
-#' SpatialPointsDataFrame; if \code{knownpts} is an sf object, the output is an 
-#' sf POINT data.frame.
 #' @seealso \link{reilly}, \link{rasterReilly}, \link{plotReilly}, \link{CreateGrid}, 
 #' \link{CreateDistMatrix}.
 #' @examples 
@@ -78,12 +76,13 @@ reilly <- function(knownpts,
                    bypassctrl = FALSE, 
                    longlat = TRUE)
 {
-  # test sf
-  sfsp <- is(knownpts, "sf")
-  if(sfsp){knownpts <- as(knownpts, "Spatial")}
-  
+  TestSp(knownpts)
   if (!is.null(unknownpts)){  
-    if(is(unknownpts, "sf")){unknownpts <- as(unknownpts, "Spatial")}
+    TestSp(unknownpts)
+    if(identicalCRS(knownpts,unknownpts) == FALSE){
+      stop(paste("Inputs (",quote(knownpts), " and ",quote(unknownpts),
+                 ") do not use the same projection", sep = ""),call. = FALSE)
+    }
     if (!is.null(matdist)){
       matdist <- UseDistMatrix(matdist =matdist, knownpts = knownpts, 
                                unknownpts =  unknownpts) 
@@ -92,31 +91,31 @@ reilly <- function(knownpts,
                                   bypassctrl = bypassctrl, longlat = longlat) 
     }
   } else {
-    if(is.null(mask)){
-      mask <- knownpts
-    } else {
-      if(is(mask, "sf")){mask <- as(mask, "Spatial")}
-      projError(mask)
-    }
-    unknownpts <- CreateGrid(w = mask, resolution = resolution) 
+    unknownpts <- CreateGrid(w = if(is.null(mask)){knownpts} else {mask}, 
+                             resolution = resolution) 
     matdist <- CreateDistMatrix(knownpts = knownpts, unknownpts = unknownpts, 
                                 bypassctrl = bypassctrl, longlat = longlat) 
   }
+  
+  
   matdens <- ComputeInteractDensity(matdist = matdist, typefct = typefct,
                                     beta = beta, span = span)
+  
   matopport <- ComputeOpportunity(knownpts = knownpts, matdens = matdens, 
                                   varname = varname)
-  unknownpts <- ComputeReilly(unknownpts = unknownpts,matopport = matopport)
-  if(sfsp){unknownpts <- st_as_sf(unknownpts)}
+  
+  unknownpts <- ComputeReilly(unknownpts = unknownpts, 
+                              matopport = matopport)
+  
   return(unknownpts)
 }
 
-#' @title Create a Raster from a Reilly Regular Grid
+#' @title Create a Raster from a Reilly SpatialPointsDataFrame
 #' @name rasterReilly
 #' @description This function creates a raster from a regularly spaced 
-#' Reilly grid (output of the \code{\link{reilly}} function). 
-#' @param x sp or sf object; output of the \code{reilly} function.
-#' @param mask sp or sf object; this object is used to clip 
+#' Reilly SpatialPointsDataFrame (output of the \code{\link{reilly}} function). 
+#' @param x sp object (SpatialPointsDataFrame); output of the \code{reilly} function.
+#' @param mask sp object (SpatialPolygonsDataFrame); this object is used to clip 
 #' the raster. (optional)
 #' @return Raster of catchment areas values.
 #' The raster uses a RAT (\code{\link{ratify}}) that contains the 
@@ -141,7 +140,6 @@ reilly <- function(knownpts,
 #' @import raster
 #' @export
 rasterReilly <- function(x ,mask = NULL){
-  if(is(x, "sf")){x <- as(x, "Spatial")}
   gridded(x) <- TRUE
   r <- raster(x)
   x$OUTPUT2 <- as.factor(x$OUTPUT)
@@ -149,10 +147,10 @@ rasterReilly <- function(x ,mask = NULL){
   x$OUTPUT2 <- as.numeric(x$OUTPUT2)
   rasterx <- rasterize(x, r, field = 'OUTPUT2')
   if(!is.null(mask)){
-    if(is(mask, "sf")){mask <- as(mask, "Spatial")}
-    projError(x, mask)
+    TestSp(mask)
     rasterx <- mask(rasterx, mask = mask)
   }
+  ratify(rasterx)
   levels(rasterx) <- data.frame(ID = x$OUTPUT2, idarea = x$OUTPUT)
   return(rasterx)
 }

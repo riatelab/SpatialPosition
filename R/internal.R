@@ -48,33 +48,16 @@ ComputeHuff <- function(unknownpts, matopport)
   return(unknownpts)
 }
 
-
-ComputeSmooth<- function(unknownpts, matopport, matdens)
-{
-  unknownpts@data$OUTPUT <- apply(matopport, 2, sum, na.rm = TRUE) / colSums(matdens)
-  return(unknownpts)
-}
-
-
-projError <- function(x,y){
-  if (is.na(x@proj4string)){
-    stop("Your input does not have a valid coordinate reference system.",
+TestSp <- function(x){
+  if (substr(class(x),1,7) != "Spatial"){
+    stop(paste("Your input (",quote(x),") is not a spatial object.", sep=""),
          call. = F)
   }
-  if(!missing(y)){
-    if (is.na(y@proj4string)){
-      stop("Your input does not have a valid coordinate reference system.",
-           call. = F)
-    }
-    if(identicalCRS(x,y) == FALSE){
-      stop("Inputs do not use the same coordinate reference system.",
-           call. = FALSE)
-    }
+  if (is.na(x@proj4string)){
+    stop(
+      paste(
+        "Your input (", quote(x),
+        ") does not have a valid coordinate reference system.", sep=""),
+      call. = F)
   }
 }
-
-
-# import stuffs
-#' @importFrom methods as
-#' @importFrom sf st_as_sf
-NULL

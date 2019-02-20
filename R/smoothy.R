@@ -3,9 +3,9 @@
 #' @description This function computes a distance weighted mean. It offers the 
 #' same parameters as \code{\link{stewart}}: user defined distance matrix, user 
 #' defined impedance function (power or exponential), user defined exponent.
-#' @param knownpts sp or sf object; this is the set of known observations to 
-#' estimate the potentials from.
-#' @param unknownpts sp or sf object;
+#' @param knownpts sp object (SpatialPointsDataFrame or SpatialPolygonsDataFrame);
+#' this is the set of known observations to estimate the potentials from.
+#' @param unknownpts sp object (SpatialPointsDataFrame or SpatialPolygonsDataFrame); 
 #' this is the set of unknown units for which the function computes the estimates. 
 #' Not used when \code{resolution} is set up. (optional)
 #' @param matdist matrix; distance matrix between known observations and unknown 
@@ -26,19 +26,17 @@
 #' @param span numeric; distance where the density of probability of the spatial 
 #' interaction function equals 0.5.
 #' @param beta numeric; impedance factor for the spatial interaction function.  
-#' @param resolution numeric; resolution of the output grid
+#' @param resolution numeric; resolution of the output SpatialPointsDataFrame
 #'  (in map units). If resolution is not set, the grid will contain around 7250 
 #'  points. (optional)
-#' @param mask sp or sf object; the spatial extent of this object is used to 
-#' create the regularly spaced points output. (optional)
+#' @param mask sp object; the spatial extent of this object is used to 
+#' create the regularly spaced SpatialPointsDataFrame output. (optional)
 #' @param bypassctrl logical; bypass the distance matrix size control (see 
 #' \code{\link{CreateDistMatrix}} Details).
 #' @param longlat	logical; if FALSE, Euclidean distance, if TRUE Great Circle 
 #' (WGS84 ellipsoid) distance.
-#' @return Point object with the computed distance weighted mean in a new field 
-#' named \code{OUTPUT}. If \code{knownpts} is an sp object, the output is a 
-#' SpatialPointsDataFrame; if \code{knownpts} is an sf object, the output is an 
-#' sf POINT data.frame.
+#' @return SpatialPointsDataFrame with the computed potentials in a new field 
+#' named \code{OUTPUT}
 #' @examples 
 #' # Create a SpatialPointsDataFrame grid of spatMask extent and 200 meters 
 #' # resolution
@@ -78,13 +76,13 @@ smoothy <- function(knownpts,
                     mask = NULL,
                     bypassctrl = FALSE, longlat = TRUE)
 {
-  # test sf
-  sfsp <- is(knownpts, "sf")
-  if(sfsp){knownpts <- as(knownpts, "Spatial")}
-  
-  
+  TestSp(knownpts)
   if (!is.null(unknownpts)){  
-    if(is(unknownpts, "sf")){unknownpts <- as(unknownpts, "Spatial")}
+    TestSp(unknownpts)
+    if(identicalCRS(knownpts,unknownpts) == FALSE){
+      stop(paste("Inputs (",quote(knownpts), " and ",quote(unknownpts),
+                 ") do not use the same projection", sep = ""),call. = FALSE)
+    }
     if (!is.null(matdist)){
       matdist <- UseDistMatrix(matdist =matdist, knownpts = knownpts, 
                                unknownpts =  unknownpts) 
@@ -93,23 +91,27 @@ smoothy <- function(knownpts,
                                   bypassctrl = bypassctrl, longlat = longlat)
     }
   } else {
-    if(is.null(mask)){
-      mask <- knownpts
-    } else {
-      if(is(mask, "sf")){mask <- as(mask, "Spatial")}
-      projError(mask)
-    }
-    unknownpts <- CreateGrid(w = mask, resolution = resolution) 
+    unknownpts <- CreateGrid(w = if(is.null(mask)){knownpts} else {mask}, 
+                             resolution = resolution) 
     matdist <- CreateDistMatrix(knownpts = knownpts, unknownpts = unknownpts, 
                                 bypassctrl = bypassctrl, longlat = longlat) 
   }
+  
   matdens <- ComputeInteractDensity(matdist = matdist, typefct = typefct,
                                     beta = beta, span = span)
+  
   matopport <- ComputeOpportunity(knownpts = knownpts, matdens = matdens, 
                                   varname = varname)
+  
   unknownpts <- ComputeSmooth(unknownpts = unknownpts, matdens = matdens,
                               matopport = matopport)
-  if(sfsp){unknownpts <- st_as_sf(unknownpts)}
+  unknownpts@data
   return(unknownpts)
 }
 
+
+ComputeSmooth<- function(unknownpts, matopport, matdens)
+{
+  unknownpts@data$OUTPUT <- apply(matopport, 2, sum, na.rm = TRUE) / colSums(matdens)
+  return(unknownpts)
+}

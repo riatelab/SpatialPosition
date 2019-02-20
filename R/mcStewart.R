@@ -91,19 +91,12 @@ mcStewart <- function(knownpts, unknownpts = NULL,
     stop("'doParallel' package needed for this function to work. Please install it.",
          call. = FALSE)
   }
-  sfsp <- is(knownpts, "sf")
-  if(sfsp){knownpts <- as(knownpts, "Spatial")}
+  
   if (is.null(unknownpts)){
-    if(is.null(mask)){
-      mask <- knownpts
-    } else {
-      if(is(mask, "sf")){mask <- as(mask, "Spatial")}
-      projError(mask)
-    }
-    unknownpts <- CreateGrid(w = mask, resolution = resolution)
+    unknownpts <- CreateGrid(w = if(is.null(mask)){knownpts} else {mask},
+                             resolution = resolution)
     unknownpts2 <- unknownpts
   }else{
-    if(is(unknownpts, "sf")){unknownpts <- as(unknownpts, "Spatial")}
     # SpatialPolygons to SpatialPoints
     if(methods::is(object = unknownpts, "SpatialPolygons")){
       unknownpts2 <- SpatialPointsDataFrame(coordinates(unknownpts),
@@ -120,7 +113,12 @@ mcStewart <- function(knownpts, unknownpts = NULL,
                                        proj4string = knownpts@proj4string)
   }
   
-
+  # force wgs84
+  # if(sp::is.projected(knownpts)){
+  #   knownpts <- sp::spTransform(knownpts,"+init=epsg:4326")
+  #   unknownpts2 <- sp::spTransform(unknownpts2,"+init=epsg:4326")
+  # }
+  
   # launch multiple cores
   if (is.null(cl)){
     cl <- parallel::detectCores(all.tests = FALSE, logical = FALSE)
@@ -155,8 +153,6 @@ mcStewart <- function(knownpts, unknownpts = NULL,
                            })
   parallel::stopCluster(cl)
   unknownpts$OUTPUT <- ls$OUTPUT
-  
-  if(sfsp){unknownpts <- st_as_sf(unknownpts)}
   return(unknownpts)
 }
 

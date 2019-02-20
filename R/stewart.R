@@ -1,11 +1,11 @@
 #' @title Stewart Potentials
 #' @name stewart
 #' @description This function computes the potentials as defined by J.Q. Stewart (1942).
-#' @param knownpts sp or sf object; this is the set of known observations to 
-#' estimate the potentials from.
-#' @param unknownpts sp or sf object; this is the set of unknown units for which 
-#' the function computes the estimates. Not used when \code{resolution} is set 
-#' up. (optional)
+#' @param knownpts sp object (SpatialPointsDataFrame or SpatialPolygonsDataFrame);
+#' this is the set of known observations to estimate the potentials from.
+#' @param unknownpts sp object (SpatialPointsDataFrame or SpatialPolygonsDataFrame); 
+#' this is the set of unknown units for which the function computes the estimates. 
+#' Not used when \code{resolution} is set up. (optional)
 #' @param matdist matrix; distance matrix between known observations and unknown 
 #' units for which the function computes the estimates. Row names match the row 
 #' names of \code{knownpts} and column names match the row names of 
@@ -24,18 +24,17 @@
 #' @param span numeric; distance where the density of probability of the spatial 
 #' interaction function equals 0.5.
 #' @param beta numeric; impedance factor for the spatial interaction function.  
-#' @param resolution numeric; resolution of the output grid (in map units). 
-#' If resolution is not set, the grid will contain around 7250 points. (optional)
-#' @param mask sp or sf object; the spatial extent of this object is used to 
-#' create the regularly spaced points output. (optional)
+#' @param resolution numeric; resolution of the output SpatialPointsDataFrame
+#'  (in map units). If resolution is not set, the grid will contain around 7250 
+#'  points. (optional)
+#' @param mask sp object; the spatial extent of this object is used to 
+#' create the regularly spaced SpatialPointsDataFrame output. (optional)
 #' @param longlat	logical; if FALSE, Euclidean distance, if TRUE Great Circle 
 #' (WGS84 ellipsoid) distance.
 #' @param bypassctrl logical; bypass the distance matrix size control (see 
 #' \code{\link{CreateDistMatrix}} Details).
-#' @return Point object with the computed potentials in a new field 
-#' named \code{OUTPUT}. If \code{knownpts} is an sp object, the output is a 
-#' SpatialPointsDataFrame; if \code{knownpts} is an sf object, the output is an 
-#' sf POINT data.frame.
+#' @return SpatialPointsDataFrame with the computed potentials in a new field 
+#' named \code{OUTPUT}
 #' @seealso \link{rasterStewart}, \link{plotStewart}, \link{quickStewart},
 #' \link{rasterToContourPoly}, \link{CreateGrid}, \link{CreateDistMatrix}.
 #' @examples 
@@ -79,48 +78,47 @@ stewart <- function(knownpts,
                     bypassctrl = FALSE, 
                     longlat = TRUE)
 {
-  # test sf
-  sfsp <- is(knownpts, "sf")
-  if(sfsp){knownpts <- as(knownpts, "Spatial")}
-  
+  TestSp(knownpts)
   if (!is.null(unknownpts)){  
-    if(is(unknownpts, "sf")){unknownpts <- as(unknownpts, "Spatial")}
+    TestSp(unknownpts)
+    if(identicalCRS(knownpts,unknownpts) == FALSE){
+      stop(paste("Inputs (",quote(knownpts), " and ",quote(unknownpts),
+                 ") do not use the same projection", sep = ""),call. = FALSE)
+    }
     if (!is.null(matdist)){
-      matdist <- UseDistMatrix(matdist = matdist, knownpts = knownpts, 
+      matdist <- UseDistMatrix(matdist =matdist, knownpts = knownpts, 
                                unknownpts =  unknownpts) 
     }else{
       matdist <- CreateDistMatrix(knownpts = knownpts, unknownpts = unknownpts, 
                                   bypassctrl = bypassctrl, longlat = longlat)
     }
   } else {
-    if(is.null(mask)){
-      mask <- knownpts
-    } else {
-      if(is(mask, "sf")){mask <- as(mask, "Spatial")}
-      projError(mask)
-    }
-    unknownpts <- CreateGrid(w = mask, resolution = resolution) 
+    unknownpts <- CreateGrid(w = if(is.null(mask)){knownpts} else {mask}, 
+                             resolution = resolution) 
     matdist <- CreateDistMatrix(knownpts = knownpts, unknownpts = unknownpts, 
                                 bypassctrl = bypassctrl, longlat = longlat) 
   }
+  
+  
   matdens <- ComputeInteractDensity(matdist = matdist, typefct = typefct,
                                     beta = beta, span = span)
+  
   matopport <- ComputeOpportunity(knownpts = knownpts, matdens = matdens, 
                                   varname = varname)
+  
   unknownpts <- ComputePotentials(unknownpts = unknownpts, 
                                   matopport = matopport)
-  if(sfsp){unknownpts <- st_as_sf(unknownpts)}
+  
   return(unknownpts)
 }
 
-
-#' @title Create a Raster from a Stewart Regular Grid
+#' @title Create a Raster from a Stewart SpatialPointsDataFrame
 #' @name rasterStewart
 #' @description This function creates a raster from a regularly spaced 
-#' Stewart points grid (output of the \code{\link{stewart}} function). 
-#' @param x sp or sf object; output of the \code{stewart} 
+#' Stewart SpatialPointsDataFrame (output of the \code{\link{stewart}} function). 
+#' @param x sp object (SpatialPointsDataFrame); output of the \code{stewart} 
 #' function.
-#' @param mask sp or sf object; this object is used to clip 
+#' @param mask sp object (SpatialPolygonsDataFrame); this object is used to clip 
 #' the raster. (optional)
 #' @return Raster of potential values.
 #' @seealso \link{stewart}, \link{quickStewart}, \link{plotStewart}, 
@@ -139,13 +137,11 @@ stewart <- function(knownpts,
 #' @import raster
 #' @export
 rasterStewart <- function(x, mask = NULL){
-  if(is(x, "sf")){x <- as(x, "Spatial")}
   gridded(x) <- TRUE
   r <- raster(x)
   rasterx <- rasterize(x[!is.na(x$OUTPUT),], r, field = 'OUTPUT')
   if(!is.null(mask)){
-    if(is(mask, "sf")){mask <- as(mask, "Spatial")}
-    projError(x, mask)
+    TestSp(mask)
     rasterx <- mask(rasterx, mask = mask)
   }
   return(rasterx)
@@ -220,7 +216,7 @@ plotStewart <- function(x, add = FALSE,
                    fill = rev(col), cex = 0.7, 
                    plot = TRUE, bty = "n", 
                    title = "Potentials")
-  
+
   return(invisible(bks))
 }
 

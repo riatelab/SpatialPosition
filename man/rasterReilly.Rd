@@ -2,14 +2,14 @@
 % Please edit documentation in R/reilly.R
 \name{rasterReilly}
 \alias{rasterReilly}
-\title{Create a Raster from a Reilly Regular Grid}
+\title{Create a Raster from a Reilly SpatialPointsDataFrame}
 \usage{
 rasterReilly(x, mask = NULL)
 }
 \arguments{
-\item{x}{sp or sf object; output of the \code{reilly} function.}
+\item{x}{sp object (SpatialPointsDataFrame); output of the \code{reilly} function.}
 
-\item{mask}{sp or sf object; this object is used to clip 
+\item{mask}{sp object (SpatialPolygonsDataFrame); this object is used to clip 
 the raster. (optional)}
 }
 \value{
@@ -20,7 +20,7 @@ unique(levels(rasterName)[[1]])} to see the correpondance table.
 }
 \description{
 This function creates a raster from a regularly spaced 
-Reilly grid (output of the \code{\link{reilly}} function).
+Reilly SpatialPointsDataFrame (output of the \code{\link{reilly}} function).
 }
 \examples{
 data(spatData)

@@ -2,15 +2,15 @@
 % Please edit documentation in R/stewart.R
 \name{rasterStewart}
 \alias{rasterStewart}
-\title{Create a Raster from a Stewart Regular Grid}
+\title{Create a Raster from a Stewart SpatialPointsDataFrame}
 \usage{
 rasterStewart(x, mask = NULL)
 }
 \arguments{
-\item{x}{sp or sf object; output of the \code{stewart} 
+\item{x}{sp object (SpatialPointsDataFrame); output of the \code{stewart} 
 function.}
 
-\item{mask}{sp or sf object; this object is used to clip 
+\item{mask}{sp object (SpatialPolygonsDataFrame); this object is used to clip 
 the raster. (optional)}
 }
 \value{
@@ -18,7 +18,7 @@ Raster of potential values.
 }
 \description{
 This function creates a raster from a regularly spaced 
-Stewart points grid (output of the \code{\link{stewart}} function).
+Stewart SpatialPointsDataFrame (output of the \code{\link{stewart}} function).
 }
 \examples{
 data(spatData)
