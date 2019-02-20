@@ -72,7 +72,6 @@ The set of known points are the hospitals and the weighting variable -- i.e. the
 
 ````{r , fig.width=7, fig.height=5}
 library(SpatialPosition)
-library(sp)
 library(sf)
 data(spatData)
 
@@ -87,7 +86,7 @@ potentials <- stewart(
   mask = spatMask
 )
 
-isopotentials <- isoStewart(x = potentials, mask = st_as_sf(spatMask))
+isopotentials <- isopoly(x = potentials, mask = spatMask)
 
 lab <- paste0(round(isopotentials$min,0),' to ', 
               round(isopotentials$max,0))
@@ -109,6 +108,7 @@ mtext(text = "Potential nb. of beds
 We now want to draw the catchment areas corresponing to the public hospitals. These areas could be used as a zoning tool, in order to set the residential zones with its referent hospital. As for the global accessibility, three steps are needed: computing the values (`reilly`), creating the raster (`rasterReilly`), plotting the raster (`plotReilly`).
 
 ````{r , fig.width=5, fig.height=5}
+library(raster)
 row.names(spatPts)
 catchReilly <- reilly(knownpts = spatPts, varname = "Capacite",
                       typefct = "exponential", span = 750, beta = 2,

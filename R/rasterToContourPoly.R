@@ -1,19 +1,17 @@
-#' @title Create Spatial Polygons Contours from a Raster
+#' @title Create a SpatialPolygonsDataFrame from a Raster
 #' @name rasterToContourPoly
 #' @description 
-#' This function creates spatial polygons of contours from a raster.
+#' This function creates a contour SpatialPolygonsDataFrame from a raster.
 #' @param r raster; the raster must contain only positive values.
 #' @param nclass numeric; a number of class.
 #' @param breaks numeric; a vector of break values. 
-#' @param mask SpatialPolygonsDataFrame or sf POLYGON data.frame; mask used to 
-#' clip contour shapes. 
+#' @param mask SpatialPolygonsDataFrame; mask used to clip contour shapes. 
 #' The mask should have a smaller extent than r.
-#' @param sf boolean; if TRUE, the output is an sf POLYGON data.frame
-#' @return If sf is FALSE, the ouput of the function is a SpatialPolygonsDataFrame. 
-#' If sf is TRUE the output is an sf POLYGON data.frame.
-#' The data frame contains four fields: 
+#' @return The ouput of the function is a SpatialPolygonsDataFrame. 
+#' The data frame of the outputed SpatialPolygonsDataFrame contains four fields: 
 #' id (id of each polygon), min and max (minimum and maximum breaks of the polygon), 
-#' center (central values of classes).
+#' center (central values of classes)
+#' @details This function uses the rgeos package.
 #' @seealso \link{stewart}, \link{rasterStewart}, \link{plotStewart}, 
 #' \link{quickStewart}, \link{CreateGrid}, \link{CreateDistMatrix}.
 #' @import sp
@@ -51,16 +49,14 @@
 #' par(opar)
 #' }
 #' @export
-rasterToContourPoly <- function(r, nclass = 8, breaks = NULL, mask = NULL, sf = FALSE){
+rasterToContourPoly <- function(r, nclass = 8, breaks = NULL, mask = NULL){
+  .Deprecated(new = "isopoly", package = "SpatialPosition" )
   breaks <- get_bks(r = r, nclass =  nclass, breaks = breaks)
   res <- get_mask(r, mask)
   res2 <- adjust_bks(r = res$r, breaks = breaks)
   res3 <- get_poly(r = res2$r, breaks = res2$breaks, finalBreaks = res2$finalBreaks)
   res4 <- add_hole(res3)
   result <- mask_clip(res4, res$mask)
-  if(sf){
-    result <- sf::st_as_sf(result)
-  }
   return(result)
 }
 
@@ -102,7 +98,6 @@ get_bks <- function(r, nclass = 8, breaks = NULL){
 get_mask <- function(r, mask){
   myres <- raster::res(r)[1]
   if(!is.null(mask)){
-    if(is(mask, "sf")){mask <- as(mask, "Spatial")}
     bmask <- TRUE
     # Dissolve the mask
     mask <- rgeos::gUnaryUnion(mask)

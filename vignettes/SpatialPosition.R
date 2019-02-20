@@ -1,6 +1,5 @@
 ## ---- fig.width=7, fig.height=5------------------------------------------
 library(SpatialPosition)
-library(sp)
 library(sf)
 data(spatData)
 
@@ -15,7 +14,7 @@ potentials <- stewart(
   mask = spatMask
 )
 
-isopotentials <- isoStewart(x = potentials, mask = st_as_sf(spatMask))
+isopotentials <- isopoly(x = potentials, mask = spatMask)
 
 lab <- paste0(round(isopotentials$min,0),' to ', 
               round(isopotentials$max,0))
@@ -32,6 +31,7 @@ mtext(text = "Potential nb. of beds
 
 
 ## ---- fig.width=5, fig.height=5------------------------------------------
+library(raster)
 row.names(spatPts)
 catchReilly <- reilly(knownpts = spatPts, varname = "Capacite",
                       typefct = "exponential", span = 750, beta = 2,

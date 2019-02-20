@@ -1,5 +1,5 @@
 #' @title Create Spatial Polygons Contours from a Raster
-#' @name isoStewart
+#' @name isopoly
 #' @description 
 #' This function creates spatial polygons of contours from a raster.
 #' @param x sf POINT data.frame; must contain X, Y and OUTPUT fields.
@@ -20,7 +20,7 @@
 #' @importFrom isoband isobands iso_to_sfg
 #' @importFrom methods is
 #' @export
-isoStewart <- function(x, nclass = 8, breaks, mask, 
+isopoly <- function(x, nclass = 8, breaks, mask, 
                        xcoords = "COORDX", ycoords = "COORDY", 
                        var = "OUTPUT"){
   # get initial min and max values

@@ -86,19 +86,19 @@ quickStewart <- function(x, spdf, df, spdfid = NULL, dfid = NULL, var,
                          bypassctrl = FALSE){
   # IDs  
   if(!missing(spdf)){
-  if (is.null(spdfid)){spdfid <- names(spdf@data)[1]}
-  if (is.null(dfid)){dfid <- names(df)[1]}
-  # Join
-  spdf@data <- data.frame(spdf@data[,spdfid], 
-                          df[match(spdf@data[,spdfid], df[,dfid]),])
-  spdf <- spdf[!is.na(spdf@data[,dfid]),]
-  
+    if (is.null(spdfid)){spdfid <- names(spdf@data)[1]}
+    if (is.null(dfid)){dfid <- names(df)[1]}
+    # Join
+    spdf@data <- data.frame(spdf@data[,spdfid], 
+                            df[match(spdf@data[,spdfid], df[,dfid]),])
+    spdf <- spdf[!is.na(spdf@data[,dfid]),]
+    
     x <- st_as_sf(spdf)
-  
+    
   }
   
   
-   # pot computation
+  # pot computation
   pot <- stewart(knownpts = x, 
                  varname = var, 
                  typefct = typefct, 
@@ -117,14 +117,14 @@ quickStewart <- function(x, spdf, df, spdfid = NULL, dfid = NULL, var,
                     resolution = resolution, 
                     mask = mask, 
                     bypassctrl = bypassctrl)
-
+    
     pot$OUTPUT   <- pot$OUTPUT / pot2$OUTPUT
   }
-
+  
   # Spdf creation
-  pot <- isoStewart(x =  pot,
-                                  nclass = nclass, 
-                                  breaks = breaks, 
-                                  mask = mask)
+  pot <- isopoly(x =  pot,
+                 nclass = nclass, 
+                 breaks = breaks, 
+                 mask = mask)
   return(pot)
 }

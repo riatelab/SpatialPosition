@@ -2,9 +2,8 @@
 
 export(CreateDistMatrix)
 export(CreateGrid)
-export(contourStewart)
 export(huff)
-export(isoStewart)
+export(isopoly)
 export(mcStewart)
 export(plotHuff)
 export(plotReilly)
