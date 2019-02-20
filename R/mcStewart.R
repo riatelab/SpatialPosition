@@ -120,7 +120,7 @@ mcStewart <- function(knownpts, unknownpts = NULL,
                                        proj4string = knownpts@proj4string)
   }
   
-
+  
   # launch multiple cores
   if (is.null(cl)){
     cl <- parallel::detectCores(all.tests = FALSE, logical = FALSE)
@@ -159,6 +159,3 @@ mcStewart <- function(knownpts, unknownpts = NULL,
   if(sfsp){unknownpts <- st_as_sf(unknownpts)}
   return(unknownpts)
 }
-
-
-

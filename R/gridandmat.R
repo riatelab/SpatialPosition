@@ -146,8 +146,8 @@ CreateDistMatrix  <- function(knownpts,
              call. = F)
       }
     }
-  }
-
+}
+  
   
   # polygon mngmnt
   if(!is(st_geometry(knownpts), "sfc_POINT")){
