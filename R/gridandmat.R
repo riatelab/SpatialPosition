@@ -151,14 +151,13 @@ CreateDistMatrix  <- function(knownpts,
   
   # polygon mngmnt
   if(!is(st_geometry(knownpts), "sfc_POINT")){
-    st_geometry(knownpts) <- st_centroid(st_geometry(knownpts))
+    st_geometry(knownpts) <- st_centroid(st_geometry(knownpts), of_largest_polygon = TRUE)
   }
   if(!is(st_geometry(unknownpts), "sfc_POINT")){
-    st_geometry(unknownpts) <- st_centroid(st_geometry(unknownpts))
+    st_geometry(unknownpts) <- st_centroid(st_geometry(unknownpts), of_largest_polygon = TRUE)
   }
   
-  
-  
+
   if(!st_is_longlat(knownpts)){
     if(longlat){
       knownpts <- st_transform(knownpts, 4326)
