@@ -17,6 +17,7 @@ Imports:
     grDevices,
     graphics,
     methods,
+    lwgeom,
     rgeos, 
     isoband, 
     raster
