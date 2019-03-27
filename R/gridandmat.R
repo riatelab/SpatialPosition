@@ -32,6 +32,10 @@ CreateGrid <- function (w, resolution)
     resolution <- sqrt(((boundingBox[3] - boundingBox[1]) * 
                           (boundingBox[4] - boundingBox[2]))/4000)
   }
+  if(is.null(resolution)){
+    resolution <- sqrt(((boundingBox[3] - boundingBox[1]) * 
+                          (boundingBox[4] - boundingBox[2]))/4000)
+  }
   rounder <- boundingBox %% resolution
   boundingBox[c(1,3)] <- boundingBox[c(1,3)] - rounder[c(1,3)]
   boundingBox[c(2,4)] <- boundingBox[c(2,4)] + resolution - rounder[c(2,4)]
