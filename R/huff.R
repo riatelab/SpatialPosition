@@ -32,82 +32,49 @@
 #' \code{\link{CreateDistMatrix}} Details).
 #' @param longlat	logical; if FALSE, Euclidean distance, if TRUE Great Circle 
 #' (WGS84 ellipsoid) distance.
+#' @param returnclass "sp" or "sf"; class of the returned object.
 #' @return Point object with the computed catchment areas in a new 
 #' field named \code{OUTPUT}.
-#' If \code{knownpts} is an sp object, the output is a 
-#' SpatialPointsDataFrame; if \code{knownpts} is an sf object, the output is an 
-#' sf POINT data.frame.
 #' @seealso \link{huff}, \link{rasterHuff}, \link{plotHuff}, \link{CreateGrid}, 
 #' \link{CreateDistMatrix}.
-#' @examples 
-#' # Create a SpatialPointsDataFrame grid of spatMask extent and 200 meters 
+#' @examples
+#' # Create a grid of paris extent and 200 meters
 #' # resolution
-#' data(spatData)
-#' mygrid <- CreateGrid(w = spatMask, resolution = 200)
-#' # Create a distance matrix between known points (spatPts) and mygrid
-#' mymat <- CreateDistMatrix(knownpts = spatPts, unknownpts = mygrid)
-#' # Compute Huff catchment areas from known points (spatPts) on a given 
+#' data(hospital)
+#' mygrid <- CreateGrid(w = paris, resolution = 200)
+#' # Create a distance matrix between known points (hospital) and mygrid
+#' mymat <- CreateDistMatrix(knownpts = hospital, unknownpts = mygrid)
+#' # Compute Huff catchment areas from known points (hospital) on a given
 #' # grid (mygrid) using a given distance matrix (mymat)
-#' myhuff <- huff(knownpts = spatPts, unknownpts = mygrid, 
-#'                matdist = mymat, varname = "Capacite", 
-#'                typefct = "exponential", span = 1250, 
-#'                beta = 3, mask = spatMask)
-#' # Compute Huff catchment areas from known points (spatPts) on a 
+#' myhuff <- huff(knownpts = hospital, unknownpts = mygrid,
+#'                matdist = mymat, varname = "capacity",
+#'                typefct = "exponential", span = 1250,
+#'                beta = 3, mask = paris)
+#' # Compute Huff catchment areas from known points (hospital) on a
 #' # grid defined by its resolution
-#' myhuff2 <- huff(knownpts = spatPts, varname = "Capacite", 
-#'                       typefct = "exponential", span = 1250, beta = 3, 
-#'                       resolution = 200, mask = spatMask)
+#' myhuff2 <- huff(knownpts = hospital, varname = "capacity",
+#'                 typefct = "exponential", span = 1250, beta = 3,
+#'                 resolution = 200, mask = paris)
 #' # The two methods have the same result
 #' identical(myhuff, myhuff2)
-#' # the function output a SpatialPointsDataFrame
+#' # the function output an sf object
 #' class(myhuff)
 #' @references HUFF D. (1964) Defining and Estimating a Trading Area. Journal of Marketing, 28: 34-38.
-#' @import sp
-#' @import raster
+#' @importFrom methods is as
+#' @importFrom sf st_as_sf
 #' @export
-huff <- function(knownpts,
-                 unknownpts = NULL,
-                 matdist = NULL,
-                 varname,
-                 typefct = "exponential", 
-                 span,
-                 beta,
-                 resolution = NULL,
-                 mask = NULL,
-                 bypassctrl = FALSE, 
-                 longlat = TRUE)
-{
-  # test sf
-  sfsp <- is(knownpts, "sf")
-  if(sfsp){knownpts <- as(knownpts, "Spatial")}
-  
-  if (!is.null(unknownpts)){  
-    if(is(unknownpts, "sf")){unknownpts <- as(unknownpts, "Spatial")}
-    if (!is.null(matdist)){
-      matdist <- UseDistMatrix(matdist = matdist, knownpts = knownpts, 
-                               unknownpts =  unknownpts) 
-    }else{
-      matdist <- CreateDistMatrix(knownpts = knownpts, unknownpts = unknownpts, 
-                                  bypassctrl = bypassctrl, longlat = longlat) 
-    }
-  } else {
-    if(is.null(mask)){
-      mask <- knownpts
-    } else {
-      if(is(mask, "sf")){mask <- as(mask, "Spatial")}
-      projError(mask)
-    }
-    unknownpts <- CreateGrid(w = mask, resolution = resolution) 
-    matdist <- CreateDistMatrix(knownpts = knownpts, unknownpts = unknownpts, 
-                                bypassctrl = bypassctrl, longlat = longlat) 
-  }
-  
-  matdens <- ComputeInteractDensity(matdist = matdist, typefct = typefct,
+huff <- function(knownpts, unknownpts, matdist, varname,
+                 typefct = "exponential", span, beta, resolution, mask, 
+                 bypassctrl = FALSE, longlat = TRUE, returnclass="sf"){
+  res <- prepdata(knownpts = knownpts, unknownpts = unknownpts, 
+                  matdist = matdist, bypassctrl = bypassctrl, longlat = longlat,
+                  mask = mask, resolution = resolution) 
+  matdens <- ComputeInteractDensity(matdist = res$matdist, typefct = typefct,
                                     beta = beta, span = span)
-  matopport <- ComputeOpportunity(knownpts = knownpts, matdens = matdens, 
+  matopport <- ComputeOpportunity(knownpts = res$knownpts, matdens = matdens, 
                                   varname = varname)
-  unknownpts <- ComputeHuff(unknownpts = unknownpts, matopport = matopport)
-  if(sfsp){unknownpts <- st_as_sf(unknownpts)}
+  unknownpts <- ComputeHuff(unknownpts = res$unknownpts, matopport = matopport)
+  if(returnclass=="sp"){unknownpts <- as(unknownpts, "Spatial")}
   return(unknownpts)
 }
 
@@ -115,22 +82,22 @@ huff <- function(knownpts,
 #' @name rasterHuff
 #' @description This function creates a raster from a regularly spaced 
 #' Huff grid (output of the \code{\link{huff}} function). 
-#' @param x sp or sf object;; output of the \code{huff} function.
+#' @param x sp or sf object; output of the \code{huff} function.
 #' @param mask sp or sf object; this object is used to clip 
 #' the raster. (optional)
 #' @return Raster of catchment areas values.
 #' @seealso \link{huff}, \link{rasterHuff}, \link{plotHuff}, \link{CreateGrid}, 
 #' \link{CreateDistMatrix}.
 #' @examples
-#' library(raster) 
-#' data(spatData)
-#' # Compute Huff catchment areas from known points (spatPts) on a
+#' library(raster)
+#' data(hospital)
+#' # Compute Huff catchment areas from known points (hospital) on a
 #' # grid defined by its resolution
-#' myhuff <- huff(knownpts = spatPts, varname = "Capacite",
+#' myhuff <- huff(knownpts = hospital, varname = "capacity",
 #'                typefct = "exponential", span = 750, beta = 2,
-#'                resolution = 100, mask = spatMask)
+#'                resolution = 100, mask = paris)
 #' # Create a raster of huff values
-#' myhuffraster <- rasterHuff(x = myhuff, mask = spatMask)
+#' myhuffraster <- rasterHuff(x = myhuff, mask = paris)
 #' plot(myhuffraster)
 #' @import sp
 #' @import raster
@@ -158,15 +125,15 @@ rasterHuff <- function(x, mask = NULL){
 #' @return Display the raster nicely.
 #' @seealso \link{huff}, \link{rasterHuff}, \link{plotHuff}, \link{CreateGrid}, 
 #' \link{CreateDistMatrix}.
-#' @examples 
-#' data(spatData)
-#' # Compute Huff catchment areas from known points (spatPts) on a
+#' @examples
+#' data(hospital)
+#' # Compute Huff catchment areas from known points (hospital) on a
 #' # grid defined by its resolution
-#' myhuff <- huff(knownpts = spatPts, varname = "Capacite",
+#' myhuff <- huff(knownpts = hospital, varname = "capacity",
 #'                typefct = "exponential", span = 750, beta = 2,
-#'                resolution = 100, mask = spatMask)
+#'                resolution = 100, mask = paris)
 #' # Create a raster of huff values
-#' myhuffraster <- rasterHuff(x = myhuff, mask = spatMask)
+#' myhuffraster <- rasterHuff(x = myhuff, mask = paris)
 #' plotHuff(myhuffraster)
 #' @import raster
 #' @import sp

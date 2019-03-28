@@ -1,4 +1,32 @@
 # Internal functions
+
+prepdata <- function(knownpts, unknownpts, matdist, bypassctrl, longlat, mask, 
+                     resolution){
+  if(is(knownpts, "Spatial")){knownpts <- st_as_sf(knownpts)}
+  if (!missing(unknownpts)){  
+    if(is(unknownpts, "Spatial")){unknownpts <- st_as_sf(unknownpts)}
+    
+    if (!missing(matdist)){
+      matdist <- UseDistMatrix(matdist = matdist, knownpts = knownpts, 
+                               unknownpts =  unknownpts) 
+    }else{
+      matdist <- CreateDistMatrix(knownpts = knownpts, unknownpts = unknownpts, 
+                                  bypassctrl = bypassctrl, longlat = longlat)
+    }
+  }else{
+    if(missing(mask)){
+      mask <- knownpts
+    } else {
+      if(is(mask, "Spatial")){unknownpts <- st_as_sf(mask)}
+    }
+    unknownpts <- CreateGrid(w = mask, resolution = resolution) 
+    matdist <- CreateDistMatrix(knownpts = knownpts, unknownpts = unknownpts, 
+                                bypassctrl = bypassctrl, longlat = longlat) 
+  }
+  return(list(knownpts=knownpts, unknownpts = unknownpts, matdist = matdist))
+}
+
+
 UseDistMatrix <- function(matdist, knownpts, unknownpts){
   i <- factor(row.names(knownpts), levels = row.names(knownpts))
   j <- factor(row.names(unknownpts), levels = row.names(unknownpts))

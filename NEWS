@@ -1,3 +1,12 @@
+SpatialPosition version 2.0.0 (Release date: 2019-04-)
+==============
+
+Major and breaking changes:
+* sf and sp objects are allowed as input and output
+* functions use sf for spatial computation
+* rasterToContourPoly() (based on rgeos & sp) is deprecated in favor of isopoly() (based on isoband and sf). 
+
+
 
 SpatialPosition version 1.2.0 (Release date: 2017-09-06)
 ==============

@@ -11,14 +11,15 @@
 #' SpatialPointsDataFrame; if \code{w} is an sf object, the output is an sf 
 #' POINT data.frame.
 #' @seealso \link{CreateDistMatrix}
-#' @examples 
-#' # Create a SpatialPointsDataFrame grid of spatMask extent and 200 meters 
+#' @examples
+#' # Create a grid of paris extent and 200 meters
 #' # resolution
-#' library(sp)
-#' data(spatData)
-#' mygrid <- CreateGrid(w = spatMask, resolution = 200)
-#' plot(mygrid, cex = 0.1, pch = ".")
-#' plot(spatMask, border="red", lwd = 2, add = TRUE)
+#' library(SpatialPosition)
+#' library(sf)
+#' data(hospital)
+#' mygrid <- CreateGrid(w = paris, resolution = 200)
+#' plot(st_geometry(mygrid), cex = 0.1, pch = ".")
+#' plot(st_geometry(paris), border="red", lwd = 2, add = TRUE)
 #' @importFrom sf st_as_sf st_crs st_bbox
 #' @importFrom methods is
 #' @export
@@ -52,31 +53,6 @@ CreateGrid <- function (w, resolution)
                          COORDY = spatGrid[, 2])
   spatGrid <- st_as_sf(spatGrid, coords = c("COORDX", "COORDY"),
                        crs = st_crs(w), remove = FALSE)
-  
-  # result <- tryCatch({
-  #   x <- spTransform(spatGrid, "+init=epsg:4326")
-  #   TRUE
-  # }, warning = function(war) {
-  #   return(FALSE)
-  # }, error = function(err) {
-  #   return(FALSE)
-  # }, finally = {
-  # })
-  # 
-  # if (result==FALSE){
-  #   pref <- SpatialPoints(coords = data.frame(x = c(-179.9999,179.9999),
-  #                                             y =  c(89.9999,-89.9999) ),
-  #                         proj4string = CRS("+init=epsg:4326"))
-  #   a <- raster::extent(sp::spTransform(pref, proj4string(w)))
-  #   b <- raster::extent(spatGrid)
-  #   e <- c(b[1], b[2], a[3], a[4])
-  #   spatGrid <- raster::crop(spatGrid, e)
-  # }
-  # 
-  # if(sfsp){
-  #   spatGrid <- sf::st_as_sf(spatGrid)
-  # }
-  
   return(spatGrid)
 }
 
@@ -91,9 +67,6 @@ CreateGrid <- function (w, resolution)
 #' @param longlat	logical; if FALSE, Euclidean distance, if TRUE Great Circle 
 #' (WGS84 ellipsoid) distance.
 #' @details The function returns a full matrix of distances in meters. 
-#' This is a wrapper
-#' for the \code{\link{spDists}} function. \cr
-#' 
 #' If the matrix to compute is too large (more than 100,000,000 cells, more than 
 #' 10,000,000 origins or more than 10,000,000 destinations) 
 #' the function sends a confirmation message to warn users about the amount of 
@@ -102,18 +75,19 @@ CreateGrid <- function (w, resolution)
 #' @return A distance matrix, row names are \code{knownpts} row names, column 
 #' names are \code{unknownpts} row names.
 #' @seealso \link{CreateGrid}
-#' @examples 
-#' # Create a SpatialPointsDataFrame grid of spatMask extent and 200 meters 
+#' @examples
+#' # Create a grid of paris extent and 200 meters
 #' # resolution
-#' data(spatData)
-#' mygrid <- CreateGrid(w = spatMask, resolution = 200)
-#' # Create a distance matrix between known spatPts and mygrid
-#' mymat <- CreateDistMatrix(knownpts = spatPts, unknownpts = mygrid)
+#' data(hospital)
+#' mygrid <- CreateGrid(w = paris, resolution = 200)
+#' # Create a distance matrix between known hospital and mygrid
+#' mymat <- CreateDistMatrix(knownpts = hospital, unknownpts = mygrid)
 #' mymat[1:5,1:5]
-#' nrow(spatPts)
+#' nrow(paris)
 #' nrow(mygrid)
 #' dim(mymat)
-#' @importFrom sf st_centroid st_geometry st_geometry<- st_as_sf st_is_longlat st_distance st_transform
+#' @importFrom sf st_centroid st_geometry st_geometry<- st_as_sf st_is_longlat 
+#' st_distance st_transform
 #' @importFrom methods is
 #' @export
 CreateDistMatrix  <- function(knownpts, 
@@ -124,7 +98,6 @@ CreateDistMatrix  <- function(knownpts,
   # test sf
   if(is(knownpts, "Spatial")){knownpts <- st_as_sf(knownpts)}
   if(is(unknownpts, "Spatial")){unknownpts <- st_as_sf(unknownpts)}
-  
   
   if (bypassctrl == FALSE){
     nk <- nrow(knownpts)
@@ -151,17 +124,16 @@ CreateDistMatrix  <- function(knownpts,
       }
     }
 }
-  
-  
   # polygon mngmnt
   if(!is(st_geometry(knownpts), "sfc_POINT")){
-    st_geometry(knownpts) <- st_centroid(st_geometry(knownpts), of_largest_polygon = TRUE)
+    st_geometry(knownpts) <- st_centroid(st_geometry(knownpts), 
+                                         of_largest_polygon = TRUE)
   }
   if(!is(st_geometry(unknownpts), "sfc_POINT")){
-    st_geometry(unknownpts) <- st_centroid(st_geometry(unknownpts), of_largest_polygon = TRUE)
+    st_geometry(unknownpts) <- st_centroid(st_geometry(unknownpts), 
+                                           of_largest_polygon = TRUE)
   }
   
-
   if(!st_is_longlat(knownpts)){
     if(longlat){
       knownpts <- st_transform(knownpts, 4326)
@@ -171,8 +143,6 @@ CreateDistMatrix  <- function(knownpts,
   x <- st_distance(knownpts, unknownpts)
   mat = as.vector(x)
   dim(mat) = dim(x)
-  
   dimnames(mat) <- list(row.names(knownpts), row.names(unknownpts))
-  
   return(round(mat, digits = 2))
 }
