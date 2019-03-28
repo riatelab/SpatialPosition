@@ -1,16 +1,16 @@
 #' @title Stewart Potentials
 #' @name stewart
 #' @description This function computes the potentials as defined by J.Q. Stewart (1942).
-#' @param knownpts sp object (SpatialPointsDataFrame or SpatialPolygonsDataFrame);
-#' this is the set of known observations to estimate the potentials from.
-#' @param unknownpts sp object (SpatialPointsDataFrame or SpatialPolygonsDataFrame); 
-#' this is the set of unknown units for which the function computes the estimates. 
-#' Not used when \code{resolution} is set up. (optional)
+#' @param knownpts sp or sf object; this is the set of known observations to 
+#' estimate the potentials from.
+#' @param unknownpts sp or sf object; this is the set of unknown units for which 
+#' the function computes the estimates. Not used when \code{resolution} is set 
+#' up. (optional)
 #' @param matdist matrix; distance matrix between known observations and unknown 
 #' units for which the function computes the estimates. Row names match the row 
 #' names of \code{knownpts} and column names match the row names of 
 #' \code{unknownpts}. \code{matdist} can contain any distance metric (time 
-#' distance or euclidean distance for example). If \code{matdist} is NULL, the distance 
+#' distance or euclidean distance for example). If \code{matdist} is missing, the distance 
 #' matrix is built with \code{\link{CreateDistMatrix}}. (optional)
 #' @param varname character; name of the variable in the \code{knownpts} dataframe 
 #' from which potentials are computed. Quantitative variable with no negative values. 
@@ -24,124 +24,98 @@
 #' @param span numeric; distance where the density of probability of the spatial 
 #' interaction function equals 0.5.
 #' @param beta numeric; impedance factor for the spatial interaction function.  
-#' @param resolution numeric; resolution of the output SpatialPointsDataFrame
-#'  (in map units). If resolution is not set, the grid will contain around 7250 
-#'  points. (optional)
-#' @param mask sp object; the spatial extent of this object is used to 
-#' create the regularly spaced SpatialPointsDataFrame output. (optional)
+#' @param resolution numeric; resolution of the output grid (in map units). 
+#' If resolution is not set, the grid will contain around 7250 points. (optional)
+#' @param mask sp or sf object; the spatial extent of this object is used to 
+#' create the regularly spaced points output. (optional)
 #' @param longlat	logical; if FALSE, Euclidean distance, if TRUE Great Circle 
 #' (WGS84 ellipsoid) distance.
 #' @param bypassctrl logical; bypass the distance matrix size control (see 
 #' \code{\link{CreateDistMatrix}} Details).
-#' @return SpatialPointsDataFrame with the computed potentials in a new field 
-#' named \code{OUTPUT}
+#' @param returnclass "sp" or "sf"; class of the returned object.
+#' @return Point object with the computed potentials in a new field 
+#' named \code{OUTPUT}. 
 #' @seealso \link{rasterStewart}, \link{plotStewart}, \link{quickStewart},
 #' \link{rasterToContourPoly}, \link{CreateGrid}, \link{CreateDistMatrix}.
-#' @examples 
-#' # Create a SpatialPointsDataFrame grid of spatMask extent and 200 meters 
+#' @examples
+#' # Create a grid of paris extent and 200 meters
 #' # resolution
-#' data(spatData)
-#' mygrid <- CreateGrid(w = spatMask, resolution = 200)
+#' data(hospital)
+#' mygrid <- CreateGrid(w = paris, resolution = 200)
 #' # Create a distance matrix between known points (spatPts) and mygrid
-#' mymat <- CreateDistMatrix(knownpts = spatPts, unknownpts = mygrid)
-#' # Compute Stewart potentials from known points (spatPts) on a given 
+#' mymat <- CreateDistMatrix(knownpts = hospital, unknownpts = mygrid)
+#' # Compute Stewart potentials from known points (spatPts) on a given
 #' # grid (mygrid) using a given distance matrix (mymat)
-#' mystewart <- stewart(knownpts = spatPts, unknownpts = mygrid, 
-#'                      matdist = mymat, varname = "Capacite", 
-#'                      typefct = "exponential", span = 1250, 
-#'                      beta = 3, mask = spatMask)
-#' # Compute Stewart potentials from known points (spatPts) on a 
+#' mystewart <- stewart(knownpts = hospital, unknownpts = mygrid,
+#'                      matdist = mymat, varname = "capacity",
+#'                      typefct = "exponential", span = 1250,
+#'                      beta = 3, mask = paris)
+#' # Compute Stewart potentials from known points (spatPts) on a
 #' # grid defined by its resolution
-#' mystewart2 <- stewart(knownpts = spatPts, varname = "Capacite", 
-#'                       typefct = "exponential", span = 1250, beta = 3, 
-#'                       resolution = 200, mask = spatMask)
+#' mystewart2 <- stewart(knownpts = hospital, varname = "capacity",
+#'                       typefct = "exponential", span = 1250, beta = 3,
+#'                       resolution = 200, mask = paris)
 #' # The two methods have the same result
 #' identical(mystewart, mystewart2)
-#' # the function output a SpatialPointsDataFrame
+#' # the function output a sf data.frame
 #' class(mystewart)
 #' # Computed values
 #' summary(mystewart$OUTPUT)
 #' @references 
 #' STEWART J.Q. (1942) "Measure of the influence of a population at a distance", Sociometry, 5(1): 63-71.  
-#' @import sp
-#' @import raster
+#' @importFrom methods is as
+#' @importFrom sf st_as_sf
 #' @export
-stewart <- function(knownpts,
-                    unknownpts = NULL,
-                    matdist = NULL,
-                    varname,
-                    typefct = "exponential", 
-                    span,
-                    beta,
-                    resolution = NULL,
-                    mask = NULL,
-                    bypassctrl = FALSE, 
-                    longlat = TRUE)
-{
-  TestSp(knownpts)
-  if (!is.null(unknownpts)){  
-    TestSp(unknownpts)
-    if(identicalCRS(knownpts,unknownpts) == FALSE){
-      stop(paste("Inputs (",quote(knownpts), " and ",quote(unknownpts),
-                 ") do not use the same projection", sep = ""),call. = FALSE)
-    }
-    if (!is.null(matdist)){
-      matdist <- UseDistMatrix(matdist =matdist, knownpts = knownpts, 
-                               unknownpts =  unknownpts) 
-    }else{
-      matdist <- CreateDistMatrix(knownpts = knownpts, unknownpts = unknownpts, 
-                                  bypassctrl = bypassctrl, longlat = longlat)
-    }
-  } else {
-    unknownpts <- CreateGrid(w = if(is.null(mask)){knownpts} else {mask}, 
-                             resolution = resolution) 
-    matdist <- CreateDistMatrix(knownpts = knownpts, unknownpts = unknownpts, 
-                                bypassctrl = bypassctrl, longlat = longlat) 
-  }
-  
-  
-  matdens <- ComputeInteractDensity(matdist = matdist, typefct = typefct,
+stewart <- function(knownpts,unknownpts, matdist, varname, 
+                    typefct = "exponential", span, beta, resolution, mask, 
+                    bypassctrl = FALSE, longlat = TRUE,  returnclass = "sf"){
+  res <- prepdata(knownpts = knownpts, unknownpts = unknownpts, 
+                  matdist = matdist, bypassctrl = bypassctrl, longlat = longlat,
+                  mask = mask, resolution = resolution) 
+  matdens <- ComputeInteractDensity(matdist = res$matdist, typefct = typefct,
                                     beta = beta, span = span)
-  
-  matopport <- ComputeOpportunity(knownpts = knownpts, matdens = matdens, 
+  matopport <- ComputeOpportunity(knownpts = res$knownpts, matdens = matdens, 
                                   varname = varname)
-  
-  unknownpts <- ComputePotentials(unknownpts = unknownpts, 
+  unknownpts <- ComputePotentials(unknownpts = res$unknownpts, 
                                   matopport = matopport)
-  
+  if(returnclass=="sp"){unknownpts <- as(unknownpts, "Spatial")}
   return(unknownpts)
 }
 
-#' @title Create a Raster from a Stewart SpatialPointsDataFrame
+
+#' @title Create a Raster from a Stewart Regular Grid
 #' @name rasterStewart
 #' @description This function creates a raster from a regularly spaced 
-#' Stewart SpatialPointsDataFrame (output of the \code{\link{stewart}} function). 
-#' @param x sp object (SpatialPointsDataFrame); output of the \code{stewart} 
+#' Stewart points grid (output of the \code{\link{stewart}} function). 
+#' @param x sp or sf object; output of the \code{stewart} 
 #' function.
-#' @param mask sp object (SpatialPolygonsDataFrame); this object is used to clip 
+#' @param mask sp or sf object; this object is used to clip 
 #' the raster. (optional)
 #' @return Raster of potential values.
 #' @seealso \link{stewart}, \link{quickStewart}, \link{plotStewart}, 
 #' \link{rasterToContourPoly}, \link{CreateGrid}, \link{CreateDistMatrix}.
 #' @examples
-#' data(spatData)
-#' # Compute Stewart potentials from known points (spatPts) on a
+#' library(raster)
+#' data(hospital)
+#' # Compute Stewart potentials from known points (hospital) on a
 #' # grid defined by its resolution
-#' mystewart <- stewart(knownpts = spatPts, varname = "Capacite",
+#' mystewart <- stewart(knownpts = hospital, varname = "capacity",
 #'                      typefct = "exponential", span = 1000, beta = 3,
-#'                      resolution = 100, mask = spatMask)
+#'                      resolution = 100, mask = paris)
 #' # Create a raster of potentials values
-#' mystewartraster <- rasterStewart(x = mystewart, mask = spatMask)
+#' mystewartraster <- rasterStewart(x = mystewart, mask = paris)
 #' plot(mystewartraster)
 #' @import sp
 #' @import raster
 #' @export
 rasterStewart <- function(x, mask = NULL){
+  if(is(x, "sf")){x <- as(x, "Spatial")}
   gridded(x) <- TRUE
   r <- raster(x)
   rasterx <- rasterize(x[!is.na(x$OUTPUT),], r, field = 'OUTPUT')
   if(!is.null(mask)){
-    TestSp(mask)
+    if(is(mask, "sf")){mask <- as(mask, "Spatial")}
+    projError(x, mask)
     rasterx <- mask(rasterx, mask = mask)
   }
   return(rasterx)
@@ -168,14 +142,14 @@ rasterStewart <- function(x, mask = NULL){
 #' @seealso \link{stewart}, \link{rasterStewart}, \link{quickStewart}, 
 #' \link{rasterToContourPoly}, \link{CreateGrid}, \link{CreateDistMatrix}.
 #' @examples 
-#' data(spatData)
-#' # Compute Stewart potentials from known points (spatPts) on a
+#' data(hospital)
+#' # Compute Stewart potentials from known points (hospital) on a
 #' # grid defined by its resolution
-#' mystewart <- stewart(knownpts = spatPts, varname = "Capacite",
+#' mystewart <- stewart(knownpts = hospital, varname = "capacity",
 #'                      typefct = "exponential", span = 1000, beta = 3,
-#'                      resolution = 100, mask = spatMask)
+#'                      resolution = 100, mask = paris)
 #' # Create a raster of potentials values
-#' mystewartraster <- rasterStewart(x = mystewart, mask = spatMask)
+#' mystewartraster <- rasterStewart(x = mystewart, mask = paris)
 #' # Plot stewart potentials nicely
 #' plotStewart(x = mystewartraster, add = FALSE, nclass = 5)
 #' # Can be used to obtain break values
@@ -216,7 +190,7 @@ plotStewart <- function(x, add = FALSE,
                    fill = rev(col), cex = 0.7, 
                    plot = TRUE, bty = "n", 
                    title = "Potentials")
-
+  
   return(invisible(bks))
 }
 

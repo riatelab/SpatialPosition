@@ -2,11 +2,11 @@
 #' @name mcStewart
 #' @description This function computes Stewart potentials using parallel 
 #' computation. 
-#' @param knownpts sp object (SpatialPointsDataFrame or SpatialPolygonsDataFrame);
-#' this is the set of known observations to estimate the potentials from.
-#' @param unknownpts sp object (SpatialPointsDataFrame or SpatialPolygonsDataFrame); 
-#' this is the set of unknown units for which the function computes the estimates. 
-#' Not used when \code{resolution} is set up. (optional)
+#' @param knownpts sp or sf object; this is the set of known observations to 
+#' estimate the potentials from.
+#' @param unknownpts sp or sf object; this is the set of unknown units for which 
+#' the function computes the estimates. Not used when \code{resolution} is set 
+#' up. (optional)
 #' @param varname character; name of the variable in the \code{knownpts} dataframe 
 #' from which potentials are computed. Quantitative variable with no negative values. 
 #' @param typefct character; spatial interaction function. Options are "pareto" 
@@ -22,8 +22,8 @@
 #' @param resolution numeric; resolution of the output SpatialPointsDataFrame
 #'  (in map units). If resolution is not set, the grid will contain around 7250 
 #'  points. (optional)
-#' @param mask sp object; the spatial extent of this object is used to 
-#' create the regularly spaced SpatialPointsDataFrame output. (optional)
+#' @param mask sp or sf object; the spatial extent of this object is used to 
+#' create the regularly spaced points output. (optional)
 #' @param cl numeric; number of clusters. By default cl is determined using 
 #' \code{parallel::detectCores()}.
 #' @param size numeric; mcStewart splits unknownpts in chunks, size indicates 
@@ -33,37 +33,38 @@
 #' @details The parallel implementation splits potentials computations along 
 #' chunks of unknownpts (or chunks of the grid defined using resolution). It only 
 #' uses Great Cercle distances (with \code{\link{CreateDistMatrix}}). 
-#' @return A Spatial*DataFrame with the computed potentials in a new field 
-#' named \code{OUTPUT} is returned. 
+#' @param returnclass "sp" or "sf"; class of the returned object.
+#' @return Point object with the computed potentials in a new field 
+#' named \code{OUTPUT}. 
 #' @seealso \link{stewart}.
-#' @examples 
+#' @examples
 #' \dontrun{
 #' if(require(cartography)){
 #'   nuts3.spdf@data <- nuts3.df
 #'   t1 <- system.time(
-#'     s1 <- stewart(knownpts = nuts3.spdf,resolution = 40000, 
+#'     s1 <- stewart(knownpts = nuts3.spdf,resolution = 40000,
 #'                   varname = "pop2008",
 #'                   typefct = "exponential", span = 100000,
 #'                   beta = 3, mask = nuts3.spdf)
 #'   )
 #'   
 #'   t2 <- system.time(
-#'     s2 <- mcStewart(knownpts = nuts3.spdf, resolution = 40000, 
-#'                      varname = "pop2008",
-#'                      typefct = "exponential", span = 100000,
-#'                      beta = 3, mask = nuts3.spdf, cl = 3, size = 500)
+#'     s2 <- mcStewart(knownpts = nuts3.spdf, resolution = 40000,
+#'                     varname = "pop2008",
+#'                     typefct = "exponential", span = 100000,
+#'                     beta = 3, mask = nuts3.spdf, cl = 3, size = 500)
 #'   )
 #'   identical(s1, s2)
 #'   cat("Elapsed time\n", "stewart:", t1[3], "\n parStewart:",t2[3])
 #'   
-#'   r2 <- rasterStewart(s2)
-#'   c2 <- rasterToContourPoly(r = r2, breaks = c(0,1000000,2000000, 5000000,
-#'                                                10000000, 20000000, 200004342), 
-#'                             mask = nuts3.spdf)
+#'   
+#'   iso <- isopoly(x = s2, breaks = c(0,1000000,2000000, 5000000,
+#'                                     10000000, 20000000, 200004342),
+#'                  mask = nuts3.spdf)
 #'   # cartography
 #'   opar <- par(mar = c(0,0,1.2,0))
-#'   bks <- sort(unique(c(c2$min, c2$max)))
-#'   choroLayer(spdf = c2, var = "center", breaks = bks, border = NA, 
+#'   bks <- sort(unique(c(iso$min, iso$max)))
+#'   choroLayer(x = iso, var = "center", breaks = bks, border = NA,
 #'              legend.title.txt = "pop")
 #'   layoutLayer("potential population", "","", scale = NULL)
 #'   par(opar)
@@ -72,13 +73,13 @@
 #' @import sp
 #' @import raster
 #' @export
-mcStewart <- function(knownpts, unknownpts = NULL,
+mcStewart <- function(knownpts, unknownpts,
                       varname,
                       typefct = "exponential",
-                      span, beta, resolution = NULL,
-                      mask = NULL, cl = NULL, size = 1000, 
-                      longlat = TRUE){
-  
+                      span, beta, resolution,
+                      mask, cl, size = 1000, 
+                      longlat = TRUE, returnclass="sf"){
+  # Check libraries
   if (!requireNamespace("parallel", quietly = TRUE)) {
     stop("'parallel' package needed for this function to work. Please install it.",
          call. = FALSE)
@@ -92,35 +93,32 @@ mcStewart <- function(knownpts, unknownpts = NULL,
          call. = FALSE)
   }
   
-  if (is.null(unknownpts)){
-    unknownpts <- CreateGrid(w = if(is.null(mask)){knownpts} else {mask},
-                             resolution = resolution)
-    unknownpts2 <- unknownpts
+  # data prep
+  if(is(knownpts, "Spatial")){knownpts <- st_as_sf(knownpts)}
+  if (!missing(unknownpts)){  
+    if(is(unknownpts, "Spatial")){unknownpts <- st_as_sf(unknownpts)}
   }else{
-    # SpatialPolygons to SpatialPoints
-    if(methods::is(object = unknownpts, "SpatialPolygons")){
-      unknownpts2 <- SpatialPointsDataFrame(coordinates(unknownpts),
-                                            data = unknownpts@data,
-                                            proj4string = unknownpts@proj4string)
-    }else{
-      unknownpts2 <- unknownpts
+    if(missing(mask)){
+      mask <- knownpts
+    } else {
+      if(is(mask, "Spatial")){unknownpts <- st_as_sf(mask)}
     }
+    unknownpts <- CreateGrid(w = mask, resolution = resolution) 
   }
-  # SpatialPolygons to SpatialPoints
-  if(methods::is(object = knownpts, "SpatialPolygons")){
-    knownpts <- SpatialPointsDataFrame(coordinates(knownpts),
-                                       data = knownpts@data,
-                                       proj4string = knownpts@proj4string)
-  }
+  unknownpts2 <- unknownpts
   
-  # force wgs84
-  # if(sp::is.projected(knownpts)){
-  #   knownpts <- sp::spTransform(knownpts,"+init=epsg:4326")
-  #   unknownpts2 <- sp::spTransform(unknownpts2,"+init=epsg:4326")
-  # }
+  # polygon mngmnt
+  if(!is(st_geometry(knownpts), "sfc_POINT")){
+    st_geometry(knownpts) <- st_centroid(st_geometry(knownpts), 
+                                         of_largest_polygon = TRUE)
+  }
+  if(!is(st_geometry(unknownpts2), "sfc_POINT")){
+    st_geometry(unknownpts2) <- st_centroid(st_geometry(unknownpts2), 
+                                           of_largest_polygon = TRUE)
+  }
   
   # launch multiple cores
-  if (is.null(cl)){
+  if (missing(cl)){
     cl <- parallel::detectCores(all.tests = FALSE, logical = FALSE)
   }
   cl <- parallel::makeCluster(cl)
@@ -138,7 +136,7 @@ mcStewart <- function(knownpts, unknownpts = NULL,
   
   ls <- foreach::`%dopar%`(foreach::foreach(i = ml, 
                                             .packages = c('SpatialPosition'),
-                                            .combine = rbind, .inorder = TRUE), 
+                                            .combine = rbind, .inorder = FALSE), 
                            {
                              mat <- CreateDistMatrix(knownpts = knownpts,
                                                      unknownpts = i,
@@ -149,12 +147,12 @@ mcStewart <- function(knownpts, unknownpts = NULL,
                                            matdist = mat,
                                            typefct = typefct,
                                            span = span, beta = beta,
-                                           varname = varname)
+                                           varname = varname, 
+                                           returnclass = "sf")
                            })
   parallel::stopCluster(cl)
   unknownpts$OUTPUT <- ls$OUTPUT
+  
+  if(returnclass=="sp"){unknownpts <- as(unknownpts, "Spatial")}
   return(unknownpts)
 }
-
-
-

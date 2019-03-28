@@ -4,23 +4,23 @@
 \alias{stewart}
 \title{Stewart Potentials}
 \usage{
-stewart(knownpts, unknownpts = NULL, matdist = NULL, varname,
-  typefct = "exponential", span, beta, resolution = NULL, mask = NULL,
-  bypassctrl = FALSE, longlat = TRUE)
+stewart(knownpts, unknownpts, matdist, varname, typefct = "exponential",
+  span, beta, resolution, mask, bypassctrl = FALSE, longlat = TRUE,
+  returnclass = "sf")
 }
 \arguments{
-\item{knownpts}{sp object (SpatialPointsDataFrame or SpatialPolygonsDataFrame);
-this is the set of known observations to estimate the potentials from.}
+\item{knownpts}{sp or sf object; this is the set of known observations to 
+estimate the potentials from.}
 
-\item{unknownpts}{sp object (SpatialPointsDataFrame or SpatialPolygonsDataFrame); 
-this is the set of unknown units for which the function computes the estimates. 
-Not used when \code{resolution} is set up. (optional)}
+\item{unknownpts}{sp or sf object; this is the set of unknown units for which 
+the function computes the estimates. Not used when \code{resolution} is set 
+up. (optional)}
 
 \item{matdist}{matrix; distance matrix between known observations and unknown 
 units for which the function computes the estimates. Row names match the row 
 names of \code{knownpts} and column names match the row names of 
 \code{unknownpts}. \code{matdist} can contain any distance metric (time 
-distance or euclidean distance for example). If \code{matdist} is NULL, the distance 
+distance or euclidean distance for example). If \code{matdist} is missing, the distance 
 matrix is built with \code{\link{CreateDistMatrix}}. (optional)}
 
 \item{varname}{character; name of the variable in the \code{knownpts} dataframe 
@@ -39,47 +39,48 @@ interaction function equals 0.5.}
 
 \item{beta}{numeric; impedance factor for the spatial interaction function.}
 
-\item{resolution}{numeric; resolution of the output SpatialPointsDataFrame
-(in map units). If resolution is not set, the grid will contain around 7250 
-points. (optional)}
+\item{resolution}{numeric; resolution of the output grid (in map units). 
+If resolution is not set, the grid will contain around 7250 points. (optional)}
 
-\item{mask}{sp object; the spatial extent of this object is used to 
-create the regularly spaced SpatialPointsDataFrame output. (optional)}
+\item{mask}{sp or sf object; the spatial extent of this object is used to 
+create the regularly spaced points output. (optional)}
 
 \item{bypassctrl}{logical; bypass the distance matrix size control (see 
 \code{\link{CreateDistMatrix}} Details).}
 
 \item{longlat}{logical; if FALSE, Euclidean distance, if TRUE Great Circle 
 (WGS84 ellipsoid) distance.}
+
+\item{returnclass}{"sp" or "sf"; class of the returned object.}
 }
 \value{
-SpatialPointsDataFrame with the computed potentials in a new field 
-named \code{OUTPUT}
+Point object with the computed potentials in a new field 
+named \code{OUTPUT}.
 }
 \description{
 This function computes the potentials as defined by J.Q. Stewart (1942).
 }
 \examples{
-# Create a SpatialPointsDataFrame grid of spatMask extent and 200 meters 
+# Create a grid of paris extent and 200 meters
 # resolution
-data(spatData)
-mygrid <- CreateGrid(w = spatMask, resolution = 200)
+data(hospital)
+mygrid <- CreateGrid(w = paris, resolution = 200)
 # Create a distance matrix between known points (spatPts) and mygrid
-mymat <- CreateDistMatrix(knownpts = spatPts, unknownpts = mygrid)
-# Compute Stewart potentials from known points (spatPts) on a given 
+mymat <- CreateDistMatrix(knownpts = hospital, unknownpts = mygrid)
+# Compute Stewart potentials from known points (spatPts) on a given
 # grid (mygrid) using a given distance matrix (mymat)
-mystewart <- stewart(knownpts = spatPts, unknownpts = mygrid, 
-                     matdist = mymat, varname = "Capacite", 
-                     typefct = "exponential", span = 1250, 
-                     beta = 3, mask = spatMask)
-# Compute Stewart potentials from known points (spatPts) on a 
+mystewart <- stewart(knownpts = hospital, unknownpts = mygrid,
+                     matdist = mymat, varname = "capacity",
+                     typefct = "exponential", span = 1250,
+                     beta = 3, mask = paris)
+# Compute Stewart potentials from known points (spatPts) on a
 # grid defined by its resolution
-mystewart2 <- stewart(knownpts = spatPts, varname = "Capacite", 
-                      typefct = "exponential", span = 1250, beta = 3, 
-                      resolution = 200, mask = spatMask)
+mystewart2 <- stewart(knownpts = hospital, varname = "capacity",
+                      typefct = "exponential", span = 1250, beta = 3,
+                      resolution = 200, mask = paris)
 # The two methods have the same result
 identical(mystewart, mystewart2)
-# the function output a SpatialPointsDataFrame
+# the function output a sf data.frame
 class(mystewart)
 # Computed values
 summary(mystewart$OUTPUT)

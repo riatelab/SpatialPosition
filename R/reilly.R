@@ -1,9 +1,9 @@
 #' @title Reilly Catchment Areas
 #' @name reilly
 #' @description This function computes the catchment areas as defined by W.J. Reilly (1931).
-#' @param knownpts sp object (SpatialPointsDataFrame or SpatialPolygonsDataFrame); 
+#' @param knownpts sp or sf object; 
 #' this is the set of known observations to estimate the catchment areas from.
-#' @param unknownpts sp object (SpatialPointsDataFrame or SpatialPolygonsDataFrame); 
+#' @param unknownpts sp or sf object; 
 #' this is the set of unknown units for which the function computes the estimates. 
 #' Not used when \code{resolution} is set up. (optional)
 #' @param matdist matrix; distance matrix between known observations and unknown 
@@ -24,39 +24,38 @@
 #' @param span numeric; distance where the density of probability of the spatial 
 #' interaction function equals 0.5.
 #' @param beta numeric; impedance factor for the spatial interaction function.  
-#' @param resolution numeric; resolution of the output SpatialPointsDataFrame
-#'  (in map units). If resolution is not set, the grid will contain around 7250 
-#'  points. (optional)
-#' @param mask sp object; the spatial extent of this object is used to 
-#' create the regularly spaced SpatialPointsDataFrame output. (optional)
+#' @param resolution numeric; resolution of the output grid (in map units). 
+#' If resolution is not set, the grid will contain around 7250 points. (optional)
+#' @param mask sp or sf object; the spatial extent of this object is used to 
+#' create the regularly spaced points output. (optional)
 #' @param bypassctrl logical; bypass the distance matrix size control (see 
 #' \code{\link{CreateDistMatrix}} Details).
 #' @param longlat	logical; if FALSE, Euclidean distance, if TRUE Great Circle 
 #' (WGS84 ellipsoid) distance.
-#' @return SpatialPointsDataFrame with the computed catchment areas in a new 
+#' @param returnclass "sp" or "sf"; class of the returned object.
+#' @return Point object with the computed catchment areas in a new 
 #' field named \code{OUTPUT}. Values match the row names of \code{knownpts}.
 #' @seealso \link{reilly}, \link{rasterReilly}, \link{plotReilly}, \link{CreateGrid}, 
 #' \link{CreateDistMatrix}.
 #' @examples 
-#' # Create a SpatialPointsDataFrame grid of spatMask extent and 200 meters 
+#' # Create a grid of paris extent and 200 meters
 #' # resolution
-#' data(spatData)
-#' mygrid <- CreateGrid(w = spatMask, resolution = 200)
-#' # Create a distance matrix between known points (spatPts) and mygrid
-#' mymat <- CreateDistMatrix(knownpts = spatPts, unknownpts = mygrid)
-#' # Compute Reilly catchment areas from known points (spatPts) on a given 
+#' data(hospital)
+#' mygrid <- CreateGrid(w = hospital, resolution = 200)
+#' # Create a distance matrix between known points (hospital) and mygrid
+#' mymat <- CreateDistMatrix(knownpts = hospital, unknownpts = mygrid)
+#' # Compute Reilly catchment areas from known points (hospital) on a given
 #' # grid (mygrid) using a given distance matrix (mymat)
-#' myreilly2 <- reilly(knownpts = spatPts, unknownpts = mygrid, 
-#'                matdist = mymat, varname = "Capacite", 
-#'                typefct = "exponential", span = 1250, 
-#'                beta = 3, mask = spatMask)
-#' row.names(spatPts) <- spatPts$CodHop
-#' # Compute Reilly catchment areas from known points (spatPts) on a 
+#' myreilly2 <- reilly(knownpts = hospital, unknownpts = mygrid,
+#'                     matdist = mymat, varname = "capacity",
+#'                     typefct = "exponential", span = 1250,
+#'                     beta = 3, mask = paris)
+#' # Compute Reilly catchment areas from known points (hospital) on a
 #' # grid defined by its resolution
-#' myreilly <- reilly(knownpts = spatPts, varname = "Capacite", 
-#'                 typefct = "exponential", span = 1250, beta = 3, 
-#'                 resolution = 200, mask = spatMask)
-#' # The function output a SpatialPointsDataFrame
+#' myreilly <- reilly(knownpts = hospital, varname = "capacity",
+#'                    typefct = "exponential", span = 1250, beta = 3,
+#'                    resolution = 200, mask = paris)
+#' # The function output an sf object
 #' class(myreilly)
 #' # The OUTPUT field values match knownpts row names
 #' head(unique(myreilly$OUTPUT))
@@ -64,58 +63,28 @@
 #' @import sp
 #' @import raster
 #' @export
-reilly <- function(knownpts,
-                   unknownpts = NULL,
-                   matdist = NULL,
-                   varname,
-                   typefct = "exponential", 
-                   span,
-                   beta,
-                   resolution = NULL,
-                   mask = NULL,
-                   bypassctrl = FALSE, 
-                   longlat = TRUE)
-{
-  TestSp(knownpts)
-  if (!is.null(unknownpts)){  
-    TestSp(unknownpts)
-    if(identicalCRS(knownpts,unknownpts) == FALSE){
-      stop(paste("Inputs (",quote(knownpts), " and ",quote(unknownpts),
-                 ") do not use the same projection", sep = ""),call. = FALSE)
-    }
-    if (!is.null(matdist)){
-      matdist <- UseDistMatrix(matdist =matdist, knownpts = knownpts, 
-                               unknownpts =  unknownpts) 
-    }else{
-      matdist <- CreateDistMatrix(knownpts = knownpts, unknownpts = unknownpts, 
-                                  bypassctrl = bypassctrl, longlat = longlat) 
-    }
-  } else {
-    unknownpts <- CreateGrid(w = if(is.null(mask)){knownpts} else {mask}, 
-                             resolution = resolution) 
-    matdist <- CreateDistMatrix(knownpts = knownpts, unknownpts = unknownpts, 
-                                bypassctrl = bypassctrl, longlat = longlat) 
-  }
-  
-  
-  matdens <- ComputeInteractDensity(matdist = matdist, typefct = typefct,
+reilly <- function(knownpts, unknownpts, matdist, varname,
+                   typefct = "exponential", span, beta, resolution, mask,
+                   bypassctrl = FALSE, longlat = TRUE, returnclass="sf"){
+  res <- prepdata(knownpts = knownpts, unknownpts = unknownpts, 
+                  matdist = matdist, bypassctrl = bypassctrl, longlat = longlat,
+                  mask = mask, resolution = resolution) 
+  matdens <- ComputeInteractDensity(matdist = res$matdist, typefct = typefct,
                                     beta = beta, span = span)
-  
-  matopport <- ComputeOpportunity(knownpts = knownpts, matdens = matdens, 
+  matopport <- ComputeOpportunity(knownpts = res$knownpts, matdens = matdens, 
                                   varname = varname)
-  
-  unknownpts <- ComputeReilly(unknownpts = unknownpts, 
+  unknownpts <- ComputeReilly(unknownpts = res$unknownpts, 
                               matopport = matopport)
-  
+  if(returnclass=="sp"){unknownpts <- as(unknownpts, "Spatial")}
   return(unknownpts)
 }
 
-#' @title Create a Raster from a Reilly SpatialPointsDataFrame
+#' @title Create a Raster from a Reilly Regular Grid
 #' @name rasterReilly
 #' @description This function creates a raster from a regularly spaced 
-#' Reilly SpatialPointsDataFrame (output of the \code{\link{reilly}} function). 
-#' @param x sp object (SpatialPointsDataFrame); output of the \code{reilly} function.
-#' @param mask sp object (SpatialPolygonsDataFrame); this object is used to clip 
+#' Reilly grid (output of the \code{\link{reilly}} function). 
+#' @param x sp or sf object; output of the \code{reilly} function.
+#' @param mask sp or sf object; this object is used to clip 
 #' the raster. (optional)
 #' @return Raster of catchment areas values.
 #' The raster uses a RAT (\code{\link{ratify}}) that contains the 
@@ -123,16 +92,16 @@ reilly <- function(knownpts,
 #' unique(levels(rasterName)[[1]])} to see the correpondance table.
 #' @seealso \link{reilly}, \link{rasterReilly}, \link{plotReilly}, \link{CreateGrid}, 
 #' \link{CreateDistMatrix}.
-#' @examples 
-#' data(spatData)
-#' row.names(spatPts) <- spatPts$CodHop
-#' # Compute Reilly catchment areas from known points (spatPts) on a
+#' @examples
+#' library(raster)
+#' data(hospital)
+#' # Compute Reilly catchment areas from known points (hospital) on a
 #' # grid defined by its resolution
-#' myreilly <- reilly(knownpts = spatPts, varname = "Capacite",
-#'                    typefct = "exponential", span = 750, beta = 2,
-#'                    resolution = 100, mask = spatMask)
+#' myreilly <- reilly(knownpts = hospital, varname = "capacity",
+#'                    typefct = "exponential", span = 1250, beta = 3,
+#'                    resolution = 200, mask = paris)
 #' # Create a raster of reilly values
-#' myreillyraster <- rasterReilly(x = myreilly, mask = spatMask)
+#' myreillyraster <- rasterReilly(x = myreilly, mask = paris)
 #' plot(myreillyraster, col = rainbow(18))
 #' # Correspondance between raster values and reilly areas
 #' head(unique(levels(myreillyraster)[[1]]))
@@ -140,6 +109,7 @@ reilly <- function(knownpts,
 #' @import raster
 #' @export
 rasterReilly <- function(x ,mask = NULL){
+  if(is(x, "sf")){x <- as(x, "Spatial")}
   gridded(x) <- TRUE
   r <- raster(x)
   x$OUTPUT2 <- as.factor(x$OUTPUT)
@@ -147,10 +117,10 @@ rasterReilly <- function(x ,mask = NULL){
   x$OUTPUT2 <- as.numeric(x$OUTPUT2)
   rasterx <- rasterize(x, r, field = 'OUTPUT2')
   if(!is.null(mask)){
-    TestSp(mask)
+    if(is(mask, "sf")){mask <- as(mask, "Spatial")}
+    projError(x, mask)
     rasterx <- mask(rasterx, mask = mask)
   }
-  ratify(rasterx)
   levels(rasterx) <- data.frame(ID = x$OUTPUT2, idarea = x$OUTPUT)
   return(rasterx)
 }
@@ -166,16 +136,15 @@ rasterReilly <- function(x ,mask = NULL){
 #' @details Display the raster nicely.
 #' @seealso \link{reilly}, \link{rasterReilly}, \link{plotReilly}, \link{CreateGrid}, 
 #' \link{CreateDistMatrix}.
-#' @examples 
-#' data(spatData)
-#' row.names(spatPts) <- spatPts$CodHop
-#' # Compute Reilly catchment areas from known points (spatPts) on a
+#' @examples
+#' data(hospital)
+#' # Compute Reilly catchment areas from known points (hospital) on a
 #' # grid defined by its resolution
-#' myreilly <- reilly(knownpts = spatPts, varname = "Capacite",
-#'                    typefct = "exponential", span = 750, beta = 2,
-#'                    resolution = 100, mask = spatMask)
+#' myreilly <- reilly(knownpts = hospital, varname = "capacity",
+#'                    typefct = "exponential", span = 1250, beta = 3,
+#'                    resolution = 200, mask = paris)
 #' # Create a raster of reilly values
-#' myreillyraster <- rasterReilly(x = myreilly, mask = spatMask)
+#' myreillyraster <- rasterReilly(x = myreilly, mask = paris)
 #' # Plot the raster nicely
 #' plotReilly(x = myreillyraster)
 #' @import sp

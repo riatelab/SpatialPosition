@@ -4,15 +4,15 @@
 \alias{smoothy}
 \title{Stewart Smooth}
 \usage{
-smoothy(knownpts, unknownpts = NULL, matdist = NULL, varname,
-  typefct = "exponential", span, beta, resolution = NULL, mask = NULL,
-  bypassctrl = FALSE, longlat = TRUE)
+smoothy(knownpts, unknownpts, matdist, varname, typefct = "exponential",
+  span, beta, resolution, mask, bypassctrl = FALSE, longlat = TRUE,
+  returnclass = "sf")
 }
 \arguments{
-\item{knownpts}{sp object (SpatialPointsDataFrame or SpatialPolygonsDataFrame);
-this is the set of known observations to estimate the potentials from.}
+\item{knownpts}{sp or sf object; this is the set of known observations to 
+estimate the potentials from.}
 
-\item{unknownpts}{sp object (SpatialPointsDataFrame or SpatialPolygonsDataFrame); 
+\item{unknownpts}{sp or sf object;
 this is the set of unknown units for which the function computes the estimates. 
 Not used when \code{resolution} is set up. (optional)}
 
@@ -39,22 +39,24 @@ interaction function equals 0.5.}
 
 \item{beta}{numeric; impedance factor for the spatial interaction function.}
 
-\item{resolution}{numeric; resolution of the output SpatialPointsDataFrame
+\item{resolution}{numeric; resolution of the output grid
 (in map units). If resolution is not set, the grid will contain around 7250 
 points. (optional)}
 
-\item{mask}{sp object; the spatial extent of this object is used to 
-create the regularly spaced SpatialPointsDataFrame output. (optional)}
+\item{mask}{sp or sf object; the spatial extent of this object is used to 
+create the regularly spaced points output. (optional)}
 
 \item{bypassctrl}{logical; bypass the distance matrix size control (see 
 \code{\link{CreateDistMatrix}} Details).}
 
 \item{longlat}{logical; if FALSE, Euclidean distance, if TRUE Great Circle 
 (WGS84 ellipsoid) distance.}
+
+\item{returnclass}{"sp" or "sf"; class of the returned object.}
 }
 \value{
-SpatialPointsDataFrame with the computed potentials in a new field 
-named \code{OUTPUT}
+Point object with the computed distance weighted mean in a new field 
+named \code{OUTPUT}.
 }
 \description{
 This function computes a distance weighted mean. It offers the 
@@ -62,29 +64,27 @@ same parameters as \code{\link{stewart}}: user defined distance matrix, user
 defined impedance function (power or exponential), user defined exponent.
 }
 \examples{
-# Create a SpatialPointsDataFrame grid of spatMask extent and 200 meters 
+# Create a grid of paris extent and 200 meters
 # resolution
-data(spatData)
-mygrid <- CreateGrid(w = spatMask, resolution = 200)
-# Create a distance matrix between known points (spatPts) and mygrid
-mymat <- CreateDistMatrix(knownpts = spatPts, unknownpts = mygrid)
-# Compute Stewart potentials from known points (spatPts) on a given 
+data(hospital)
+mygrid <- CreateGrid(w = paris, resolution = 200)
+# Create a distance matrix between known points (hospital) and mygrid
+mymat <- CreateDistMatrix(knownpts = hospital, unknownpts = mygrid)
+# Compute  distance weighted mean from known points (hospital) on a given
 # grid (mygrid) using a given distance matrix (mymat)
-mystewart <- smoothy(knownpts = spatPts, unknownpts = mygrid, 
-                     matdist = mymat, varname = "Capacite", 
-                     typefct = "exponential", span = 1250, 
-                     beta = 3, mask = spatMask)
-# Compute Stewart potentials from known points (spatPts) on a 
+mysmoothy <- smoothy(knownpts = hospital, unknownpts = mygrid,
+                     matdist = mymat, varname = "capacity",
+                     typefct = "exponential", span = 1250,
+                     beta = 3, mask = paris)
+# Compute  distance weighted mean from known points (hospital) on a
 # grid defined by its resolution
-mystewart2 <- smoothy(knownpts = spatPts, varname = "Capacite", 
-                      typefct = "exponential", span = 1250, beta = 3, 
-                      resolution = 200, mask = spatMask)
+mysmoothy2 <- smoothy(knownpts = hospital, varname = "capacity",
+                      typefct = "exponential", span = 1250, beta = 3,
+                      resolution = 200, mask = paris)
 # The two methods have the same result
-identical(mystewart, mystewart2)
-# the function output a SpatialPointsDataFrame
-class(mystewart)
+identical(mysmoothy, mysmoothy2)
 # Computed values
-summary(mystewart$OUTPUT)
+summary(mysmoothy$OUTPUT)
 }
 \seealso{
 \link{stewart}.

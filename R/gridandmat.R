@@ -1,92 +1,72 @@
-#' @title Create a Regularly Spaced SpatialPointsDataFrame
+#' @title Create a Regularly Spaced Points Grid
 #' @name CreateGrid
-#' @description This function creates a regular grid of SpatialPointsDataFrame 
-#' from the extent of a given sp object and a given resolution.
-#' @param w sp object; the spatial extent of this object is used to 
-#' create the regular SpatialPointsDataFrame.
+#' @description This function creates a regular grid of points 
+#' from the extent of a given spatial object and a given resolution.
+#' @param w sp or sf object; the spatial extent of this object is used to 
+#' create the regular grid.
 #' @param resolution numeric; resolution of the grid (in map units). If 
 #' resolution is not set, the grid will contain around 7500 points. (optional)
-#' @return The output of the function is a SpatialPointsDataFrame of regularly
-#' spaced points with the same extent as \code{w}. 
+#' @return The output of the function is a regularly spaced points grid with the 
+#' extent of \code{w}. If \code{w} is an sp object, the output is a 
+#' SpatialPointsDataFrame; if \code{w} is an sf object, the output is an sf 
+#' POINT data.frame.
 #' @seealso \link{CreateDistMatrix}
-#' @examples 
-#' # Create a SpatialPointsDataFrame grid of spatMask extent and 200 meters 
+#' @examples
+#' # Create a grid of paris extent and 200 meters
 #' # resolution
-#' data(spatData)
-#' mygrid <- CreateGrid(w = spatMask, resolution = 200)
-#' plot(mygrid, cex = 0.1, pch = ".")
-#' plot(spatMask, border="red", lwd = 2, add = TRUE)
-#' @import sp
+#' library(SpatialPosition)
+#' library(sf)
+#' data(hospital)
+#' mygrid <- CreateGrid(w = paris, resolution = 200)
+#' plot(st_geometry(mygrid), cex = 0.1, pch = ".")
+#' plot(st_geometry(paris), border="red", lwd = 2, add = TRUE)
+#' @importFrom sf st_as_sf st_crs st_bbox
+#' @importFrom methods is
 #' @export
 CreateGrid <- function (w, resolution)
 {
-  # w <- wo
-  # resolution <- 5000000
-  TestSp(w)
-  boundingBox <- bbox(w)
+  # test sf
+  if(is(w, "Spatial")){w <- st_as_sf(w)}
+  
+  boundingBox <- st_bbox(w)
+  if(missing(resolution)){
+    resolution <- sqrt(((boundingBox[3] - boundingBox[1]) * 
+                          (boundingBox[4] - boundingBox[2]))/4000)
+  }
   if(is.null(resolution)){
-    resolution <- sqrt(((boundingBox[1,2] - boundingBox[1,1]) * 
-                          (boundingBox[2,2] - boundingBox[2,1]))/4000)
+    resolution <- sqrt(((boundingBox[3] - boundingBox[1]) * 
+                          (boundingBox[4] - boundingBox[2]))/4000)
   }
   rounder <- boundingBox %% resolution
-  boundingBox[,1] <- boundingBox[,1] - rounder[,1]
-  boundingBox[,2] <- boundingBox[,2] + resolution - rounder[,2]
-  boxCoordX <- seq(from = boundingBox[1,1] - resolution * 2, 
-                   to = boundingBox[1,2]+resolution * 2, 
+  boundingBox[c(1,3)] <- boundingBox[c(1,3)] - rounder[c(1,3)]
+  boundingBox[c(2,4)] <- boundingBox[c(2,4)] + resolution - rounder[c(2,4)]
+  boxCoordX <- seq(from = boundingBox[1] - resolution * 2, 
+                   to = boundingBox[3]+resolution * 2, 
                    by = resolution)
-  boxCoordY <- seq(from = boundingBox[2,1] - resolution * 2, 
-                   to = boundingBox[2,2] + resolution * 2, 
+  boxCoordY <- seq(from = boundingBox[2] - resolution * 2, 
+                   to = boundingBox[4] + resolution * 2, 
                    by = resolution)
   
   spatGrid <- expand.grid(boxCoordX, boxCoordY)
-  
-  idSeq <- seq(1, nrow(spatGrid), 1)
-  
-  spatGrid <- data.frame(ID = idSeq, 
+  spatGrid <- data.frame(ID = 1:nrow(spatGrid),
                          COORDX = spatGrid[, 1], 
                          COORDY = spatGrid[, 2])
-  
-  spatGrid <- SpatialPointsDataFrame(coords = spatGrid[ , c(2, 3)], 
-                                     data = spatGrid, 
-                                     proj4string = CRS(proj4string(w)))
-  
-  result <- tryCatch({
-    x <- spTransform(spatGrid, "+init=epsg:4326")
-    TRUE
-  }, warning = function(war) {
-    return(FALSE)
-  }, error = function(err) {
-    return(FALSE)
-  }, finally = {
-  })
-  
-  if (result==FALSE){
-    pref <- SpatialPoints(coords = data.frame(x = c(-179.9999,179.9999),
-                                              y =  c(89.9999,-89.9999) ),
-                          proj4string = CRS("+init=epsg:4326"))
-    a <- raster::extent(sp::spTransform(pref, proj4string(w)))
-    b <- raster::extent(spatGrid)
-    e <- c(b[1], b[2], a[3], a[4])
-    spatGrid <- raster::crop(spatGrid, e)
-  }
-  
+  spatGrid <- st_as_sf(spatGrid, coords = c("COORDX", "COORDY"),
+                       crs = st_crs(w), remove = FALSE)
   return(spatGrid)
 }
 
 
-#' @title Create a Distance Matrix Between Two Sp Objects
+#' @title Create a Distance Matrix Between Two Spatial Objects
 #' @name CreateDistMatrix
 #' @description This function creates a distance matrix between two 
-#' sp objects (SpatialPointsDataFrame or SpatialPolygonsDataFrame).
-#' @param knownpts sp object; rows of the distance matrix.
-#' @param unknownpts sp object; columns of the distance matrix.
+#' spatial objects (sp or sf objects).
+#' @param knownpts sp or sf object; rows of the distance matrix.
+#' @param unknownpts sp or sf object; columns of the distance matrix.
 #' @param bypassctrl logical; bypass the distance matrix size control (see Details).
 #' @param longlat	logical; if FALSE, Euclidean distance, if TRUE Great Circle 
 #' (WGS84 ellipsoid) distance.
 #' @details The function returns a full matrix of distances in meters. 
-#' This is a wrapper
-#' for the \code{\link{spDists}} function. \cr
-#' 
 #' If the matrix to compute is too large (more than 100,000,000 cells, more than 
 #' 10,000,000 origins or more than 10,000,000 destinations) 
 #' the function sends a confirmation message to warn users about the amount of 
@@ -95,31 +75,30 @@ CreateGrid <- function (w, resolution)
 #' @return A distance matrix, row names are \code{knownpts} row names, column 
 #' names are \code{unknownpts} row names.
 #' @seealso \link{CreateGrid}
-#' @examples 
-#' # Create a SpatialPointsDataFrame grid of spatMask extent and 200 meters 
+#' @examples
+#' # Create a grid of paris extent and 200 meters
 #' # resolution
-#' data(spatData)
-#' mygrid <- CreateGrid(w = spatMask, resolution = 200)
-#' # Create a distance matrix between known spatPts and mygrid
-#' mymat <- CreateDistMatrix(knownpts = spatPts, unknownpts = mygrid)
+#' data(hospital)
+#' mygrid <- CreateGrid(w = paris, resolution = 200)
+#' # Create a distance matrix between known hospital and mygrid
+#' mymat <- CreateDistMatrix(knownpts = hospital, unknownpts = mygrid)
 #' mymat[1:5,1:5]
-#' nrow(spatPts)
+#' nrow(paris)
 #' nrow(mygrid)
 #' dim(mymat)
-#' @import sp
-#' @import rgdal
+#' @importFrom sf st_centroid st_geometry st_geometry<- st_as_sf st_is_longlat 
+#' st_distance st_transform
+#' @importFrom methods is
 #' @export
 CreateDistMatrix  <- function(knownpts, 
                               unknownpts, 
                               bypassctrl = FALSE, 
                               longlat = TRUE)
 {
-  TestSp(knownpts)
-  TestSp(unknownpts)
-  if(identicalCRS(knownpts,unknownpts) == FALSE){
-    stop(paste("Inputs (",quote(knownpts), " and ",quote(unknownpts),
-               ") do not use the same projection", sep = ""),call. = FALSE)
-  }
+  # test sf
+  if(is(knownpts, "Spatial")){knownpts <- st_as_sf(knownpts)}
+  if(is(unknownpts, "Spatial")){unknownpts <- st_as_sf(unknownpts)}
+  
   if (bypassctrl == FALSE){
     nk <- nrow(knownpts)
     nu <- nrow(unknownpts)
@@ -136,42 +115,34 @@ CreateDistMatrix  <- function(knownpts,
         if (z == "y"){
           cat("Ok, YOLO!")
         } else {
-          stop("Computation aborted. Matrix would probably be too big.",
+          stop("Computation aborted. Matrix would probably be too large.",
                call. = F)
         }
       } else {
-        stop("Computation aborted. Matrix would probably be too big.", 
+        stop("Computation aborted. Matrix would probably be too large.", 
              call. = F)
       }
     }
+}
+  # polygon mngmnt
+  if(!is(st_geometry(knownpts), "sfc_POINT")){
+    st_geometry(knownpts) <- st_centroid(st_geometry(knownpts), 
+                                         of_largest_polygon = TRUE)
+  }
+  if(!is(st_geometry(unknownpts), "sfc_POINT")){
+    st_geometry(unknownpts) <- st_centroid(st_geometry(unknownpts), 
+                                           of_largest_polygon = TRUE)
   }
   
-  if(methods::is(knownpts, "SpatialPolygons")){
-    knownpts <- SpatialPointsDataFrame(coordinates(knownpts), 
-                                       data = knownpts@data, 
-                                       proj4string = knownpts@proj4string)
-    
-    
-  }
-  if(methods::is(unknownpts, "SpatialPolygons")){
-    unknownpts <- SpatialPointsDataFrame(coordinates(unknownpts), 
-                                         data = unknownpts@data, 
-                                         proj4string = unknownpts@proj4string)
-  }
-  
-  if(sp::is.projected(knownpts)){
+  if(!st_is_longlat(knownpts)){
     if(longlat){
-      knownpts <- sp::spTransform(knownpts,"+init=epsg:4326")
-      unknownpts <- sp::spTransform(unknownpts,"+init=epsg:4326")
-      matDist <- sp::spDists(x = knownpts, y = unknownpts, longlat = TRUE) * 1000
-    }else{
-      matDist <- sp::spDists(x = knownpts, y = unknownpts, longlat = FALSE)
+      knownpts <- st_transform(knownpts, 4326)
+      unknownpts <- st_transform(unknownpts, 4326)
     }
-  }else{
-    matDist <- sp::spDists(x = knownpts, y = unknownpts, longlat = TRUE) * 1000
   }
-  
-  dimnames(matDist) <- list(row.names(knownpts), row.names(unknownpts))
-  
-  return(round(matDist, digits = 8))
+  x <- st_distance(knownpts, unknownpts)
+  mat = as.vector(x)
+  dim(mat) = dim(x)
+  dimnames(mat) <- list(row.names(knownpts), row.names(unknownpts))
+  return(round(mat, digits = 2))
 }

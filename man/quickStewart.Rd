@@ -4,11 +4,14 @@
 \alias{quickStewart}
 \title{Create a SpatialPolygonsDataFrame of Potentials Contours}
 \usage{
-quickStewart(spdf, df, spdfid = NULL, dfid = NULL, var, var2 = NULL,
-  typefct = "exponential", span, beta, resolution = NULL, mask = NULL,
-  nclass = 8, breaks = NULL, bypassctrl = FALSE)
+quickStewart(x, spdf, df, spdfid = NULL, dfid = NULL, var, var2,
+  typefct = "exponential", span, beta, resolution, mask, nclass = 8,
+  breaks, bypassctrl = FALSE)
 }
 \arguments{
+\item{x}{sp or sf object; this is the set of known observations to 
+estimate the potentials from.}
+
 \item{spdf}{a SpatialPolygonsDataFrame.}
 
 \item{df}{a data frame that contains the values to compute}
@@ -41,7 +44,8 @@ interaction function equals 0.5.}
 (in map units). If resolution is not set, the grid will contain around 7250 
 points. (optional)}
 
-\item{mask}{SpatialPolygonsDataFrame; mask used to clip contours of potentials.}
+\item{mask}{sp or sf object; the spatial extent of this object is used to 
+create the regularly spaced points output. (optional)}
 
 \item{nclass}{numeric; a targeted number of classes (default to 8). Not used 
 if breaks is set.}
@@ -52,7 +56,7 @@ if breaks is set.}
 \code{\link{CreateDistMatrix}} Details).}
 }
 \value{
-A SpatialPolygonsDataFrame is returned (see \link{rasterToContourPoly} Value).
+An sf object is returned (see \link{isopoly} Value).
 }
 \description{
 This function is a wrapper around \link{stewart}, \link{rasterStewart} 
@@ -62,45 +66,40 @@ This function creates a SpatialPolygonsDataFrame of potential values.
 It also allows to compute directly the ratio between the potentials of two variables.
 }
 \details{
-If var2 is provided the ratio between the potentials of var (numerator) 
+If var2 is provided, the ratio between the potentials of var (numerator) 
 and var2 (denominator) is computed.
 }
 \examples{
 # load data
-data("spatData")
-# Compute a SpatialPolygonsDataFrame of potentials
-pot.spdf <- quickStewart(spdf = spatPts, 
-                         df = spatPts@data, 
-                         var = "Capacite", 
-                         span = 1000, 
-                         beta = 2, mask = spatMask)
-plot(pot.spdf)
+data("hospital")
+# Compute potentials
+pot <- quickStewart(x = hospital,
+                    var = "capacity",
+                    span = 1000,
+                    beta = 2, mask = paris)
 # cartography
 if(require("cartography")){
-  breaks <- sort(c(unique(pot.spdf$min), max(pot.spdf$max)), decreasing = FALSE)
-  cartography::choroLayer(spdf = pot.spdf, df = pot.spdf@data,
-                          var = "center", breaks = breaks, 
-                          legend.pos = "topleft",
-                          legend.title.txt = "Nb. of Beds")
+  breaks <- sort(c(unique(pot$min), max(pot$max)), decreasing = FALSE)
+  choroLayer(x = pot,
+             var = "center", breaks = breaks,
+             legend.pos = "topleft",
+             legend.title.txt = "Nb. of Beds")
 }
-pot.spdf@data
 
-
-# Compute a SpatialPolygonsDataFrame of a ratio of potentials
-spatPts$dummy <- spatPts$Capacite + c(rep(50, 18))
-pot2.spdf <- quickStewart(spdf = spatPts, 
-                          df = spatPts@data, 
-                          var = "Capacite", 
-                          var2 = "dummy",
-                          span = 1000, 
-                          beta = 2, mask = spatMask)
+# Compute a ratio of potentials
+hospital$dummy <- hospital$capacity + c(rep(50, 18))
+pot2 <- quickStewart(x = hospital,
+                     var = "capacity",
+                     var2 = "dummy",
+                     span = 1000,
+                     beta = 2, mask = paris)
 # cartography
 if(require("cartography")){
-  breaks <- sort(c(unique(pot2.spdf$min), max(pot2.spdf$max)), decreasing = FALSE)
-  cartography::choroLayer(spdf = pot2.spdf, df = pot2.spdf@data,
-                          var = "center", breaks = breaks, 
-                          legend.pos = "topleft",legend.values.rnd = 3,
-                          legend.title.txt = "Nb. of Beds")
+  breaks <- sort(c(unique(pot2$min), max(pot2$max)), decreasing = FALSE)
+  choroLayer(x = pot2,
+             var = "center", breaks = breaks,
+             legend.pos = "topleft",legend.values.rnd = 3,
+             legend.title.txt = "Nb. of DummyBeds")
 }
 }
 \seealso{

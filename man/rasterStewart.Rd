@@ -2,15 +2,15 @@
 % Please edit documentation in R/stewart.R
 \name{rasterStewart}
 \alias{rasterStewart}
-\title{Create a Raster from a Stewart SpatialPointsDataFrame}
+\title{Create a Raster from a Stewart Regular Grid}
 \usage{
 rasterStewart(x, mask = NULL)
 }
 \arguments{
-\item{x}{sp object (SpatialPointsDataFrame); output of the \code{stewart} 
+\item{x}{sp or sf object; output of the \code{stewart} 
 function.}
 
-\item{mask}{sp object (SpatialPolygonsDataFrame); this object is used to clip 
+\item{mask}{sp or sf object; this object is used to clip 
 the raster. (optional)}
 }
 \value{
@@ -18,17 +18,18 @@ Raster of potential values.
 }
 \description{
 This function creates a raster from a regularly spaced 
-Stewart SpatialPointsDataFrame (output of the \code{\link{stewart}} function).
+Stewart points grid (output of the \code{\link{stewart}} function).
 }
 \examples{
-data(spatData)
-# Compute Stewart potentials from known points (spatPts) on a
+library(raster)
+data(hospital)
+# Compute Stewart potentials from known points (hospital) on a
 # grid defined by its resolution
-mystewart <- stewart(knownpts = spatPts, varname = "Capacite",
+mystewart <- stewart(knownpts = hospital, varname = "capacity",
                      typefct = "exponential", span = 1000, beta = 3,
-                     resolution = 100, mask = spatMask)
+                     resolution = 100, mask = paris)
 # Create a raster of potentials values
-mystewartraster <- rasterStewart(x = mystewart, mask = spatMask)
+mystewartraster <- rasterStewart(x = mystewart, mask = paris)
 plot(mystewartraster)
 }
 \seealso{

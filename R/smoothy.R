@@ -3,9 +3,9 @@
 #' @description This function computes a distance weighted mean. It offers the 
 #' same parameters as \code{\link{stewart}}: user defined distance matrix, user 
 #' defined impedance function (power or exponential), user defined exponent.
-#' @param knownpts sp object (SpatialPointsDataFrame or SpatialPolygonsDataFrame);
-#' this is the set of known observations to estimate the potentials from.
-#' @param unknownpts sp object (SpatialPointsDataFrame or SpatialPolygonsDataFrame); 
+#' @param knownpts sp or sf object; this is the set of known observations to 
+#' estimate the potentials from.
+#' @param unknownpts sp or sf object;
 #' this is the set of unknown units for which the function computes the estimates. 
 #' Not used when \code{resolution} is set up. (optional)
 #' @param matdist matrix; distance matrix between known observations and unknown 
@@ -26,92 +26,57 @@
 #' @param span numeric; distance where the density of probability of the spatial 
 #' interaction function equals 0.5.
 #' @param beta numeric; impedance factor for the spatial interaction function.  
-#' @param resolution numeric; resolution of the output SpatialPointsDataFrame
+#' @param resolution numeric; resolution of the output grid
 #'  (in map units). If resolution is not set, the grid will contain around 7250 
 #'  points. (optional)
-#' @param mask sp object; the spatial extent of this object is used to 
-#' create the regularly spaced SpatialPointsDataFrame output. (optional)
+#' @param mask sp or sf object; the spatial extent of this object is used to 
+#' create the regularly spaced points output. (optional)
 #' @param bypassctrl logical; bypass the distance matrix size control (see 
 #' \code{\link{CreateDistMatrix}} Details).
 #' @param longlat	logical; if FALSE, Euclidean distance, if TRUE Great Circle 
 #' (WGS84 ellipsoid) distance.
-#' @return SpatialPointsDataFrame with the computed potentials in a new field 
-#' named \code{OUTPUT}
-#' @examples 
-#' # Create a SpatialPointsDataFrame grid of spatMask extent and 200 meters 
+#' @param returnclass "sp" or "sf"; class of the returned object.
+#' @return Point object with the computed distance weighted mean in a new field 
+#' named \code{OUTPUT}. 
+#' @examples
+#' # Create a grid of paris extent and 200 meters
 #' # resolution
-#' data(spatData)
-#' mygrid <- CreateGrid(w = spatMask, resolution = 200)
-#' # Create a distance matrix between known points (spatPts) and mygrid
-#' mymat <- CreateDistMatrix(knownpts = spatPts, unknownpts = mygrid)
-#' # Compute Stewart potentials from known points (spatPts) on a given 
+#' data(hospital)
+#' mygrid <- CreateGrid(w = paris, resolution = 200)
+#' # Create a distance matrix between known points (hospital) and mygrid
+#' mymat <- CreateDistMatrix(knownpts = hospital, unknownpts = mygrid)
+#' # Compute  distance weighted mean from known points (hospital) on a given
 #' # grid (mygrid) using a given distance matrix (mymat)
-#' mystewart <- smoothy(knownpts = spatPts, unknownpts = mygrid, 
-#'                      matdist = mymat, varname = "Capacite", 
-#'                      typefct = "exponential", span = 1250, 
-#'                      beta = 3, mask = spatMask)
-#' # Compute Stewart potentials from known points (spatPts) on a 
+#' mysmoothy <- smoothy(knownpts = hospital, unknownpts = mygrid,
+#'                      matdist = mymat, varname = "capacity",
+#'                      typefct = "exponential", span = 1250,
+#'                      beta = 3, mask = paris)
+#' # Compute  distance weighted mean from known points (hospital) on a
 #' # grid defined by its resolution
-#' mystewart2 <- smoothy(knownpts = spatPts, varname = "Capacite", 
-#'                       typefct = "exponential", span = 1250, beta = 3, 
-#'                       resolution = 200, mask = spatMask)
+#' mysmoothy2 <- smoothy(knownpts = hospital, varname = "capacity",
+#'                       typefct = "exponential", span = 1250, beta = 3,
+#'                       resolution = 200, mask = paris)
 #' # The two methods have the same result
-#' identical(mystewart, mystewart2)
-#' # the function output a SpatialPointsDataFrame
-#' class(mystewart)
+#' identical(mysmoothy, mysmoothy2)
 #' # Computed values
-#' summary(mystewart$OUTPUT)
+#' summary(mysmoothy$OUTPUT)
 #' @seealso \link{stewart}.
 #' @import sp
 #' @import raster
 #' @export
-smoothy <- function(knownpts,
-                    unknownpts = NULL,
-                    matdist = NULL,
-                    varname,
-                    typefct = "exponential", 
-                    span,
-                    beta,
-                    resolution = NULL,
-                    mask = NULL,
-                    bypassctrl = FALSE, longlat = TRUE)
-{
-  TestSp(knownpts)
-  if (!is.null(unknownpts)){  
-    TestSp(unknownpts)
-    if(identicalCRS(knownpts,unknownpts) == FALSE){
-      stop(paste("Inputs (",quote(knownpts), " and ",quote(unknownpts),
-                 ") do not use the same projection", sep = ""),call. = FALSE)
-    }
-    if (!is.null(matdist)){
-      matdist <- UseDistMatrix(matdist =matdist, knownpts = knownpts, 
-                               unknownpts =  unknownpts) 
-    }else{
-      matdist <- CreateDistMatrix(knownpts = knownpts, unknownpts = unknownpts,
-                                  bypassctrl = bypassctrl, longlat = longlat)
-    }
-  } else {
-    unknownpts <- CreateGrid(w = if(is.null(mask)){knownpts} else {mask}, 
-                             resolution = resolution) 
-    matdist <- CreateDistMatrix(knownpts = knownpts, unknownpts = unknownpts, 
-                                bypassctrl = bypassctrl, longlat = longlat) 
-  }
-  
-  matdens <- ComputeInteractDensity(matdist = matdist, typefct = typefct,
+smoothy <- function(knownpts, unknownpts, matdist, varname,
+                    typefct = "exponential", span, beta, resolution , mask,
+                    bypassctrl = FALSE, longlat = TRUE, returnclass="sf"){
+  res <- prepdata(knownpts = knownpts, unknownpts = unknownpts, 
+                  matdist = matdist, bypassctrl = bypassctrl, longlat = longlat,
+                  mask = mask, resolution = resolution) 
+  matdens <- ComputeInteractDensity(matdist = res$matdist, typefct = typefct,
                                     beta = beta, span = span)
-  
-  matopport <- ComputeOpportunity(knownpts = knownpts, matdens = matdens, 
+  matopport <- ComputeOpportunity(knownpts = res$knownpts, matdens = matdens, 
                                   varname = varname)
-  
-  unknownpts <- ComputeSmooth(unknownpts = unknownpts, matdens = matdens,
+  unknownpts <- ComputeSmooth(unknownpts = res$unknownpts, matdens = matdens,
                               matopport = matopport)
-  unknownpts@data
+  if(returnclass=="sp"){unknownpts <- as(unknownpts, "Spatial")}
   return(unknownpts)
 }
 
-
-ComputeSmooth<- function(unknownpts, matopport, matdens)
-{
-  unknownpts@data$OUTPUT <- apply(matopport, 2, sum, na.rm = TRUE) / colSums(matdens)
-  return(unknownpts)
-}

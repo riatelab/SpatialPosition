@@ -2,14 +2,14 @@
 % Please edit documentation in R/reilly.R
 \name{rasterReilly}
 \alias{rasterReilly}
-\title{Create a Raster from a Reilly SpatialPointsDataFrame}
+\title{Create a Raster from a Reilly Regular Grid}
 \usage{
 rasterReilly(x, mask = NULL)
 }
 \arguments{
-\item{x}{sp object (SpatialPointsDataFrame); output of the \code{reilly} function.}
+\item{x}{sp or sf object; output of the \code{reilly} function.}
 
-\item{mask}{sp object (SpatialPolygonsDataFrame); this object is used to clip 
+\item{mask}{sp or sf object; this object is used to clip 
 the raster. (optional)}
 }
 \value{
@@ -20,18 +20,18 @@ unique(levels(rasterName)[[1]])} to see the correpondance table.
 }
 \description{
 This function creates a raster from a regularly spaced 
-Reilly SpatialPointsDataFrame (output of the \code{\link{reilly}} function).
+Reilly grid (output of the \code{\link{reilly}} function).
 }
 \examples{
-data(spatData)
-row.names(spatPts) <- spatPts$CodHop
-# Compute Reilly catchment areas from known points (spatPts) on a
+library(raster)
+data(hospital)
+# Compute Reilly catchment areas from known points (hospital) on a
 # grid defined by its resolution
-myreilly <- reilly(knownpts = spatPts, varname = "Capacite",
-                   typefct = "exponential", span = 750, beta = 2,
-                   resolution = 100, mask = spatMask)
+myreilly <- reilly(knownpts = hospital, varname = "capacity",
+                   typefct = "exponential", span = 1250, beta = 3,
+                   resolution = 200, mask = paris)
 # Create a raster of reilly values
-myreillyraster <- rasterReilly(x = myreilly, mask = spatMask)
+myreillyraster <- rasterReilly(x = myreilly, mask = paris)
 plot(myreillyraster, col = rainbow(18))
 # Correspondance between raster values and reilly areas
 head(unique(levels(myreillyraster)[[1]]))

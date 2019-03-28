@@ -2,14 +2,15 @@
 % Please edit documentation in R/gridandmat.R
 \name{CreateDistMatrix}
 \alias{CreateDistMatrix}
-\title{Create a Distance Matrix Between Two Sp Objects}
+\title{Create a Distance Matrix Between Two Spatial Objects}
 \usage{
-CreateDistMatrix(knownpts, unknownpts, bypassctrl = FALSE, longlat = TRUE)
+CreateDistMatrix(knownpts, unknownpts, bypassctrl = FALSE,
+  longlat = TRUE)
 }
 \arguments{
-\item{knownpts}{sp object; rows of the distance matrix.}
+\item{knownpts}{sp or sf object; rows of the distance matrix.}
 
-\item{unknownpts}{sp object; columns of the distance matrix.}
+\item{unknownpts}{sp or sf object; columns of the distance matrix.}
 
 \item{bypassctrl}{logical; bypass the distance matrix size control (see Details).}
 
@@ -22,13 +23,10 @@ names are \code{unknownpts} row names.
 }
 \description{
 This function creates a distance matrix between two 
-sp objects (SpatialPointsDataFrame or SpatialPolygonsDataFrame).
+spatial objects (sp or sf objects).
 }
 \details{
 The function returns a full matrix of distances in meters. 
-This is a wrapper
-for the \code{\link{spDists}} function. \cr
-
 If the matrix to compute is too large (more than 100,000,000 cells, more than 
 10,000,000 origins or more than 10,000,000 destinations) 
 the function sends a confirmation message to warn users about the amount of 
@@ -36,14 +34,14 @@ RAM mobilized.
 Use \code{bypassctrl} = TRUE to skip this control.
 }
 \examples{
-# Create a SpatialPointsDataFrame grid of spatMask extent and 200 meters 
+# Create a grid of paris extent and 200 meters
 # resolution
-data(spatData)
-mygrid <- CreateGrid(w = spatMask, resolution = 200)
-# Create a distance matrix between known spatPts and mygrid
-mymat <- CreateDistMatrix(knownpts = spatPts, unknownpts = mygrid)
+data(hospital)
+mygrid <- CreateGrid(w = paris, resolution = 200)
+# Create a distance matrix between known hospital and mygrid
+mymat <- CreateDistMatrix(knownpts = hospital, unknownpts = mygrid)
 mymat[1:5,1:5]
-nrow(spatPts)
+nrow(paris)
 nrow(mygrid)
 dim(mymat)
 }

@@ -4,8 +4,9 @@
 \alias{plotStewart}
 \title{Plot a Stewart Raster}
 \usage{
-plotStewart(x, add = FALSE, breaks = NULL, typec = "equal", nclass = 5,
-  legend.rnd = 0, col = colorRampPalette(c("#FEA3A3", "#980000")))
+plotStewart(x, add = FALSE, breaks = NULL, typec = "equal",
+  nclass = 5, legend.rnd = 0, col = colorRampPalette(c("#FEA3A3",
+  "#980000")))
 }
 \arguments{
 \item{x}{raster; output of the \code{\link{rasterStewart}} function.}
@@ -33,14 +34,14 @@ This function plots the raster produced by the
 \code{\link{rasterStewart}} function.
 }
 \examples{
-data(spatData)
-# Compute Stewart potentials from known points (spatPts) on a
+data(hospital)
+# Compute Stewart potentials from known points (hospital) on a
 # grid defined by its resolution
-mystewart <- stewart(knownpts = spatPts, varname = "Capacite",
+mystewart <- stewart(knownpts = hospital, varname = "capacity",
                      typefct = "exponential", span = 1000, beta = 3,
-                     resolution = 100, mask = spatMask)
+                     resolution = 100, mask = paris)
 # Create a raster of potentials values
-mystewartraster <- rasterStewart(x = mystewart, mask = spatMask)
+mystewartraster <- rasterStewart(x = mystewart, mask = paris)
 # Plot stewart potentials nicely
 plotStewart(x = mystewartraster, add = FALSE, nclass = 5)
 # Can be used to obtain break values

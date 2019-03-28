@@ -20,14 +20,14 @@ This function plots the raster produced by the
 \code{\link{rasterHuff}} function.
 }
 \examples{
-data(spatData)
-# Compute Huff catchment areas from known points (spatPts) on a
+data(hospital)
+# Compute Huff catchment areas from known points (hospital) on a
 # grid defined by its resolution
-myhuff <- huff(knownpts = spatPts, varname = "Capacite",
+myhuff <- huff(knownpts = hospital, varname = "capacity",
                typefct = "exponential", span = 750, beta = 2,
-               resolution = 100, mask = spatMask)
+               resolution = 100, mask = paris)
 # Create a raster of huff values
-myhuffraster <- rasterHuff(x = myhuff, mask = spatMask)
+myhuffraster <- rasterHuff(x = myhuff, mask = paris)
 plotHuff(myhuffraster)
 }
 \seealso{

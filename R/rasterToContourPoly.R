@@ -50,6 +50,7 @@
 #' }
 #' @export
 rasterToContourPoly <- function(r, nclass = 8, breaks = NULL, mask = NULL){
+  .Deprecated(new = "isopoly", package = "SpatialPosition" )
   breaks <- get_bks(r = r, nclass =  nclass, breaks = breaks)
   res <- get_mask(r, mask)
   res2 <- adjust_bks(r = res$r, breaks = breaks)

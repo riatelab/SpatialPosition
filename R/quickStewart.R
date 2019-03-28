@@ -6,6 +6,8 @@
 #' Providing only the main parameters of these functions, it simplifies a lot the computation of potentials. 
 #' This function creates a SpatialPolygonsDataFrame of potential values. 
 #' It also allows to compute directly the ratio between the potentials of two variables. 
+#' @param x sp or sf object; this is the set of known observations to 
+#' estimate the potentials from.
 #' @param spdf a SpatialPolygonsDataFrame.
 #' @param df a data frame that contains the values to compute
 #' @param spdfid name of the identifier field in spdf, default to the first column 
@@ -31,73 +33,71 @@
 #' @param nclass	numeric; a targeted number of classes (default to 8). Not used 
 #' if breaks is set.
 #' @param breaks numeric; a vector of values used to discretize the potentials. 
-#' @param mask SpatialPolygonsDataFrame; mask used to clip contours of potentials.
+#' @param mask sp or sf object; the spatial extent of this object is used to 
+#' create the regularly spaced points output. (optional)
 #' @param bypassctrl logical; bypass the distance matrix size control (see 
 #' \code{\link{CreateDistMatrix}} Details).
-#' @return A SpatialPolygonsDataFrame is returned (see \link{rasterToContourPoly} Value). 
+#' @return An sf object is returned (see \link{isopoly} Value). 
 #' @details 
-#' If var2 is provided the ratio between the potentials of var (numerator) 
+#' If var2 is provided, the ratio between the potentials of var (numerator) 
 #' and var2 (denominator) is computed.
 #' @seealso \link{stewart}, \link{rasterStewart}, \link{plotStewart}, 
 #' \link{rasterToContourPoly}, \link{CreateGrid}, \link{CreateDistMatrix}.
 #' @import sp
 #' @import raster
 #' @export
-#' @examples 
+#' @examples
 #' # load data
-#' data("spatData")
-#' # Compute a SpatialPolygonsDataFrame of potentials
-#' pot.spdf <- quickStewart(spdf = spatPts, 
-#'                          df = spatPts@data, 
-#'                          var = "Capacite", 
-#'                          span = 1000, 
-#'                          beta = 2, mask = spatMask)
-#' plot(pot.spdf)
+#' data("hospital")
+#' # Compute potentials
+#' pot <- quickStewart(x = hospital,
+#'                     var = "capacity",
+#'                     span = 1000,
+#'                     beta = 2, mask = paris)
 #' # cartography
 #' if(require("cartography")){
-#'   breaks <- sort(c(unique(pot.spdf$min), max(pot.spdf$max)), decreasing = FALSE)
-#'   cartography::choroLayer(spdf = pot.spdf, df = pot.spdf@data,
-#'                           var = "center", breaks = breaks, 
-#'                           legend.pos = "topleft",
-#'                           legend.title.txt = "Nb. of Beds")
+#'   breaks <- sort(c(unique(pot$min), max(pot$max)), decreasing = FALSE)
+#'   choroLayer(x = pot,
+#'              var = "center", breaks = breaks,
+#'              legend.pos = "topleft",
+#'              legend.title.txt = "Nb. of Beds")
 #' }
-#' pot.spdf@data
 #' 
-#' 
-#' # Compute a SpatialPolygonsDataFrame of a ratio of potentials
-#' spatPts$dummy <- spatPts$Capacite + c(rep(50, 18))
-#' pot2.spdf <- quickStewart(spdf = spatPts, 
-#'                           df = spatPts@data, 
-#'                           var = "Capacite", 
-#'                           var2 = "dummy",
-#'                           span = 1000, 
-#'                           beta = 2, mask = spatMask)
+#' # Compute a ratio of potentials
+#' hospital$dummy <- hospital$capacity + c(rep(50, 18))
+#' pot2 <- quickStewart(x = hospital,
+#'                      var = "capacity",
+#'                      var2 = "dummy",
+#'                      span = 1000,
+#'                      beta = 2, mask = paris)
 #' # cartography
 #' if(require("cartography")){
-#'   breaks <- sort(c(unique(pot2.spdf$min), max(pot2.spdf$max)), decreasing = FALSE)
-#'   cartography::choroLayer(spdf = pot2.spdf, df = pot2.spdf@data,
-#'                           var = "center", breaks = breaks, 
-#'                           legend.pos = "topleft",legend.values.rnd = 3,
-#'                           legend.title.txt = "Nb. of Beds")
+#'   breaks <- sort(c(unique(pot2$min), max(pot2$max)), decreasing = FALSE)
+#'   choroLayer(x = pot2,
+#'              var = "center", breaks = breaks,
+#'              legend.pos = "topleft",legend.values.rnd = 3,
+#'              legend.title.txt = "Nb. of DummyBeds")
 #' }
-quickStewart <- function(spdf, df, spdfid = NULL, dfid = NULL, var, 
-                         var2 = NULL, 
+quickStewart <- function(x, spdf, df, spdfid = NULL, dfid = NULL, var, var2, 
                          typefct = "exponential", span, 
-                         beta, resolution = NULL, 
-                         mask = NULL, 
-                         nclass = 8, breaks = NULL, 
+                         beta, resolution, 
+                         mask, nclass = 8, breaks, 
                          bypassctrl = FALSE){
   # IDs  
-  if (is.null(spdfid)){spdfid <- names(spdf@data)[1]}
-  if (is.null(dfid)){dfid <- names(df)[1]}
+  if(missing(x)){
+    if (is.null(spdfid)){spdfid <- names(spdf@data)[1]}
+    if (is.null(dfid)){dfid <- names(df)[1]}
+    # Join
+    spdf@data <- data.frame(spdf@data[,spdfid], 
+                            df[match(spdf@data[,spdfid], df[,dfid]),])
+    x <- spdf[!is.na(spdf@data[,dfid]),]
+  }
   
-  # Join
-  spdf@data <- data.frame(spdf@data[,spdfid], 
-                          df[match(spdf@data[,spdfid], df[,dfid]),])
-  spdf <- spdf[!is.na(spdf@data[,dfid]),]
   
-   # pot computation
-  pot <- stewart(knownpts = spdf, 
+  # sp mgmt
+  if(is(x, "Spatial")){x <- st_as_sf(x)}
+  # pot computation
+  pot <- stewart(knownpts = x, 
                  varname = var, 
                  typefct = typefct, 
                  span = span, 
@@ -106,8 +106,8 @@ quickStewart <- function(spdf, df, spdfid = NULL, dfid = NULL, var,
                  mask = mask, 
                  bypassctrl = bypassctrl)
   
-  if(!is.null(var2)){
-    pot2 <- stewart(knownpts = spdf, 
+  if(!missing(var2)){
+    pot2 <- stewart(knownpts = x, 
                     varname = var2, 
                     typefct = typefct, 
                     span = span, 
@@ -115,15 +115,14 @@ quickStewart <- function(spdf, df, spdfid = NULL, dfid = NULL, var,
                     resolution = resolution, 
                     mask = mask, 
                     bypassctrl = bypassctrl)
-    ras <- rasterStewart(pot) / rasterStewart(pot2)
-  }else{
-    ras <- rasterStewart(pot)
+    
+    pot$OUTPUT <- pot$OUTPUT / pot2$OUTPUT
   }
-
+  
   # Spdf creation
-  pot.spdf <- rasterToContourPoly(r =  ras,
-                                  nclass = nclass, 
-                                  breaks = breaks, 
-                                  mask = mask)
-  return(pot.spdf)
+  pot <- isopoly(x = pot,
+                 nclass = nclass, 
+                 breaks = breaks, 
+                 mask = mask)
+  return(pot)
 }

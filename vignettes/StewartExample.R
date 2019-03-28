@@ -1,5 +1,7 @@
 ## ----regionalmap, fig.width=7, fig.height=6------------------------------
 library(cartography)
+library(sp)
+library(sf)
 library(SpatialPosition)
 data(nuts2006)
 
@@ -123,20 +125,16 @@ gdppot <- stewart(knownpts = nuts3.spdf,
                   resolution = 50000, 
                   mask = nuts0.spdf)
 
-# Transform the regularly spaced SpatialPointsDataFrame to a raster
-popras <- rasterStewart(poppot)
-gdpras <- rasterStewart(gdppot)
+# Create the ratio variable
+poppot$OUTPUT2 <- gdppot$OUTPUT * 1e6 / poppot$OUTPUT
 
-# Compute the GDP per capita 
-ras <- gdpras * 1000000 / popras
-
-# Create a SpatialPolygonsDataFrame from the raster
-pot.spdf <- rasterToContourPoly(r = ras, 
-                                breaks = bv, 
-                                mask = nuts0.spdf)
+# Create an isopleth layer
+pot <- isopoly(x = poppot, var = "OUTPUT2",
+               breaks = bv, 
+               mask = nuts0.spdf)
 
 # Get breaks values
-bv3 <- sort(c(unique(pot.spdf$min), max(pot.spdf$max)), decreasing = FALSE)
+bv3 <- sort(c(unique(pot$min), max(pot$max)), decreasing = FALSE)
 
 # Draw the map
 par <- par(mar = c(0,0,1.2,0))
@@ -146,7 +144,7 @@ plot(nuts0.spdf, add = F, border = NA, bg = "#cdd2d4")
 plot(world.spdf, col = "#f5f5f3ff", border = "#a9b3b4ff", add = TRUE)
 
 # Map the potential GDP per Capita
-choroLayer(spdf = pot.spdf, df = pot.spdf@data, var = "center", 
+choroLayer(x = pot, var = "center", 
            legend.pos = "topright",
            breaks = bv3, col = pal, add=T, 
            border = NA, lwd = 0.2,

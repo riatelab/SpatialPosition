@@ -57,51 +57,47 @@ Modeling spatial interactions means quantifying the distance friction or impedan
 
 ## Examples
 
-Tha example dataset consists in three spatial objects: 
+Tha example dataset consists in two spatial objects: 
 
-- `spatUnits` (polygons): 20 spatial units representing the Paris' districts (*arrondissements*)
-- `spatMask` (polygons): 1 spatial unit representing the Paris' perimeter 
-- `spatPts` (points): 18 points representing the public hospitals with their capacity (number of beds)
+- `paris` (polygons): 1 spatial unit representing the Paris' perimeter 
+- `hospital` (points): 18 points representing the public hospitals with their capacity (number of beds)
 
 
 ### Drawing global accessiblity to public hospitals
 
 First we want to compute a global accessibility to hospitals. This computation could lead the residential choice of a highly hypocondriac individual searching for the optimal location with the best global access to hospitals. It could also lead an investment choice of the local authority searching for the optimal location to improve equity of access to health services. 
 
-The set of known points are the hospitals and the weighting variable -- i.e. the mass of the points -- is their capacity (`Capacite`). We want to create a raster of values and to clip it with the perimeter of the study area so we provide clipping mask (`spatMask`). The function type, the span and the exponent should reflect research hypothesis or known behavior of the individuals: e.g. in a dense urban area such as the center of Paris, an average consumer wouldn't go farther than 500 meters to reach a small retail shop and the friction of the distance is very high (exponential form with a large beta coefficient). Here we set the span at 1000 meters, the impedance function is exponential with beta = 3.
+The set of known points are the hospitals and the weighting variable -- i.e. the mass of the points -- is their capacity (`capacity`). We want to create a raster of values and to clip it with the perimeter of the study area so we provide clipping mask (`paris`). The function type, the span and the exponent should reflect research hypothesis or known behavior of the individuals: e.g. in a dense urban area such as the center of Paris, an average consumer wouldn't go farther than 500 meters to reach a small retail shop and the friction of the distance is very high (exponential form with a large beta coefficient). Here we set the span at 1000 meters, the impedance function is exponential with beta = 3.
 
-````{r , fig.width=5, fig.height=5}
+````{r , fig.width=7, fig.height=5}
 library(SpatialPosition)
-data(spatData)
+library(sf)
+data(hospital)
 
 # Compute potentials (accessibility)
-globalAccessibility <- stewart(knownpts = spatPts, varname = "Capacite",
-                               typefct = "exponential", span = 1000, beta = 3,
-                               resolution = 50,  
-                               mask = spatMask)
+potentials <- stewart(
+  knownpts = hospital, 
+  varname = "capacity",
+  typefct = "exponential", 
+  span = 1000, 
+  beta = 3,
+  resolution = 50,
+  mask = paris
+)
 
-# Create a raster
-rasterAccessibility <- rasterStewart(x = globalAccessibility, mask = spatMask)
+isopotentials <- isopoly(x = potentials, mask = paris)
 
-# Plot the raster
+lab <- paste0(round(isopotentials$min,0),' to ', 
+              round(isopotentials$max,0))
 par(mar = c(4,2,2,1))
-
-plotStewart(x = rasterAccessibility, add = FALSE, nclass = 6)
-
-# The function returns break values
-breakValues <- plotStewart(x = rasterAccessibility, add = FALSE, nclass = 6)
-
-# Create contour lines and add them to the plot
-contLines <- rasterToContour(x = rasterAccessibility, levels = breakValues)
-plot(contLines, add = TRUE)
-plot(spatMask, add = TRUE)
-
+plot(st_geometry(isopotentials), col = heat.colors(8))
+legend(x = "topright", legend = lab, fill = heat.colors(8), 
+       cex = 0.7, title = "Potentials")
+  
 mtext("Global Accessibility to Public Hospitals", side = 3,cex = 1.5)
 mtext(text = "Potential nb. of beds
       distance function: exponential, span = 1 km, beta = 3",
       side = 1, line = 1)   
-
-
 ````
 
 ### Drawing catchment areas of public hospitals
@@ -109,18 +105,18 @@ mtext(text = "Potential nb. of beds
 We now want to draw the catchment areas corresponing to the public hospitals. These areas could be used as a zoning tool, in order to set the residential zones with its referent hospital. As for the global accessibility, three steps are needed: computing the values (`reilly`), creating the raster (`rasterReilly`), plotting the raster (`plotReilly`).
 
 ````{r , fig.width=5, fig.height=5}
-row.names(spatPts)
-catchReilly <- reilly(knownpts = spatPts, varname = "Capacite",
+library(raster)
+row.names(hospital)
+catchReilly <- reilly(knownpts = hospital, varname = "capacity",
                       typefct = "exponential", span = 750, beta = 2,
-                      resolution = 50, mask = spatMask)
-
+                      resolution = 50, mask = paris)
 # Create a raster
-rasterCatch <- rasterReilly(x = catchReilly, mask = spatMask)
+rasterCatch <- rasterReilly(x = catchReilly, mask = paris)
 
 par(mar = c(4,2,2,1))
 # Plot the raster and add the points
 plotReilly(x = rasterCatch)
-plot(spatPts, pch = 20, add = TRUE)
+plot(hospital, pch = 20, add = TRUE)
 
 mtext("Catchment Areas of Public Hospitals", side = 3,cex = 1.5)
 mtext(text = "distance function: exponential, span = 0.75 km, beta = 2",
@@ -134,18 +130,17 @@ mtext(text = "distance function: exponential, span = 0.75 km, beta = 2",
 We now want to draw the probabilistic catchment areas corresponing to the public hospitals. These areas show the probability for a patient to go to one hospital or to another. It is used in geomarketing to detect the fuzzy areas where there are competing shopping malls and where the brand should focus its advertising. The same three steps are needed: computing the values (`huff`), creating the raster (`rasterHuff`) and plotting the raster (`plotHuff`).
 
 ````{r , fig.width=5, fig.height=5}
-###
-catchHuff <- huff(knownpts = spatPts, varname = "Capacite",
+catchHuff <- huff(knownpts = hospital, varname = "capacity",
                   typefct = "exponential", span = 750, beta = 2,
-                  resolution = 50, mask = spatMask)
+                  resolution = 50, mask = paris)
 
 # Create a raster
-rasterCatch <- rasterHuff(x = catchHuff, mask = spatMask)
+rasterCatch <- rasterHuff(x = catchHuff, mask = paris)
 
 # Plot the raster and add the points
 par(mar = c(4,2,2,1))
 plotHuff(x = rasterCatch)
-plot(spatPts, pch = 20, col = "red", add = TRUE)
+plot(hospital, pch = 20, col = "red", add = TRUE)
 
 mtext("Probabilistic Catchment Areas \nof Public Hospitals", 
       side = 3,cex = 1.5, line=-1.5)
