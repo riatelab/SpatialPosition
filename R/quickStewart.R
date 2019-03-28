@@ -8,6 +8,12 @@
 #' It also allows to compute directly the ratio between the potentials of two variables. 
 #' @param x sp or sf object; this is the set of known observations to 
 #' estimate the potentials from.
+#' @param spdf a SpatialPolygonsDataFrame.
+#' @param df a data frame that contains the values to compute
+#' @param spdfid name of the identifier field in spdf, default to the first column 
+#' of the spdf data frame. (optional)
+#' @param dfid name of the identifier field in df, default to the first column 
+#' of df. (optional)
 #' @param var name of the numeric field in df used to compute potentials.
 #' @param var2 name of the numeric field in df used to compute potentials. 
 #' This field is used for ratio computation (see Details).
@@ -72,11 +78,22 @@
 #'              legend.pos = "topleft",legend.values.rnd = 3,
 #'              legend.title.txt = "Nb. of DummyBeds")
 #' }
-quickStewart <- function(x, var, var2, 
+quickStewart <- function(x, spdf, df, spdfid = NULL, dfid = NULL, var, var2, 
                          typefct = "exponential", span, 
                          beta, resolution, 
                          mask, nclass = 8, breaks, 
                          bypassctrl = FALSE){
+  # IDs  
+  if(missing(x)){
+    if (is.null(spdfid)){spdfid <- names(spdf@data)[1]}
+    if (is.null(dfid)){dfid <- names(df)[1]}
+    # Join
+    spdf@data <- data.frame(spdf@data[,spdfid], 
+                            df[match(spdf@data[,spdfid], df[,dfid]),])
+    x <- spdf[!is.na(spdf@data[,dfid]),]
+  }
+  
+  
   # sp mgmt
   if(is(x, "Spatial")){x <- st_as_sf(x)}
   # pot computation

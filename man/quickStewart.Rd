@@ -4,12 +4,23 @@
 \alias{quickStewart}
 \title{Create a SpatialPolygonsDataFrame of Potentials Contours}
 \usage{
-quickStewart(x, var, var2, typefct = "exponential", span, beta,
-  resolution, mask, nclass = 8, breaks, bypassctrl = FALSE)
+quickStewart(x, spdf, df, spdfid = NULL, dfid = NULL, var, var2,
+  typefct = "exponential", span, beta, resolution, mask, nclass = 8,
+  breaks, bypassctrl = FALSE)
 }
 \arguments{
 \item{x}{sp or sf object; this is the set of known observations to 
 estimate the potentials from.}
+
+\item{spdf}{a SpatialPolygonsDataFrame.}
+
+\item{df}{a data frame that contains the values to compute}
+
+\item{spdfid}{name of the identifier field in spdf, default to the first column 
+of the spdf data frame. (optional)}
+
+\item{dfid}{name of the identifier field in df, default to the first column 
+of df. (optional)}
 
 \item{var}{name of the numeric field in df used to compute potentials.}
 
