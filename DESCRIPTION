@@ -4,7 +4,7 @@ Version: 2.0.0
 Date: 2018-02-06
 Authors@R: c(
       person("Timothée", "Giraud", email = "timothee.giraud@cnrs.fr", role = c("cre","aut")),
-      person("Hadrien", "Commenges", email = "hcommenges@parisgeo.cnrs.fr", role = c("aut")), 
+      person("Hadrien", "Commenges", email = "hadrien.commenges@univ-paris1.fr", role = c("aut")), 
       person("Joël", "Boulier", email = "joel.boulier@univ-paris1.fr", role = c("ctb")))
 Description: Computes spatial position models: Stewart potentials, Reilly
     catchment areas, Huff catchment areas.
