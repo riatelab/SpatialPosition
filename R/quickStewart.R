@@ -37,6 +37,7 @@
 #' create the regularly spaced points output. (optional)
 #' @param bypassctrl logical; bypass the distance matrix size control (see 
 #' \code{\link{CreateDistMatrix}} Details).
+#' @param returnclass "sp" or "sf"; class of the returned object.
 #' @return An sf object is returned (see \link{isopoly} Value). 
 #' @details 
 #' If var2 is provided, the ratio between the potentials of var (numerator) 
@@ -79,10 +80,9 @@
 #'              legend.title.txt = "Nb. of DummyBeds")
 #' }
 quickStewart <- function(x, spdf, df, spdfid = NULL, dfid = NULL, var, var2, 
-                         typefct = "exponential", span, 
-                         beta, resolution, 
-                         mask, nclass = 8, breaks, 
-                         bypassctrl = FALSE){
+                         typefct = "exponential", span, beta, resolution, 
+                         mask, nclass = 8, breaks, bypassctrl = FALSE, 
+                         returnclass="sf"){
   # IDs  
   if(missing(x)){
     if (is.null(spdfid)){spdfid <- names(spdf@data)[1]}
@@ -92,7 +92,6 @@ quickStewart <- function(x, spdf, df, spdfid = NULL, dfid = NULL, var, var2,
                             df[match(spdf@data[,spdfid], df[,dfid]),])
     x <- spdf[!is.na(spdf@data[,dfid]),]
   }
-  
   
   # sp mgmt
   if(is(x, "Spatial")){x <- st_as_sf(x)}
@@ -107,22 +106,31 @@ quickStewart <- function(x, spdf, df, spdfid = NULL, dfid = NULL, var, var2,
                  bypassctrl = bypassctrl)
   
   if(!missing(var2)){
-    pot2 <- stewart(knownpts = x, 
-                    varname = var2, 
-                    typefct = typefct, 
-                    span = span, 
-                    beta = beta, 
-                    resolution = resolution, 
-                    mask = mask, 
-                    bypassctrl = bypassctrl)
-    
-    pot$OUTPUT <- pot$OUTPUT / pot2$OUTPUT
+    if(!is.null(var2)){
+      pot2 <- stewart(knownpts = x, 
+                      varname = var2, 
+                      typefct = typefct, 
+                      span = span, 
+                      beta = beta, 
+                      resolution = resolution, 
+                      mask = mask, 
+                      bypassctrl = bypassctrl)
+      pot$OUTPUT <- pot$OUTPUT / pot2$OUTPUT
+    }
+  }
+  # dirty stuff to accomodate cartography :-(
+  if(!missing(breaks)){
+    if(!is.null(breaks)){
+      pot <- isopoly(x = pot, breaks = breaks, mask = mask)
+    }else{
+      pot <- isopoly(x = pot, nclass = nclass, mask = mask)
+    }
+  }else{
+    pot <- isopoly(x = pot, nclass = nclass, mask = mask)
   }
   
-  # Spdf creation
-  pot <- isopoly(x = pot,
-                 nclass = nclass, 
-                 breaks = breaks, 
-                 mask = mask)
+  if(returnclass=="sp"){pot <- as(pot, "Spatial")}
+  
   return(pot)
+  
 }

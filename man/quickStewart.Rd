@@ -6,7 +6,7 @@
 \usage{
 quickStewart(x, spdf, df, spdfid = NULL, dfid = NULL, var, var2,
   typefct = "exponential", span, beta, resolution, mask, nclass = 8,
-  breaks, bypassctrl = FALSE)
+  breaks, bypassctrl = FALSE, returnclass = "sf")
 }
 \arguments{
 \item{x}{sp or sf object; this is the set of known observations to 
@@ -54,6 +54,8 @@ if breaks is set.}
 
 \item{bypassctrl}{logical; bypass the distance matrix size control (see 
 \code{\link{CreateDistMatrix}} Details).}
+
+\item{returnclass}{"sp" or "sf"; class of the returned object.}
 }
 \value{
 An sf object is returned (see \link{isopoly} Value).
