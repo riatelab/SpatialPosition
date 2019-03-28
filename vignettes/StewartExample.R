@@ -1,6 +1,7 @@
 ## ----regionalmap, fig.width=7, fig.height=6------------------------------
 library(cartography)
 library(sp)
+library(sf)
 library(SpatialPosition)
 data(nuts2006)
 
@@ -124,10 +125,10 @@ gdppot <- stewart(knownpts = nuts3.spdf,
                   resolution = 50000, 
                   mask = nuts0.spdf)
 
-# Transform the regularly spaced SpatialPointsDataFrame to a raster
+# Create the ratio variable
 poppot$OUTPUT2 <- gdppot$OUTPUT * 1e6 / poppot$OUTPUT
 
-# Create a SpatialPolygonsDataFrame from the raster
+# Create an isopleth layer
 pot <- isopoly(x = poppot, var = "OUTPUT2",
                breaks = bv, 
                mask = nuts0.spdf)

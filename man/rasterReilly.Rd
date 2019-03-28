@@ -24,15 +24,14 @@ Reilly grid (output of the \code{\link{reilly}} function).
 }
 \examples{
 library(raster)
-data(spatData)
-row.names(spatPts) <- spatPts$CodHop
-# Compute Reilly catchment areas from known points (spatPts) on a
+data(hospital)
+# Compute Reilly catchment areas from known points (hospital) on a
 # grid defined by its resolution
-myreilly <- reilly(knownpts = spatPts, varname = "Capacite",
-                   typefct = "exponential", span = 750, beta = 2,
-                   resolution = 100, mask = spatMask)
+myreilly <- reilly(knownpts = hospital, varname = "capacity",
+                   typefct = "exponential", span = 1250, beta = 3,
+                   resolution = 200, mask = paris)
 # Create a raster of reilly values
-myreillyraster <- rasterReilly(x = myreilly, mask = spatMask)
+myreillyraster <- rasterReilly(x = myreilly, mask = paris)
 plot(myreillyraster, col = rainbow(18))
 # Correspondance between raster values and reilly areas
 head(unique(levels(myreillyraster)[[1]]))

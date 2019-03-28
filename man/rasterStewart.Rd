@@ -22,14 +22,14 @@ Stewart points grid (output of the \code{\link{stewart}} function).
 }
 \examples{
 library(raster)
-data(spatData)
-# Compute Stewart potentials from known points (spatPts) on a
+data(hospital)
+# Compute Stewart potentials from known points (hospital) on a
 # grid defined by its resolution
-mystewart <- stewart(knownpts = spatPts, varname = "Capacite",
+mystewart <- stewart(knownpts = hospital, varname = "capacity",
                      typefct = "exponential", span = 1000, beta = 3,
-                     resolution = 100, mask = spatMask)
+                     resolution = 100, mask = paris)
 # Create a raster of potentials values
-mystewartraster <- rasterStewart(x = mystewart, mask = spatMask)
+mystewartraster <- rasterStewart(x = mystewart, mask = paris)
 plot(mystewartraster)
 }
 \seealso{

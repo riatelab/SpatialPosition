@@ -24,13 +24,14 @@ This function creates a regular grid of points
 from the extent of a given spatial object and a given resolution.
 }
 \examples{
-# Create a SpatialPointsDataFrame grid of spatMask extent and 200 meters 
+# Create a grid of paris extent and 200 meters
 # resolution
-library(sp)
-data(spatData)
-mygrid <- CreateGrid(w = spatMask, resolution = 200)
-plot(mygrid, cex = 0.1, pch = ".")
-plot(spatMask, border="red", lwd = 2, add = TRUE)
+library(SpatialPosition)
+library(sf)
+data(hospital)
+mygrid <- CreateGrid(w = paris, resolution = 200)
+plot(st_geometry(mygrid), cex = 0.1, pch = ".")
+plot(st_geometry(paris), border="red", lwd = 2, add = TRUE)
 }
 \seealso{
 \link{CreateDistMatrix}

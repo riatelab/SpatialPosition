@@ -32,6 +32,39 @@ center (central values of classes).
 \description{
 This function creates spatial polygons of contours from a raster.
 }
+\examples{
+data(hospital)
+# Compute Stewart potentials
+mystewart <- stewart(knownpts = hospital, varname = "capacity",
+                     typefct = "exponential", span = 1000, beta = 3,
+                     mask = paris)
+# Create contour
+contourpoly <- isopoly(x = mystewart,
+                       nclass = 6,
+                       mask = paris)
+library(sf)
+plot(st_geometry(contourpoly))
+if(require(cartography)){
+  # Created breaks
+  bks <- sort(unique(c(contourpoly$min, contourpoly$max)))
+  opar <- par(mar = c(0,0,1.2,0))
+  # Display the map
+  choroLayer(x = contourpoly,
+             var = "center", legend.pos = "topleft",
+             breaks = bks, border = "grey90",
+             lwd = 0.2,
+             legend.title.txt = "Potential number\\nof beds in the\\nneighbourhood",
+             legend.values.rnd = 0)
+  plot(st_geometry(paris), add = TRUE)
+  propSymbolsLayer(x = hospital, var = "capacity",
+                   legend.pos = "right",
+                   legend.title.txt = "Number of beds",
+                   col = "#ff000020")
+  layoutLayer(title = "Global Accessibility to Public Hospitals",
+              sources = "", author = "")
+  par(opar)
+}
+}
 \seealso{
 \link{stewart}, \link{rasterStewart}, \link{plotStewart}, 
 \link{quickStewart}, \link{CreateGrid}, \link{CreateDistMatrix}.

@@ -4,9 +4,9 @@
 \alias{smoothy}
 \title{Stewart Smooth}
 \usage{
-smoothy(knownpts, unknownpts = NULL, matdist = NULL, varname,
-  typefct = "exponential", span, beta, resolution = NULL,
-  mask = NULL, bypassctrl = FALSE, longlat = TRUE)
+smoothy(knownpts, unknownpts, matdist, varname, typefct = "exponential",
+  span, beta, resolution, mask, bypassctrl = FALSE, longlat = TRUE,
+  returnclass = "sf")
 }
 \arguments{
 \item{knownpts}{sp or sf object; this is the set of known observations to 
@@ -51,12 +51,12 @@ create the regularly spaced points output. (optional)}
 
 \item{longlat}{logical; if FALSE, Euclidean distance, if TRUE Great Circle 
 (WGS84 ellipsoid) distance.}
+
+\item{returnclass}{"sp" or "sf"; class of the returned object.}
 }
 \value{
 Point object with the computed distance weighted mean in a new field 
-named \code{OUTPUT}. If \code{knownpts} is an sp object, the output is a 
-SpatialPointsDataFrame; if \code{knownpts} is an sf object, the output is an 
-sf POINT data.frame.
+named \code{OUTPUT}.
 }
 \description{
 This function computes a distance weighted mean. It offers the 
@@ -64,29 +64,27 @@ same parameters as \code{\link{stewart}}: user defined distance matrix, user
 defined impedance function (power or exponential), user defined exponent.
 }
 \examples{
-# Create a SpatialPointsDataFrame grid of spatMask extent and 200 meters 
+# Create a grid of paris extent and 200 meters
 # resolution
-data(spatData)
-mygrid <- CreateGrid(w = spatMask, resolution = 200)
-# Create a distance matrix between known points (spatPts) and mygrid
-mymat <- CreateDistMatrix(knownpts = spatPts, unknownpts = mygrid)
-# Compute Stewart potentials from known points (spatPts) on a given 
+data(hospital)
+mygrid <- CreateGrid(w = paris, resolution = 200)
+# Create a distance matrix between known points (hospital) and mygrid
+mymat <- CreateDistMatrix(knownpts = hospital, unknownpts = mygrid)
+# Compute  distance weighted mean from known points (hospital) on a given
 # grid (mygrid) using a given distance matrix (mymat)
-mystewart <- smoothy(knownpts = spatPts, unknownpts = mygrid, 
-                     matdist = mymat, varname = "Capacite", 
-                     typefct = "exponential", span = 1250, 
-                     beta = 3, mask = spatMask)
-# Compute Stewart potentials from known points (spatPts) on a 
+mysmoothy <- smoothy(knownpts = hospital, unknownpts = mygrid,
+                     matdist = mymat, varname = "capacity",
+                     typefct = "exponential", span = 1250,
+                     beta = 3, mask = paris)
+# Compute  distance weighted mean from known points (hospital) on a
 # grid defined by its resolution
-mystewart2 <- smoothy(knownpts = spatPts, varname = "Capacite", 
-                      typefct = "exponential", span = 1250, beta = 3, 
-                      resolution = 200, mask = spatMask)
+mysmoothy2 <- smoothy(knownpts = hospital, varname = "capacity",
+                      typefct = "exponential", span = 1250, beta = 3,
+                      resolution = 200, mask = paris)
 # The two methods have the same result
-identical(mystewart, mystewart2)
-# the function output a SpatialPointsDataFrame
-class(mystewart)
+identical(mysmoothy, mysmoothy2)
 # Computed values
-summary(mystewart$OUTPUT)
+summary(mysmoothy$OUTPUT)
 }
 \seealso{
 \link{stewart}.

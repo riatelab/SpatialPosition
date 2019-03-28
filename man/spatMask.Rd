@@ -7,3 +7,6 @@
 \description{
 A SpatialPolygonsDataFrame of the Paris perimeter.
 }
+\details{
+This is a deprecated dataset.
+}

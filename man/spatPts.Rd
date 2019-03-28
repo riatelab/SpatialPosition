@@ -8,3 +8,6 @@
 A SpatialPointsDataFrame of 18 public hospitals with their capacity 
 (Capacite field = number of beds).
 }
+\details{
+This is a deprecated dataset.
+}

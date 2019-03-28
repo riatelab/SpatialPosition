@@ -7,3 +7,6 @@
 \description{
 A SpatialPolygonsDataFrame of the 20 spatial arrondissements of the Paris.
 }
+\details{
+This is a deprecated dataset.
+}
