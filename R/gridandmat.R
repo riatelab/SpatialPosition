@@ -6,10 +6,9 @@
 #' create the regular grid.
 #' @param resolution numeric; resolution of the grid (in map units). If 
 #' resolution is not set, the grid will contain around 7500 points. (optional)
-#' @return The output of the function is a regularly spaced points grid with the 
-#' extent of \code{w}. If \code{w} is an sp object, the output is a 
-#' SpatialPointsDataFrame; if \code{w} is an sf object, the output is an sf 
-#' POINT data.frame.
+#' @param returnclass "sp" or "sf"; class of the returned object.
+#' @return The output of the function is a regularly spaced points grid
+#'  with the extent of \code{w}.
 #' @seealso \link{CreateDistMatrix}
 #' @examples
 #' # Create a grid of paris extent and 200 meters
@@ -23,7 +22,7 @@
 #' @importFrom sf st_as_sf st_crs st_bbox
 #' @importFrom methods is
 #' @export
-CreateGrid <- function (w, resolution)
+CreateGrid <- function (w, resolution, returnclass="sf")
 {
   # test sf
   if(is(w, "Spatial")){w <- st_as_sf(w)}
@@ -53,6 +52,7 @@ CreateGrid <- function (w, resolution)
                          COORDY = spatGrid[, 2])
   spatGrid <- st_as_sf(spatGrid, coords = c("COORDX", "COORDY"),
                        crs = st_crs(w), remove = FALSE)
+  if(returnclass=="sp"){spatGrid <- as(spatGrid, "Spatial")}
   return(spatGrid)
 }
 
