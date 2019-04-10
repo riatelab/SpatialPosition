@@ -31,8 +31,7 @@
 #' @param longlat	logical; if FALSE, Euclidean distance, if TRUE Great Circle 
 #' (WGS84 ellipsoid) distance.
 #' @details The parallel implementation splits potentials computations along 
-#' chunks of unknownpts (or chunks of the grid defined using resolution). It only 
-#' uses Great Cercle distances (with \code{\link{CreateDistMatrix}}). 
+#' chunks of unknownpts (or chunks of the grid defined using resolution).
 #' @param returnclass "sp" or "sf"; class of the returned object.
 #' @return Point object with the computed potentials in a new field 
 #' named \code{OUTPUT}. 
@@ -55,7 +54,7 @@
 #'                     beta = 3, mask = nuts3.spdf, cl = 3, size = 500)
 #'   )
 #'   identical(s1, s2)
-#'   cat("Elapsed time\n", "stewart:", t1[3], "\n parStewart:",t2[3])
+#'   cat("Elapsed time\n", "stewart:", t1[3], "\n mcStewart:",t2[3])
 #'   
 #'   
 #'   iso <- isopoly(x = s2, breaks = c(0,1000000,2000000, 5000000,

@@ -6,5 +6,5 @@
 \title{Public Hospitals}
 \description{
 An sf POINT data frame of 18 public hospitals with their capacity 
-(capacity field = number of beds).
+("capacity" = number of beds).
 }

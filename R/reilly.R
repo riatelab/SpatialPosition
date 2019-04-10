@@ -10,8 +10,8 @@
 #' units for which the function computes the estimates. Row names match the row 
 #' names of \code{knownpts} and column names match the row names of 
 #' \code{unknownpts}. \code{matdist} can contain any distance metric (time 
-#' distance or euclidean distance for example). If \code{matdist} is NULL, the distance 
-#' matrix is built with \code{\link{CreateDistMatrix}}. (optional)
+#' distance or euclidean distance for example). If \code{matdist} is not set, 
+#' the distance matrix is built with \code{\link{CreateDistMatrix}}. (optional)
 #' @param varname character; name of the variable in the \code{knownpts} dataframe 
 #' from which values are computed. Quantitative variable with no negative values. 
 #' @param typefct character; spatial interaction function. Options are "pareto" 
@@ -90,8 +90,7 @@ reilly <- function(knownpts, unknownpts, matdist, varname,
 #' The raster uses a RAT (\code{\link{ratify}}) that contains the 
 #' correspondance between raster values and catchement areas values. Use \code{
 #' unique(levels(rasterName)[[1]])} to see the correpondance table.
-#' @seealso \link{reilly}, \link{rasterReilly}, \link{plotReilly}, \link{CreateGrid}, 
-#' \link{CreateDistMatrix}.
+#' @seealso \link{reilly}, \link{plotReilly}.
 #' @examples
 #' library(raster)
 #' data(hospital)
@@ -134,8 +133,7 @@ rasterReilly <- function(x ,mask = NULL){
 #' the raster is displayed in a new plot.
 #' @param col function; color ramp function, such as \code{\link{colorRampPalette}}.
 #' @details Display the raster nicely.
-#' @seealso \link{reilly}, \link{rasterReilly}, \link{plotReilly}, \link{CreateGrid}, 
-#' \link{CreateDistMatrix}.
+#' @seealso \link{reilly}, \link{rasterReilly}.
 #' @examples
 #' data(hospital)
 #' # Compute Reilly catchment areas from known points (hospital) on a

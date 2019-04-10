@@ -10,12 +10,12 @@
 #' @param xcoords character; name of the X coordinates field in x.
 #' @param ycoords character; name of the Y coordinates field in x.
 #' @param var character; name of the OUTPUT field in x.
+#' @param returnclass "sp" or "sf"; class of the returned object.
 #' @return The output is an sf POLYGON data.frame.
 #' The data frame contains four fields: 
 #' id (id of each polygon), min and max (minimum and maximum breaks of the polygon), 
 #' center (central values of classes).
-#' @seealso \link{stewart}, \link{rasterStewart}, \link{plotStewart}, 
-#' \link{quickStewart}, \link{CreateGrid}, \link{CreateDistMatrix}.
+#' @seealso \link{stewart}.
 #' @importFrom sf st_as_sf st_crs st_bbox st_cast st_sf st_sfc st_intersection 
 #' st_union st_agr<- st_collection_extract
 #' @importFrom isoband isobands iso_to_sfg
@@ -56,7 +56,7 @@
 #' @export
 isopoly <- function(x, nclass = 8, breaks, mask, 
                     xcoords = "COORDX", ycoords = "COORDY", 
-                    var = "OUTPUT"){
+                    var = "OUTPUT", returnclass="sf"){
   # get initial min and max values
   vmin <- min(x[[var]], na.rm = TRUE)
   vmax <- max(x[[var]], na.rm = TRUE)
@@ -96,7 +96,7 @@ isopoly <- function(x, nclass = 8, breaks, mask,
     st_agr(iso) <- "constant"
     iso <- st_cast(st_intersection(x = iso, y = st_union(mask)))
   }
-  
+  if(returnclass=="sp"){iso <- as(iso, "Spatial")}
   return(iso)
 }
 

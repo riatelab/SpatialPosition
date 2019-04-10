@@ -20,8 +20,8 @@ Not used when \code{resolution} is set up. (optional)}
 units for which the function computes the estimates. Row names match the row 
 names of \code{knownpts} and column names match the row names of 
 \code{unknownpts}. \code{matdist} can contain any distance metric (time 
-distance or euclidean distance for example). If \code{matdist} is NULL, the distance 
-matrix is built with \code{\link{CreateDistMatrix}}. (optional)}
+distance or euclidean distance for example). If \code{matdist} is not set, 
+the distance matrix is built with \code{\link{CreateDistMatrix}}. (optional)}
 
 \item{varname}{character; name of the variable in the \code{knownpts} dataframe 
 from which values are computed. Quantitative variable with no negative values.}

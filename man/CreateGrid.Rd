@@ -4,7 +4,7 @@
 \alias{CreateGrid}
 \title{Create a Regularly Spaced Points Grid}
 \usage{
-CreateGrid(w, resolution)
+CreateGrid(w, resolution, returnclass = "sf")
 }
 \arguments{
 \item{w}{sp or sf object; the spatial extent of this object is used to 
@@ -12,12 +12,12 @@ create the regular grid.}
 
 \item{resolution}{numeric; resolution of the grid (in map units). If 
 resolution is not set, the grid will contain around 7500 points. (optional)}
+
+\item{returnclass}{"sp" or "sf"; class of the returned object.}
 }
 \value{
-The output of the function is a regularly spaced points grid with the 
-extent of \code{w}. If \code{w} is an sp object, the output is a 
-SpatialPointsDataFrame; if \code{w} is an sf object, the output is an sf 
-POINT data.frame.
+The output of the function is a regularly spaced points grid
+ with the extent of \code{w}.
 }
 \description{
 This function creates a regular grid of points 

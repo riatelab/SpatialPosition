@@ -34,6 +34,5 @@ myreillyraster <- rasterReilly(x = myreilly, mask = paris)
 plotReilly(x = myreillyraster)
 }
 \seealso{
-\link{reilly}, \link{rasterReilly}, \link{plotReilly}, \link{CreateGrid}, 
-\link{CreateDistMatrix}.
+\link{reilly}, \link{rasterReilly}.
 }

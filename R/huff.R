@@ -10,8 +10,8 @@
 #' units for which the function computes the estimates. Row names match the row 
 #' names of \code{knownpts} and column names match the row names of 
 #' \code{unknownpts}. \code{matdist} can contain any distance metric (time 
-#' distance or euclidean distance for example). If \code{matdist} is NULL, the distance 
-#' matrix is built with \code{\link{CreateDistMatrix}}. (optional)
+#' distance or euclidean distance for example). If \code{matdist} is not set, the distance 
+#' matrix is automaticly built with \code{\link{CreateDistMatrix}}. (optional)
 #' @param varname character; name of the variable in the \code{knownpts} dataframe 
 #' from which values are computed. Quantitative variable with no negative values. 
 #' @param typefct character; spatial interaction function. Options are "pareto" 
@@ -25,7 +25,7 @@
 #' interaction function equals 0.5.
 #' @param beta numeric; impedance factor for the spatial interaction function.  
 #' @param resolution numeric; resolution of the output grid (in map units). 
-#' If resolution is not set, the grid will contain around 7250 points. (optional)
+#' If resolution is not set, the grid will contain around 7000 points. (optional)
 #' @param mask sp or sf object; the spatial extent of this object is used to 
 #' create the regularly spaced points output. (optional)
 #' @param bypassctrl logical; bypass the distance matrix size control (see 
@@ -86,8 +86,7 @@ huff <- function(knownpts, unknownpts, matdist, varname,
 #' @param mask sp or sf object; this object is used to clip 
 #' the raster. (optional)
 #' @return Raster of catchment areas values.
-#' @seealso \link{huff}, \link{rasterHuff}, \link{plotHuff}, \link{CreateGrid}, 
-#' \link{CreateDistMatrix}.
+#' @seealso \link{huff}, \link{plotHuff}.
 #' @examples
 #' library(raster)
 #' data(hospital)
@@ -123,8 +122,7 @@ rasterHuff <- function(x, mask = NULL){
 #' @param add logical; if TRUE the raster is added to the current plot, if FALSE 
 #' the raster is displayed in a new plot.
 #' @return Display the raster nicely.
-#' @seealso \link{huff}, \link{rasterHuff}, \link{plotHuff}, \link{CreateGrid}, 
-#' \link{CreateDistMatrix}.
+#' @seealso \link{huff}, \link{rasterHuff}.
 #' @examples
 #' data(hospital)
 #' # Compute Huff catchment areas from known points (hospital) on a

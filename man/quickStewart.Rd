@@ -2,7 +2,7 @@
 % Please edit documentation in R/quickStewart.R
 \name{quickStewart}
 \alias{quickStewart}
-\title{Create a SpatialPolygonsDataFrame of Potentials Contours}
+\title{Create Polygons of Potentials Contours}
 \usage{
 quickStewart(x, spdf, df, spdfid = NULL, dfid = NULL, var, var2,
   typefct = "exponential", span, beta, resolution, mask, nclass = 8,
@@ -58,13 +58,12 @@ if breaks is set.}
 \item{returnclass}{"sp" or "sf"; class of the returned object.}
 }
 \value{
-An sf object is returned (see \link{isopoly} Value).
+A polyfon object is returned ("sp" or "sf", see \link{isopoly} Value).
 }
 \description{
-This function is a wrapper around \link{stewart}, \link{rasterStewart} 
-and \link{rasterToContourPoly} functions. 
+This function is a wrapper around \link{stewart}, and \link{isopoly} functions. 
 Providing only the main parameters of these functions, it simplifies a lot the computation of potentials. 
-This function creates a SpatialPolygonsDataFrame of potential values. 
+This function creates polygons of potential values. 
 It also allows to compute directly the ratio between the potentials of two variables.
 }
 \details{
@@ -105,6 +104,5 @@ if(require("cartography")){
 }
 }
 \seealso{
-\link{stewart}, \link{rasterStewart}, \link{plotStewart}, 
-\link{rasterToContourPoly}, \link{CreateGrid}, \link{CreateDistMatrix}.
+\link{stewart}, \link{isopoly}
 }

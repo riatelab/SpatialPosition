@@ -36,7 +36,7 @@
 #' @return Point object with the computed potentials in a new field 
 #' named \code{OUTPUT}. 
 #' @seealso \link{rasterStewart}, \link{plotStewart}, \link{quickStewart},
-#' \link{rasterToContourPoly}, \link{CreateGrid}, \link{CreateDistMatrix}.
+#' \link{isopoly}, \link{CreateGrid}, \link{CreateDistMatrix}.
 #' @examples
 #' # Create a grid of paris extent and 200 meters
 #' # resolution

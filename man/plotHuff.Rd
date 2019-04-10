@@ -31,6 +31,5 @@ myhuffraster <- rasterHuff(x = myhuff, mask = paris)
 plotHuff(myhuffraster)
 }
 \seealso{
-\link{huff}, \link{rasterHuff}, \link{plotHuff}, \link{CreateGrid}, 
-\link{CreateDistMatrix}.
+\link{huff}, \link{rasterHuff}.
 }

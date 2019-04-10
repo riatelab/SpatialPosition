@@ -37,6 +37,5 @@ plot(myreillyraster, col = rainbow(18))
 head(unique(levels(myreillyraster)[[1]]))
 }
 \seealso{
-\link{reilly}, \link{rasterReilly}, \link{plotReilly}, \link{CreateGrid}, 
-\link{CreateDistMatrix}.
+\link{reilly}, \link{plotReilly}.
 }

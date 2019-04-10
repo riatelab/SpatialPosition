@@ -5,7 +5,7 @@
 \title{Create Spatial Polygons Contours from a Raster}
 \usage{
 isopoly(x, nclass = 8, breaks, mask, xcoords = "COORDX",
-  ycoords = "COORDY", var = "OUTPUT")
+  ycoords = "COORDY", var = "OUTPUT", returnclass = "sf")
 }
 \arguments{
 \item{x}{sf POINT data.frame; must contain X, Y and OUTPUT fields.}
@@ -22,6 +22,8 @@ clip contour shapes.}
 \item{ycoords}{character; name of the Y coordinates field in x.}
 
 \item{var}{character; name of the OUTPUT field in x.}
+
+\item{returnclass}{"sp" or "sf"; class of the returned object.}
 }
 \value{
 The output is an sf POLYGON data.frame.
@@ -66,6 +68,5 @@ if(require(cartography)){
 }
 }
 \seealso{
-\link{stewart}, \link{rasterStewart}, \link{plotStewart}, 
-\link{quickStewart}, \link{CreateGrid}, \link{CreateDistMatrix}.
+\link{stewart}.
 }

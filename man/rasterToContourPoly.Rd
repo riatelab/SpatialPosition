@@ -23,6 +23,7 @@ id (id of each polygon), min and max (minimum and maximum breaks of the polygon)
 center (central values of classes)
 }
 \description{
+Deprecated. 
 This function creates a contour SpatialPolygonsDataFrame from a raster.
 }
 \details{
@@ -62,6 +63,5 @@ par(opar)
 }
 }
 \seealso{
-\link{stewart}, \link{rasterStewart}, \link{plotStewart}, 
-\link{quickStewart}, \link{CreateGrid}, \link{CreateDistMatrix}.
+\link{stewart}, \link{rasterStewart}.
 }

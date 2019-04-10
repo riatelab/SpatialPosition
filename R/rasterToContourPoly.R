@@ -1,6 +1,7 @@
 #' @title Create a SpatialPolygonsDataFrame from a Raster
 #' @name rasterToContourPoly
 #' @description 
+#' Deprecated. 
 #' This function creates a contour SpatialPolygonsDataFrame from a raster.
 #' @param r raster; the raster must contain only positive values.
 #' @param nclass numeric; a number of class.
@@ -12,8 +13,7 @@
 #' id (id of each polygon), min and max (minimum and maximum breaks of the polygon), 
 #' center (central values of classes)
 #' @details This function uses the rgeos package.
-#' @seealso \link{stewart}, \link{rasterStewart}, \link{plotStewart}, 
-#' \link{quickStewart}, \link{CreateGrid}, \link{CreateDistMatrix}.
+#' @seealso \link{stewart}, \link{rasterStewart}.
 #' @import sp
 #' @import raster
 #' @examples

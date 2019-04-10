@@ -1,10 +1,9 @@
-#' @title Create a SpatialPolygonsDataFrame of Potentials Contours
+#' @title Create Polygons of Potentials Contours
 #' @name quickStewart
 #' @description 
-#' This function is a wrapper around \link{stewart}, \link{rasterStewart} 
-#' and \link{rasterToContourPoly} functions. 
+#' This function is a wrapper around \link{stewart}, and \link{isopoly} functions. 
 #' Providing only the main parameters of these functions, it simplifies a lot the computation of potentials. 
-#' This function creates a SpatialPolygonsDataFrame of potential values. 
+#' This function creates polygons of potential values. 
 #' It also allows to compute directly the ratio between the potentials of two variables. 
 #' @param x sp or sf object; this is the set of known observations to 
 #' estimate the potentials from.
@@ -38,12 +37,11 @@
 #' @param bypassctrl logical; bypass the distance matrix size control (see 
 #' \code{\link{CreateDistMatrix}} Details).
 #' @param returnclass "sp" or "sf"; class of the returned object.
-#' @return An sf object is returned (see \link{isopoly} Value). 
+#' @return A polyfon object is returned ("sp" or "sf", see \link{isopoly} Value). 
 #' @details 
 #' If var2 is provided, the ratio between the potentials of var (numerator) 
 #' and var2 (denominator) is computed.
-#' @seealso \link{stewart}, \link{rasterStewart}, \link{plotStewart}, 
-#' \link{rasterToContourPoly}, \link{CreateGrid}, \link{CreateDistMatrix}.
+#' @seealso \link{stewart}, \link{isopoly}
 #' @import sp
 #' @import raster
 #' @export
