@@ -9,19 +9,22 @@ vignette: >
   \usepackage[utf8]{inputenc}
 ---
 
-## The QGIS Toolbox
 
-Quantum GIS or QGIS is a free desktop Geographic Information System software first released in 2002. In 2013 (release 2.0) [the Sextante plugin was integrated in the QGIS default install](https://en.wikipedia.org/wiki/QGIS) as a **processing toolbox** with a set of geoalgorithms from several providers (QGIS itself, GRASS, R, etc.). The [processing toolbox](http://docs.qgis.org/2.14/en/docs/user_manual/processing/index.html) provides pre-implemented scripts but it is also possible to edit user-defined scripts. This tutorial details the steps to set up a R script and use the `SpatialPosition` package from within QGIS.
+## The QGIS Toolbox
+QGIS is a free desktop Geographic Information System software first released in 2002. This tutorial details the steps to set up an R script and use the `SpatialPosition` package from within QGIS.
+The [Processing R Provider](https://github.com/north-road/qgis-processing-r) plugin offers to create user-defined R scripts integrated to QGIS. This vignette has been tested with SpatialPosition (v2.0.0), QGIS (v3.4.6 Madeira, Long Time Release) and Processing R Provider plugin (v1.0.5). 
+
 
 ## Install and set up instructions
 
 **Basic install and activation**
 
-- install a recent version of QGIS: http://qgis.org/
-- install a recent version of R: https://cran.r-project.org/
+- install a recent version of QGIS: http://qgis.org/ (>=3.4.6)
+- install a recent version of R: https://cran.r-project.org/ (>=3.5.x)
 - R: with the user interface go to `install packages` and install the `SpatialPosition` package (or use the `install.packages()` function)
+- QGIS: go to `Plugins > Manage and Install Plugins...` to install the **Processing R Provider** plugin.
 - QGIS: go to `Processing` and check the `Toolbox` button
-- QGIS: go to `Processing > Options > Providers > R Scripts` and check `activate`
+
 
 **Two ways to add the script**
 
@@ -29,19 +32,14 @@ Quantum GIS or QGIS is a free desktop Geographic Information System software fir
 
 - copy-paste the following script in a text editor
 - save the script with a `.rsx` extension, for example `SpatialPosition.Rsx`
-- paste the file `SpatialPosition.rsx` into the `R scripts folder` (the path is given in `Options > Providers > R Scripts`)
+- paste the file `SpatialPosition.rsx` into the `R scripts folder` (the path is given in `Options > Providers > R > R scripts folder`)
 
 *Option 2 - Creating a new script*
 
-- QGIS: in the `Toolbox` panel choose `Advanced interface`
-- QGIS: go to `Toolbox > R Scripts > Tools` and open `Create a new R script`
+- QGIS: go to `Toolbox > R` and open `Create a new R script`
 - copy-paste the following script in the script editor and save
 
 ## Using the script
-
-The new script appear in `QGIS > Toolbox > R Scripts > Tools > User R scripts`. If you want to make it appear in an existing or a user-defined category (for example a category called "Spatial statistics") you can add a line in the header such as `##Spatial statistics=group`.
-
-The new script appear in `QGIS > Toolbox > R Scripts > Tools > User R scripts`. If you want to make it appear in an existing or a user-defined category (for example a category called "Spatial statistics") you can add a line in the header such as `##Spatial statistics=group`.
 
 The main arguments of the `stewart()` function are available. The function (exponential) and the beta parameter (3) are hard coded, you may edit the script if you want to change this default behavior. 
 
