@@ -87,7 +87,7 @@ CreateGrid <- function (w, resolution, returnclass="sf")
 #' nrow(mygrid)
 #' dim(mymat)
 #' @importFrom sf st_centroid st_geometry st_geometry<- st_as_sf st_is_longlat 
-#' st_distance st_transform
+#' st_distance st_transform st_is
 #' @importFrom methods is
 #' @export
 CreateDistMatrix  <- function(knownpts, 
@@ -127,11 +127,13 @@ CreateDistMatrix  <- function(knownpts,
   # polygon mngmnt
   if(!is(st_geometry(knownpts), "sfc_POINT")){
     st_geometry(knownpts) <- st_centroid(st_geometry(knownpts), 
-                                         of_largest_polygon = TRUE)
+                                         of_largest_polygon = all(
+                                           st_is(knownpts, "MULTIPOLYGON")))
   }
   if(!is(st_geometry(unknownpts), "sfc_POINT")){
     st_geometry(unknownpts) <- st_centroid(st_geometry(unknownpts), 
-                                           of_largest_polygon = TRUE)
+                                           of_largest_polygon = all(
+                                             st_is(unknownpts, "MULTIPOLYGON")))
   }
   
   if(!st_is_longlat(knownpts)){
