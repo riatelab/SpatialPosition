@@ -16,13 +16,13 @@
 #' library(SpatialPosition)
 #' library(sf)
 #' data(hospital)
-#' mygrid <- CreateGrid(w = paris, resolution = 200)
+#' mygrid <- CreateGrid(w = paris, resolution = 200, returnclass = "sf")
 #' plot(st_geometry(mygrid), cex = 0.1, pch = ".")
 #' plot(st_geometry(paris), border="red", lwd = 2, add = TRUE)
 #' @importFrom sf st_as_sf st_crs st_bbox
 #' @importFrom methods is
 #' @export
-CreateGrid <- function (w, resolution, returnclass="sf")
+CreateGrid <- function (w, resolution, returnclass="sp")
 {
   # test sf
   if(is(w, "Spatial")){w <- st_as_sf(w)}

@@ -11,10 +11,11 @@ potentials <- stewart(
   span = 1000, 
   beta = 3,
   resolution = 50,
-  mask = paris
+  mask = paris, 
+  returnclass = "sf"
 )
 
-isopotentials <- isopoly(x = potentials, mask = paris)
+isopotentials <- isopoly(x = potentials, mask = paris, returnclass = "sf")
 
 lab <- paste0(round(isopotentials$min,0),' to ', 
               round(isopotentials$max,0))

@@ -86,7 +86,8 @@ poppot <- stewart(knownpts = nuts3.spdf,
                   varname = "pop2008", 
                   typefct = "exponential", 
                   beta = 2, 
-                  span = 75000)
+                  span = 75000,
+                  returnclass = "sf")
 
 # Compute the potentials of GDP per units
 # function = exponential, beta = 2, span = 75 km
@@ -96,7 +97,8 @@ gdppot <- stewart(knownpts = nuts3.spdf,
                   varname = "gdppps2008", 
                   typefct = "exponential", 
                   beta = 2,
-                  span = 75000)
+                  span = 75000, 
+                  returnclass = "sf")
 
 # Create a data frame of potential GDP per capita
 pot <- data.frame(id = nuts3.df$id, 
@@ -149,7 +151,8 @@ poppot <- stewart(knownpts = nuts3.spdf,
                   span = 75000, 
                   beta = 2, 
                   resolution = 50000, 
-                  mask = nuts0.spdf)
+                  mask = nuts0.spdf, 
+                  returnclass = "sf")
 
 # Compute the potentials of GDP on a regular grid (50km span)
 # function = exponential, beta = 2, span = 75 km
@@ -159,7 +162,8 @@ gdppot <- stewart(knownpts = nuts3.spdf,
                   span = 75000, 
                   beta = 2, 
                   resolution = 50000, 
-                  mask = nuts0.spdf)
+                  mask = nuts0.spdf, 
+                  returnclass = "sf")
 
 # Create the ratio variable
 poppot$OUTPUT2 <- gdppot$OUTPUT * 1e6 / poppot$OUTPUT
@@ -167,7 +171,8 @@ poppot$OUTPUT2 <- gdppot$OUTPUT * 1e6 / poppot$OUTPUT
 # Create an isopleth layer
 pot <- isopoly(x = poppot, var = "OUTPUT2",
                breaks = bv, 
-               mask = nuts0.spdf)
+               mask = nuts0.spdf, 
+               returnclass = "sf")
 
 # Get breaks values
 bv3 <- sort(c(unique(pot$min), max(pot$max)), decreasing = FALSE)

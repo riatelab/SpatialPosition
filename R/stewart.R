@@ -49,12 +49,12 @@
 #' mystewart <- stewart(knownpts = hospital, unknownpts = mygrid,
 #'                      matdist = mymat, varname = "capacity",
 #'                      typefct = "exponential", span = 1250,
-#'                      beta = 3, mask = paris)
+#'                      beta = 3, mask = paris, returnclass = "sf")
 #' # Compute Stewart potentials from known points (spatPts) on a
 #' # grid defined by its resolution
 #' mystewart2 <- stewart(knownpts = hospital, varname = "capacity",
 #'                       typefct = "exponential", span = 1250, beta = 3,
-#'                       resolution = 200, mask = paris)
+#'                       resolution = 200, mask = paris, returnclass = "sf")
 #' # The two methods have the same result
 #' identical(mystewart, mystewart2)
 #' # the function output a sf data.frame
@@ -68,7 +68,7 @@
 #' @export
 stewart <- function(knownpts,unknownpts, matdist, varname, 
                     typefct = "exponential", span, beta, resolution, mask, 
-                    bypassctrl = FALSE, longlat = TRUE,  returnclass = "sf"){
+                    bypassctrl = FALSE, longlat = TRUE,  returnclass = "sp"){
   res <- prepdata(knownpts = knownpts, unknownpts = unknownpts, 
                   matdist = matdist, bypassctrl = bypassctrl, longlat = longlat,
                   mask = mask, resolution = resolution) 

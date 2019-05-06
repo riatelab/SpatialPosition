@@ -4,7 +4,7 @@
 \alias{CreateGrid}
 \title{Create a Regularly Spaced Points Grid}
 \usage{
-CreateGrid(w, resolution, returnclass = "sf")
+CreateGrid(w, resolution, returnclass = "sp")
 }
 \arguments{
 \item{w}{sp or sf object; the spatial extent of this object is used to 
@@ -29,7 +29,7 @@ from the extent of a given spatial object and a given resolution.
 library(SpatialPosition)
 library(sf)
 data(hospital)
-mygrid <- CreateGrid(w = paris, resolution = 200)
+mygrid <- CreateGrid(w = paris, resolution = 200, returnclass = "sf")
 plot(st_geometry(mygrid), cex = 0.1, pch = ".")
 plot(st_geometry(paris), border="red", lwd = 2, add = TRUE)
 }

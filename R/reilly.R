@@ -49,12 +49,12 @@
 #' myreilly2 <- reilly(knownpts = hospital, unknownpts = mygrid,
 #'                     matdist = mymat, varname = "capacity",
 #'                     typefct = "exponential", span = 1250,
-#'                     beta = 3, mask = paris)
+#'                     beta = 3, mask = paris, returnclass = "sf")
 #' # Compute Reilly catchment areas from known points (hospital) on a
 #' # grid defined by its resolution
 #' myreilly <- reilly(knownpts = hospital, varname = "capacity",
 #'                    typefct = "exponential", span = 1250, beta = 3,
-#'                    resolution = 200, mask = paris)
+#'                    resolution = 200, mask = paris, returnclass = "sf")
 #' # The function output an sf object
 #' class(myreilly)
 #' # The OUTPUT field values match knownpts row names
@@ -65,7 +65,7 @@
 #' @export
 reilly <- function(knownpts, unknownpts, matdist, varname,
                    typefct = "exponential", span, beta, resolution, mask,
-                   bypassctrl = FALSE, longlat = TRUE, returnclass="sf"){
+                   bypassctrl = FALSE, longlat = TRUE, returnclass="sp"){
   res <- prepdata(knownpts = knownpts, unknownpts = unknownpts, 
                   matdist = matdist, bypassctrl = bypassctrl, longlat = longlat,
                   mask = mask, resolution = resolution) 

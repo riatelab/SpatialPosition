@@ -6,7 +6,7 @@
 \usage{
 quickStewart(x, spdf, df, spdfid = NULL, dfid = NULL, var, var2,
   typefct = "exponential", span, beta, resolution, mask, nclass = 8,
-  breaks, bypassctrl = FALSE, returnclass = "sf")
+  breaks, bypassctrl = FALSE, returnclass = "sp")
 }
 \arguments{
 \item{x}{sp or sf object; this is the set of known observations to 
@@ -77,7 +77,8 @@ data("hospital")
 pot <- quickStewart(x = hospital,
                     var = "capacity",
                     span = 1000,
-                    beta = 2, mask = paris)
+                    beta = 2, mask = paris, 
+                    returnclass = "sf")
 # cartography
 if(require("cartography")){
   breaks <- sort(c(unique(pot$min), max(pot$max)), decreasing = FALSE)
@@ -93,7 +94,9 @@ pot2 <- quickStewart(x = hospital,
                      var = "capacity",
                      var2 = "dummy",
                      span = 1000,
-                     beta = 2, mask = paris)
+                     beta = 2, 
+                     mask = paris, 
+                     returnclass = "sf")
 # cartography
 if(require("cartography")){
   breaks <- sort(c(unique(pot2$min), max(pot2$max)), decreasing = FALSE)

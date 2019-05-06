@@ -5,7 +5,7 @@
 \title{Create Spatial Polygons Contours from a Raster}
 \usage{
 isopoly(x, nclass = 8, breaks, mask, xcoords = "COORDX",
-  ycoords = "COORDY", var = "OUTPUT", returnclass = "sf")
+  ycoords = "COORDY", var = "OUTPUT", returnclass = "sp")
 }
 \arguments{
 \item{x}{sf POINT data.frame; must contain X, Y and OUTPUT fields.}
@@ -39,11 +39,11 @@ data(hospital)
 # Compute Stewart potentials
 mystewart <- stewart(knownpts = hospital, varname = "capacity",
                      typefct = "exponential", span = 1000, beta = 3,
-                     mask = paris)
+                     mask = paris, returnclass = "sf")
 # Create contour
 contourpoly <- isopoly(x = mystewart,
                        nclass = 6,
-                       mask = paris)
+                       mask = paris, returnclass = "sf")
 library(sf)
 plot(st_geometry(contourpoly))
 if(require(cartography)){

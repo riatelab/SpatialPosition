@@ -6,7 +6,7 @@
 \usage{
 huff(knownpts, unknownpts, matdist, varname, typefct = "exponential",
   span, beta, resolution, mask, bypassctrl = FALSE, longlat = TRUE,
-  returnclass = "sf")
+  returnclass = "sp")
 }
 \arguments{
 \item{knownpts}{sp or sf object; 
@@ -64,7 +64,7 @@ This function computes the catchment areas as defined by D. Huff (1964).
 # Create a grid of paris extent and 200 meters
 # resolution
 data(hospital)
-mygrid <- CreateGrid(w = paris, resolution = 200)
+mygrid <- CreateGrid(w = paris, resolution = 200, returnclass = "sf")
 # Create a distance matrix between known points (hospital) and mygrid
 mymat <- CreateDistMatrix(knownpts = hospital, unknownpts = mygrid)
 # Compute Huff catchment areas from known points (hospital) on a given
@@ -72,12 +72,12 @@ mymat <- CreateDistMatrix(knownpts = hospital, unknownpts = mygrid)
 myhuff <- huff(knownpts = hospital, unknownpts = mygrid,
                matdist = mymat, varname = "capacity",
                typefct = "exponential", span = 1250,
-               beta = 3, mask = paris)
+               beta = 3, mask = paris, returnclass = "sf")
 # Compute Huff catchment areas from known points (hospital) on a
 # grid defined by its resolution
 myhuff2 <- huff(knownpts = hospital, varname = "capacity",
                 typefct = "exponential", span = 1250, beta = 3,
-                resolution = 200, mask = paris)
+                resolution = 200, mask = paris, returnclass= "sf")
 # The two methods have the same result
 identical(myhuff, myhuff2)
 # the function output an sf object

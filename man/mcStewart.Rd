@@ -6,7 +6,7 @@
 \usage{
 mcStewart(knownpts, unknownpts, varname, typefct = "exponential", span,
   beta, resolution, mask, cl, size = 1000, longlat = TRUE,
-  returnclass = "sf")
+  returnclass = "sp")
 }
 \arguments{
 \item{knownpts}{sp or sf object; this is the set of known observations to 

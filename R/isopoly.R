@@ -26,11 +26,11 @@
 #' # Compute Stewart potentials
 #' mystewart <- stewart(knownpts = hospital, varname = "capacity",
 #'                      typefct = "exponential", span = 1000, beta = 3,
-#'                      mask = paris)
+#'                      mask = paris, returnclass = "sf")
 #' # Create contour
 #' contourpoly <- isopoly(x = mystewart,
 #'                        nclass = 6,
-#'                        mask = paris)
+#'                        mask = paris, returnclass = "sf")
 #' library(sf)
 #' plot(st_geometry(contourpoly))
 #' if(require(cartography)){
@@ -56,7 +56,7 @@
 #' @export
 isopoly <- function(x, nclass = 8, breaks, mask, 
                     xcoords = "COORDX", ycoords = "COORDY", 
-                    var = "OUTPUT", returnclass="sf"){
+                    var = "OUTPUT", returnclass="sp"){
   # get initial min and max values
   vmin <- min(x[[var]], na.rm = TRUE)
   vmax <- max(x[[var]], na.rm = TRUE)

@@ -77,7 +77,7 @@ mcStewart <- function(knownpts, unknownpts,
                       typefct = "exponential",
                       span, beta, resolution,
                       mask, cl, size = 1000, 
-                      longlat = TRUE, returnclass="sf"){
+                      longlat = TRUE, returnclass="sp"){
   # Check libraries
   if (!requireNamespace("parallel", quietly = TRUE)) {
     stop("'parallel' package needed for this function to work. Please install it.",
@@ -102,7 +102,8 @@ mcStewart <- function(knownpts, unknownpts,
     } else {
       if(is(mask, "Spatial")){unknownpts <- st_as_sf(mask)}
     }
-    unknownpts <- CreateGrid(w = mask, resolution = resolution) 
+    unknownpts <- CreateGrid(w = mask, resolution = resolution, 
+                             returnclass = "sf") 
   }
   unknownpts2 <- unknownpts
   

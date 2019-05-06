@@ -52,7 +52,8 @@
 #' pot <- quickStewart(x = hospital,
 #'                     var = "capacity",
 #'                     span = 1000,
-#'                     beta = 2, mask = paris)
+#'                     beta = 2, mask = paris, 
+#'                     returnclass = "sf")
 #' # cartography
 #' if(require("cartography")){
 #'   breaks <- sort(c(unique(pot$min), max(pot$max)), decreasing = FALSE)
@@ -68,7 +69,9 @@
 #'                      var = "capacity",
 #'                      var2 = "dummy",
 #'                      span = 1000,
-#'                      beta = 2, mask = paris)
+#'                      beta = 2, 
+#'                      mask = paris, 
+#'                      returnclass = "sf")
 #' # cartography
 #' if(require("cartography")){
 #'   breaks <- sort(c(unique(pot2$min), max(pot2$max)), decreasing = FALSE)
@@ -80,7 +83,7 @@
 quickStewart <- function(x, spdf, df, spdfid = NULL, dfid = NULL, var, var2, 
                          typefct = "exponential", span, beta, resolution, 
                          mask, nclass = 8, breaks, bypassctrl = FALSE, 
-                         returnclass="sf"){
+                         returnclass="sp"){
   # IDs  
   if(missing(x)){
     if (is.null(spdfid)){spdfid <- names(spdf@data)[1]}
@@ -101,7 +104,8 @@ quickStewart <- function(x, spdf, df, spdfid = NULL, dfid = NULL, var, var2,
                  beta = beta, 
                  resolution = resolution, 
                  mask = mask, 
-                 bypassctrl = bypassctrl)
+                 bypassctrl = bypassctrl, 
+                 returnclass = "sf")
   
   if(!missing(var2)){
     if(!is.null(var2)){
@@ -112,19 +116,20 @@ quickStewart <- function(x, spdf, df, spdfid = NULL, dfid = NULL, var, var2,
                       beta = beta, 
                       resolution = resolution, 
                       mask = mask, 
-                      bypassctrl = bypassctrl)
+                      bypassctrl = bypassctrl, 
+                      returnclass = "sf")
       pot$OUTPUT <- pot$OUTPUT / pot2$OUTPUT
     }
   }
   # dirty stuff to accomodate cartography :-(
   if(!missing(breaks)){
     if(!is.null(breaks)){
-      pot <- isopoly(x = pot, breaks = breaks, mask = mask)
+      pot <- isopoly(x = pot, breaks = breaks, mask = mask, returnclass = "sf")
     }else{
-      pot <- isopoly(x = pot, nclass = nclass, mask = mask)
+      pot <- isopoly(x = pot, nclass = nclass, mask = mask, returnclass = "sf")
     }
   }else{
-    pot <- isopoly(x = pot, nclass = nclass, mask = mask)
+    pot <- isopoly(x = pot, nclass = nclass, mask = mask, returnclass = "sf")
   }
   
   if(returnclass=="sp"){pot <- as(pot, "Spatial")}

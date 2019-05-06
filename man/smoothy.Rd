@@ -6,7 +6,7 @@
 \usage{
 smoothy(knownpts, unknownpts, matdist, varname, typefct = "exponential",
   span, beta, resolution, mask, bypassctrl = FALSE, longlat = TRUE,
-  returnclass = "sf")
+  returnclass = "sp")
 }
 \arguments{
 \item{knownpts}{sp or sf object; this is the set of known observations to 
@@ -75,12 +75,12 @@ mymat <- CreateDistMatrix(knownpts = hospital, unknownpts = mygrid)
 mysmoothy <- smoothy(knownpts = hospital, unknownpts = mygrid,
                      matdist = mymat, varname = "capacity",
                      typefct = "exponential", span = 1250,
-                     beta = 3, mask = paris)
+                     beta = 3, mask = paris, returnclass = "sf")
 # Compute  distance weighted mean from known points (hospital) on a
 # grid defined by its resolution
 mysmoothy2 <- smoothy(knownpts = hospital, varname = "capacity",
                       typefct = "exponential", span = 1250, beta = 3,
-                      resolution = 200, mask = paris)
+                      resolution = 200, mask = paris, returnclass = "sf")
 # The two methods have the same result
 identical(mysmoothy, mysmoothy2)
 # Computed values
