@@ -19,7 +19,8 @@ prepdata <- function(knownpts, unknownpts, matdist, bypassctrl, longlat, mask,
     } else {
       if(is(mask, "Spatial")){unknownpts <- st_as_sf(mask)}
     }
-    unknownpts <- CreateGrid(w = mask, resolution = resolution) 
+    unknownpts <- CreateGrid(w = mask, resolution = resolution, 
+                             returnclass = "sf") 
     matdist <- CreateDistMatrix(knownpts = knownpts, unknownpts = unknownpts, 
                                 bypassctrl = bypassctrl, longlat = longlat) 
   }
@@ -79,7 +80,8 @@ ComputeHuff <- function(unknownpts, matopport)
 
 ComputeSmooth<- function(unknownpts, matopport, matdens)
 {
-  unknownpts$OUTPUT <- apply(matopport, 2, sum, na.rm = TRUE) / colSums(matdens)
+  unknownpts$OUTPUT <- apply(matopport, 2, sum, na.rm = TRUE) / 
+    colSums(matdens, na.rm = TRUE)
   return(unknownpts)
 }
 
