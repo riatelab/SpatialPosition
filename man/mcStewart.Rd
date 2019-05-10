@@ -72,7 +72,6 @@ if(require(cartography)){
                   typefct = "exponential", span = 100000,
                   beta = 3, mask = nuts3.spdf)
   )
-  
   t2 <- system.time(
     s2 <- mcStewart(knownpts = nuts3.spdf, resolution = 40000,
                     varname = "pop2008",
@@ -82,10 +81,10 @@ if(require(cartography)){
   identical(s1, s2)
   cat("Elapsed time\\n", "stewart:", t1[3], "\\n mcStewart:",t2[3])
   
-  
-  iso <- isopoly(x = s2, breaks = c(0,1000000,2000000, 5000000,
-                                    10000000, 20000000, 200004342),
-                 mask = nuts3.spdf)
+  iso <- isopoly(x = s2, 
+                 breaks = c(0,1000000,2000000, 5000000, 10000000, 20000000, 
+                            200004342),
+                 mask = nuts3.spdf, returnclass = "sf")
   # cartography
   opar <- par(mar = c(0,0,1.2,0))
   bks <- sort(unique(c(iso$min, iso$max)))

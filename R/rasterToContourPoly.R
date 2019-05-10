@@ -32,6 +32,7 @@
 #' bks <- sort(unique(c(contourpoly$min, contourpoly$max)))
 #' # Display the map
 #' library(cartography)
+#' library(sp)
 #' opar <- par(mar = c(0,0,1.2,0))
 #' choroLayer(spdf = contourpoly,
 #'            df = contourpoly@data,
