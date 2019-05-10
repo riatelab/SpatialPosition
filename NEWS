@@ -1,4 +1,4 @@
-SpatialPosition version 2.0.0 (Release date: 2019-04-)
+SpatialPosition version 2.0.0 (Release date: 2019-05-10)
 ==============
 
 Major changes:
@@ -7,7 +7,7 @@ Major changes:
 * rasterToContourPoly() (based on rgeos & sp) is deprecated in favor of isopoly() (based on isoband and sf).  
 * bug fix in smoothy for some computations with NAs.  
 * addition of a dataset hospital, with hospital points and capacity and Paris polygon. 
-
+* suppression of the QGIS vignette, irrelevant in regard to QGIS v3, and not really specific to SpatialPosition
 
 SpatialPosition version 1.2.0 (Release date: 2017-09-06)
 ==============
