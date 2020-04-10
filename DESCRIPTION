@@ -1,6 +1,6 @@
 Package: SpatialPosition
 Title: Spatial Position Models
-Version: 2.0.0
+Version: 2.0.1
 Date: 2019-04-21
 Authors@R: c(
       person("Timothée", "Giraud", email = "timothee.giraud@cnrs.fr", role = c("cre","aut")),
@@ -20,7 +20,8 @@ Imports:
     lwgeom,
     rgeos, 
     isoband, 
-    raster
+    raster, 
+    utils
 Suggests:
     parallel,
     doParallel, 
@@ -33,4 +34,4 @@ URL: https://github.com/Groupe-ElementR/SpatialPosition
 BugReports: https://github.com/Groupe-ElementR/SpatialPosition/issues
 VignetteBuilder: knitr
 Encoding: UTF-8
-RoxygenNote: 6.1.1
+RoxygenNote: 7.1.0

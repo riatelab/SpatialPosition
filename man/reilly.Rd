@@ -4,9 +4,20 @@
 \alias{reilly}
 \title{Reilly Catchment Areas}
 \usage{
-reilly(knownpts, unknownpts, matdist, varname, typefct = "exponential",
-  span, beta, resolution, mask, bypassctrl = FALSE, longlat = TRUE,
-  returnclass = "sp")
+reilly(
+  knownpts,
+  unknownpts,
+  matdist,
+  varname,
+  typefct = "exponential",
+  span,
+  beta,
+  resolution,
+  mask,
+  bypassctrl = FALSE,
+  longlat = TRUE,
+  returnclass = "sp"
+)
 }
 \arguments{
 \item{knownpts}{sp or sf object; 

@@ -3,7 +3,6 @@
 \docType{package}
 \name{SpatialPosition}
 \alias{SpatialPosition}
-\alias{SpatialPosition-package}
 \title{Spatial Position Package}
 \description{
 Computes spatial position models: \itemize{

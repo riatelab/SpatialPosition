@@ -20,7 +20,6 @@
 #' st_union st_agr<- st_collection_extract
 #' @importFrom isoband isobands iso_to_sfg
 #' @importFrom methods is
-#' @importFrom lwgeom st_make_valid
 #' @examples
 #' data(hospital)
 #' # Compute Stewart potentials
@@ -86,7 +85,13 @@ isopoly <- function(x, nclass = 8, breaks, mask,
   iso$center = iso$min + (iso$max - iso$min) / 2
   
   
-  st_geometry(iso) <- st_make_valid(st_geometry(iso))
+  
+  if (utils::packageVersion("sf") < "0.9.0"){
+    st_geometry(iso) <- lwgeom::st_make_valid(st_geometry(iso))
+  }else{
+    st_geometry(iso) <- sf::st_make_valid(st_geometry(iso))
+  }
+  
   if(methods::is(st_geometry(iso),"sfc_GEOMETRY")){
     st_geometry(iso) <-   st_collection_extract(st_geometry(iso), "POLYGON")
   }

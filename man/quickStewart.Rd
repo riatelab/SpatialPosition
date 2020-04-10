@@ -4,9 +4,24 @@
 \alias{quickStewart}
 \title{Create Polygons of Potentials Contours}
 \usage{
-quickStewart(x, spdf, df, spdfid = NULL, dfid = NULL, var, var2,
-  typefct = "exponential", span, beta, resolution, mask, nclass = 8,
-  breaks, bypassctrl = FALSE, returnclass = "sp")
+quickStewart(
+  x,
+  spdf,
+  df,
+  spdfid = NULL,
+  dfid = NULL,
+  var,
+  var2,
+  typefct = "exponential",
+  span,
+  beta,
+  resolution,
+  mask,
+  nclass = 8,
+  breaks,
+  bypassctrl = FALSE,
+  returnclass = "sp"
+)
 }
 \arguments{
 \item{x}{sp or sf object; this is the set of known observations to 

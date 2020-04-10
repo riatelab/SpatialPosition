@@ -4,9 +4,20 @@
 \alias{smoothy}
 \title{Stewart Smooth}
 \usage{
-smoothy(knownpts, unknownpts, matdist, varname, typefct = "exponential",
-  span, beta, resolution, mask, bypassctrl = FALSE, longlat = TRUE,
-  returnclass = "sp")
+smoothy(
+  knownpts,
+  unknownpts,
+  matdist,
+  varname,
+  typefct = "exponential",
+  span,
+  beta,
+  resolution,
+  mask,
+  bypassctrl = FALSE,
+  longlat = TRUE,
+  returnclass = "sp"
+)
 }
 \arguments{
 \item{knownpts}{sp or sf object; this is the set of known observations to 

@@ -1,4 +1,4 @@
-## ---- fig.width=7, fig.height=5------------------------------------------
+## ---- fig.width=7, fig.height=5-----------------------------------------------
 library(SpatialPosition)
 library(sf)
 data(hospital)
@@ -29,7 +29,7 @@ mtext(text = "Potential nb. of beds
       distance function: exponential, span = 1 km, beta = 3",
       side = 1, line = 1)   
 
-## ---- fig.width=5, fig.height=5------------------------------------------
+## ---- fig.width=5, fig.height=5-----------------------------------------------
 library(raster)
 row.names(hospital)
 catchReilly <- reilly(knownpts = hospital, varname = "capacity",
@@ -47,7 +47,7 @@ mtext("Catchment Areas of Public Hospitals", side = 3,cex = 1.5)
 mtext(text = "distance function: exponential, span = 0.75 km, beta = 2",
       side = 1, line = 0) 
 
-## ---- fig.width=5, fig.height=5------------------------------------------
+## ---- fig.width=5, fig.height=5-----------------------------------------------
 catchHuff <- huff(knownpts = hospital, varname = "capacity",
                   typefct = "exponential", span = 750, beta = 2,
                   resolution = 50, mask = paris)

@@ -4,9 +4,20 @@
 \alias{huff}
 \title{Huff Catchment Areas}
 \usage{
-huff(knownpts, unknownpts, matdist, varname, typefct = "exponential",
-  span, beta, resolution, mask, bypassctrl = FALSE, longlat = TRUE,
-  returnclass = "sp")
+huff(
+  knownpts,
+  unknownpts,
+  matdist,
+  varname,
+  typefct = "exponential",
+  span,
+  beta,
+  resolution,
+  mask,
+  bypassctrl = FALSE,
+  longlat = TRUE,
+  returnclass = "sp"
+)
 }
 \arguments{
 \item{knownpts}{sp or sf object; 

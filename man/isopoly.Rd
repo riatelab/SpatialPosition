@@ -4,8 +4,16 @@
 \alias{isopoly}
 \title{Create Spatial Polygons Contours from a Raster}
 \usage{
-isopoly(x, nclass = 8, breaks, mask, xcoords = "COORDX",
-  ycoords = "COORDY", var = "OUTPUT", returnclass = "sp")
+isopoly(
+  x,
+  nclass = 8,
+  breaks,
+  mask,
+  xcoords = "COORDX",
+  ycoords = "COORDY",
+  var = "OUTPUT",
+  returnclass = "sp"
+)
 }
 \arguments{
 \item{x}{sf POINT data.frame; must contain X, Y and OUTPUT fields.}
@@ -55,7 +63,7 @@ if(require(cartography)){
              var = "center", legend.pos = "topleft",
              breaks = bks, border = "grey90",
              lwd = 0.2,
-             legend.title.txt = "Potential number\\nof beds in the\\nneighbourhood",
+             legend.title.txt = "Potential number\nof beds in the\nneighbourhood",
              legend.values.rnd = 0)
   plot(st_geometry(paris), add = TRUE)
   propSymbolsLayer(x = hospital, var = "capacity",

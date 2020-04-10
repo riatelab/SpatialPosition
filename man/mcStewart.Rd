@@ -4,9 +4,20 @@
 \alias{mcStewart}
 \title{Stewart Potentials Parallel}
 \usage{
-mcStewart(knownpts, unknownpts, varname, typefct = "exponential", span,
-  beta, resolution, mask, cl, size = 1000, longlat = TRUE,
-  returnclass = "sp")
+mcStewart(
+  knownpts,
+  unknownpts,
+  varname,
+  typefct = "exponential",
+  span,
+  beta,
+  resolution,
+  mask,
+  cl,
+  size = 1000,
+  longlat = TRUE,
+  returnclass = "sp"
+)
 }
 \arguments{
 \item{knownpts}{sp or sf object; this is the set of known observations to 
@@ -79,7 +90,7 @@ if(require(cartography)){
                     beta = 3, mask = nuts3.spdf, cl = 3, size = 500)
   )
   identical(s1, s2)
-  cat("Elapsed time\\n", "stewart:", t1[3], "\\n mcStewart:",t2[3])
+  cat("Elapsed time\n", "stewart:", t1[3], "\n mcStewart:",t2[3])
   
   iso <- isopoly(x = s2, 
                  breaks = c(0,1000000,2000000, 5000000, 10000000, 20000000, 

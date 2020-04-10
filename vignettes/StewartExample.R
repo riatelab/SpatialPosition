@@ -1,4 +1,4 @@
-## ----regionalmap, fig.width=7, fig.height=6------------------------------
+## ----regionalmap, fig.width=7, fig.height=6-----------------------------------
 library(cartography)
 library(sp)
 library(sf)
@@ -39,7 +39,7 @@ layoutLayer(title = "Wealth Inequality in Europe",
             author = "T. Giraud, 2015")
 par(opar)
 
-## ----regionalmappot, fig.width=7, fig.height=6---------------------------
+## ----regionalmappot, fig.width=7, fig.height=6--------------------------------
 # Create a distance matrix between units
 mat <- CreateDistMatrix(knownpts = nuts3.spdf, 
                         unknownpts = nuts3.spdf)
@@ -106,7 +106,7 @@ layoutLayer(title = "Wealth Inequality in Europe",
             author = "T. Giraud, 2015")
 par(opar)
 
-## ----smoothedmappot, fig.width=7, fig.height=6---------------------------
+## ----smoothedmappot, fig.width=7, fig.height=6--------------------------------
 # Compute the potentials of population on a regular grid (50km span)
 # function = exponential, beta = 2, span = 75 km
 poppot <- stewart(knownpts = nuts3.spdf, 

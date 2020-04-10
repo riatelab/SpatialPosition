@@ -52,7 +52,7 @@ choroLayer(spdf = contourpoly,
            var = "center", legend.pos = "topleft",
            breaks = bks, border = "grey90",
            lwd = 0.2,
-           legend.title.txt = "Potential number\\nof beds in the\\nneighbourhood",
+           legend.title.txt = "Potential number\nof beds in the\nneighbourhood",
            legend.values.rnd = 0)
 plot(spatMask, add = TRUE)
 propSymbolsLayer(spdf = spatPts, df = spatPts@data, var = "Capacite",

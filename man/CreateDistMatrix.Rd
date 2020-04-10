@@ -4,8 +4,7 @@
 \alias{CreateDistMatrix}
 \title{Create a Distance Matrix Between Two Spatial Objects}
 \usage{
-CreateDistMatrix(knownpts, unknownpts, bypassctrl = FALSE,
-  longlat = TRUE)
+CreateDistMatrix(knownpts, unknownpts, bypassctrl = FALSE, longlat = TRUE)
 }
 \arguments{
 \item{knownpts}{sp or sf object; rows of the distance matrix.}
