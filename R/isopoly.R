@@ -96,7 +96,7 @@ isopoly <- function(x, nclass = 8, breaks, mask,
   if(!missing(mask)){
     if(is(mask, "Spatial")){mask <- st_as_sf(mask)}
     st_agr(iso) <- "constant"
-    iso <- st_cast(st_intersection(x = iso, y = st_union(mask)))
+    iso <- st_cast(st_intersection(x = iso, y = st_union(st_geometry(mask))))
   }
   if(returnclass=="sp"){iso <- as(iso, "Spatial")}
   return(iso)

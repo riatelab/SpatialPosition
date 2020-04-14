@@ -41,7 +41,7 @@ rasterCatch <- rasterReilly(x = catchReilly, mask = paris)
 par(mar = c(4,2,2,1))
 # Plot the raster and add the points
 plotReilly(x = rasterCatch)
-plot(hospital, pch = 20, add = TRUE)
+plot(st_geometry(hospital), pch = 20, add = TRUE)
 
 mtext("Catchment Areas of Public Hospitals", side = 3,cex = 1.5)
 mtext(text = "distance function: exponential, span = 0.75 km, beta = 2",
@@ -58,7 +58,7 @@ rasterCatch <- rasterHuff(x = catchHuff, mask = paris)
 # Plot the raster and add the points
 par(mar = c(4,2,2,1))
 plotHuff(x = rasterCatch)
-plot(hospital, pch = 20, col = "red", add = TRUE)
+plot(st_geometry(hospital), pch = 20, col = "red", add = TRUE)
 
 mtext("Probabilistic Catchment Areas \nof Public Hospitals", 
       side = 3,cex = 1.5, line=-1.5)
