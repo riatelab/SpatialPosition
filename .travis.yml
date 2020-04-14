@@ -1,6 +1,6 @@
 language: r
 sudo: required
-dist: xenial
+dist: bionic
 
 jobs:
   include:
