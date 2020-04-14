@@ -1,6 +1,6 @@
 language: r
 sudo: required
-dist: bionic
+dist: xenial
 
 jobs:
   include:
@@ -8,13 +8,16 @@ jobs:
   - r: release
   - r: oldrel
 
+
 addons:
   apt:
+    sources:
+      - sourceline: 'ppa:ubuntugis/ubuntugis-unstable'
     packages:
-     - libgdal-dev
-     - libproj-dev 
-     - libgeos-dev
-     - libudunits2-dev 
+      - libudunits2-dev
+      - libproj-dev
+      - libgeos-dev
+      - libgdal-dev
 
 warnings_are_errors: true
 

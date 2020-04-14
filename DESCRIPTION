@@ -8,7 +8,7 @@ Authors@R: c(
       person("Joël", "Boulier", email = "joel.boulier@univ-paris1.fr", role = c("ctb")))
 Description: Computes spatial position models: Stewart potentials, Reilly
     catchment areas, Huff catchment areas.
-Depends: R (>= 3.0.0)
+Depends: R (>= 3.5.0)
 License: GPL-3
 LazyData: true
 Imports:
