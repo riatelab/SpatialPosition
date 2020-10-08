@@ -56,5 +56,5 @@ break.values
 }
 \seealso{
 \link{stewart}, \link{rasterStewart}, \link{quickStewart}, 
-\link{rasterToContourPoly}, \link{CreateGrid}, \link{CreateDistMatrix}.
+\link{CreateGrid}, \link{CreateDistMatrix}.
 }

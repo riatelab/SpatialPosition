@@ -1,5 +1,5 @@
 ---
-title: "Introduction to the `SpatialPosition` package"
+title: "Introduction to the SpatialPosition package"
 author: "Hadrien Commenges & Timothée Giraud"
 date: "`r Sys.Date()`"
 output: rmarkdown::html_vignette

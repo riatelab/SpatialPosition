@@ -93,7 +93,7 @@ stewart <- function(knownpts,unknownpts, matdist, varname,
 #' the raster. (optional)
 #' @return Raster of potential values.
 #' @seealso \link{stewart}, \link{quickStewart}, \link{plotStewart}, 
-#' \link{rasterToContourPoly}, \link{CreateGrid}, \link{CreateDistMatrix}.
+#' \link{CreateGrid}, \link{CreateDistMatrix}.
 #' @examples
 #' library(raster)
 #' data(hospital)
@@ -140,7 +140,7 @@ rasterStewart <- function(x, mask = NULL){
 #' @param col function; color ramp function, such as \code{\link{colorRampPalette}}.
 #' @return Display the raster nicely and return the list of break values (invisible).
 #' @seealso \link{stewart}, \link{rasterStewart}, \link{quickStewart}, 
-#' \link{rasterToContourPoly}, \link{CreateGrid}, \link{CreateDistMatrix}.
+#' \link{CreateGrid}, \link{CreateDistMatrix}.
 #' @examples 
 #' data(hospital)
 #' # Compute Stewart potentials from known points (hospital) on a

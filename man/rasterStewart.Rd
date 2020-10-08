@@ -34,5 +34,5 @@ plot(mystewartraster)
 }
 \seealso{
 \link{stewart}, \link{quickStewart}, \link{plotStewart}, 
-\link{rasterToContourPoly}, \link{CreateGrid}, \link{CreateDistMatrix}.
+\link{CreateGrid}, \link{CreateDistMatrix}.
 }
