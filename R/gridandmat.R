@@ -52,7 +52,7 @@ CreateGrid <- function (w, resolution, returnclass="sp")
                          COORDY = spatGrid[, 2])
   spatGrid <- st_as_sf(spatGrid, coords = c("COORDX", "COORDY"),
                        crs = st_crs(w), remove = FALSE)
-  if(returnclass=="sp"){spatGrid <- as(spatGrid, "Spatial")}
+  if(returnclass=="sp"){spatGrid <- suppressWarnings(as(spatGrid, "Spatial"))}
   return(spatGrid)
 }
 
@@ -79,9 +79,10 @@ CreateGrid <- function (w, resolution, returnclass="sp")
 #' # Create a grid of paris extent and 200 meters
 #' # resolution
 #' data(hospital)
-#' mygrid <- CreateGrid(w = paris, resolution = 200)
+#' mygrid <- CreateGrid(w = paris, resolution = 200, returnclass = "sf")
 #' # Create a distance matrix between known hospital and mygrid
-#' mymat <- CreateDistMatrix(knownpts = hospital, unknownpts = mygrid)
+#' mymat <- CreateDistMatrix(knownpts = hospital, unknownpts = mygrid, 
+#'                           longlat = FALSE)
 #' mymat[1:5,1:5]
 #' nrow(paris)
 #' nrow(mygrid)

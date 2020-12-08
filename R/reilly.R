@@ -98,7 +98,7 @@ reilly <- function(knownpts, unknownpts, matdist, varname,
 #' # grid defined by its resolution
 #' myreilly <- reilly(knownpts = hospital, varname = "capacity",
 #'                    typefct = "exponential", span = 1250, beta = 3,
-#'                    resolution = 200, mask = paris)
+#'                    resolution = 200, mask = paris, returnclass = "sf")
 #' # Create a raster of reilly values
 #' myreillyraster <- rasterReilly(x = myreilly, mask = paris)
 #' plot(myreillyraster, col = rainbow(18))
@@ -108,7 +108,7 @@ reilly <- function(knownpts, unknownpts, matdist, varname,
 #' @import raster
 #' @export
 rasterReilly <- function(x ,mask = NULL){
-  if(is(x, "sf")){x <- as(x, "Spatial")}
+  if(is(x, "sf")){x <- suppressWarnings(as(x, "Spatial"))}
   gridded(x) <- TRUE
   r <- raster(x)
   x$OUTPUT2 <- as.factor(x$OUTPUT)
@@ -116,7 +116,7 @@ rasterReilly <- function(x ,mask = NULL){
   x$OUTPUT2 <- as.numeric(x$OUTPUT2)
   rasterx <- rasterize(x, r, field = 'OUTPUT2')
   if(!is.null(mask)){
-    if(is(mask, "sf")){mask <- as(mask, "Spatial")}
+    if(is(mask, "sf")){mask <- suppressWarnings(as(mask, "Spatial"))}
     projError(x, mask)
     rasterx <- mask(rasterx, mask = mask)
   }
@@ -140,7 +140,7 @@ rasterReilly <- function(x ,mask = NULL){
 #' # grid defined by its resolution
 #' myreilly <- reilly(knownpts = hospital, varname = "capacity",
 #'                    typefct = "exponential", span = 1250, beta = 3,
-#'                    resolution = 200, mask = paris)
+#'                    resolution = 200, mask = paris, returnclass = 'sf')
 #' # Create a raster of reilly values
 #' myreillyraster <- rasterReilly(x = myreilly, mask = paris)
 #' # Plot the raster nicely

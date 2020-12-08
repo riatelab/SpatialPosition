@@ -26,7 +26,7 @@ data(hospital)
 # grid defined by its resolution
 myhuff <- huff(knownpts = hospital, varname = "capacity",
                typefct = "exponential", span = 750, beta = 2,
-               resolution = 100, mask = paris)
+               resolution = 100, mask = paris, returnclass = "sf")
 # Create a raster of huff values
 myhuffraster <- rasterHuff(x = myhuff, mask = paris)
 plot(myhuffraster)

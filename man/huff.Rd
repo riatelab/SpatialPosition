@@ -77,7 +77,8 @@ This function computes the catchment areas as defined by D. Huff (1964).
 data(hospital)
 mygrid <- CreateGrid(w = paris, resolution = 200, returnclass = "sf")
 # Create a distance matrix between known points (hospital) and mygrid
-mymat <- CreateDistMatrix(knownpts = hospital, unknownpts = mygrid)
+mymat <- CreateDistMatrix(knownpts = hospital, unknownpts = mygrid, 
+                          longlat = FALSE)
 # Compute Huff catchment areas from known points (hospital) on a given
 # grid (mygrid) using a given distance matrix (mymat)
 myhuff <- huff(knownpts = hospital, unknownpts = mygrid,

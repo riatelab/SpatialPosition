@@ -36,9 +36,10 @@ Use \code{bypassctrl} = TRUE to skip this control.
 # Create a grid of paris extent and 200 meters
 # resolution
 data(hospital)
-mygrid <- CreateGrid(w = paris, resolution = 200)
+mygrid <- CreateGrid(w = paris, resolution = 200, returnclass = "sf")
 # Create a distance matrix between known hospital and mygrid
-mymat <- CreateDistMatrix(knownpts = hospital, unknownpts = mygrid)
+mymat <- CreateDistMatrix(knownpts = hospital, unknownpts = mygrid, 
+                          longlat = FALSE)
 mymat[1:5,1:5]
 nrow(paris)
 nrow(mygrid)

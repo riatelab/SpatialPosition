@@ -43,7 +43,8 @@
 #' data(hospital)
 #' mygrid <- CreateGrid(w = paris, resolution = 200, returnclass = "sf")
 #' # Create a distance matrix between known points (hospital) and mygrid
-#' mymat <- CreateDistMatrix(knownpts = hospital, unknownpts = mygrid)
+#' mymat <- CreateDistMatrix(knownpts = hospital, unknownpts = mygrid, 
+#'                           longlat = FALSE)
 #' # Compute Huff catchment areas from known points (hospital) on a given
 #' # grid (mygrid) using a given distance matrix (mymat)
 #' myhuff <- huff(knownpts = hospital, unknownpts = mygrid,
@@ -94,7 +95,7 @@ huff <- function(knownpts, unknownpts, matdist, varname,
 #' # grid defined by its resolution
 #' myhuff <- huff(knownpts = hospital, varname = "capacity",
 #'                typefct = "exponential", span = 750, beta = 2,
-#'                resolution = 100, mask = paris)
+#'                resolution = 100, mask = paris, returnclass = "sf")
 #' # Create a raster of huff values
 #' myhuffraster <- rasterHuff(x = myhuff, mask = paris)
 #' plot(myhuffraster)
@@ -102,12 +103,12 @@ huff <- function(knownpts, unknownpts, matdist, varname,
 #' @import raster
 #' @export
 rasterHuff <- function(x, mask = NULL){
-  if(is(x, "sf")){x <- as(x, "Spatial")}
+  if(is(x, "sf")){x <-   suppressWarnings(as(x, "Spatial"))}
   gridded(x) <- TRUE
   r <- raster(x)
   rasterx <- rasterize(x, r, field = 'OUTPUT')
   if(!is.null(mask)){
-    if(is(mask, "sf")){mask <- as(mask, "Spatial")}
+    if(is(mask, "sf")){mask <-   suppressWarnings(as(mask, "Spatial"))}
     projError(x, mask)
     rasterx <- mask(rasterx, mask = mask)
   }
@@ -129,7 +130,7 @@ rasterHuff <- function(x, mask = NULL){
 #' # grid defined by its resolution
 #' myhuff <- huff(knownpts = hospital, varname = "capacity",
 #'                typefct = "exponential", span = 750, beta = 2,
-#'                resolution = 100, mask = paris)
+#'                resolution = 100, mask = paris, returnclass = "sf")
 #' # Create a raster of huff values
 #' myhuffraster <- rasterHuff(x = myhuff, mask = paris)
 #' plotHuff(myhuffraster)

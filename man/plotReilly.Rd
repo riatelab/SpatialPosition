@@ -27,7 +27,7 @@ data(hospital)
 # grid defined by its resolution
 myreilly <- reilly(knownpts = hospital, varname = "capacity",
                    typefct = "exponential", span = 1250, beta = 3,
-                   resolution = 200, mask = paris)
+                   resolution = 200, mask = paris, returnclass = 'sf')
 # Create a raster of reilly values
 myreillyraster <- rasterReilly(x = myreilly, mask = paris)
 # Plot the raster nicely

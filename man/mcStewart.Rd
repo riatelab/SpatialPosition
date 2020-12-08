@@ -81,13 +81,14 @@ if(require(cartography)){
     s1 <- stewart(knownpts = nuts3.spdf,resolution = 40000,
                   varname = "pop2008",
                   typefct = "exponential", span = 100000,
-                  beta = 3, mask = nuts3.spdf)
+                  beta = 3, mask = nuts3.spdf, returnclass = "sf")
   )
   t2 <- system.time(
     s2 <- mcStewart(knownpts = nuts3.spdf, resolution = 40000,
                     varname = "pop2008",
                     typefct = "exponential", span = 100000,
-                    beta = 3, mask = nuts3.spdf, cl = 3, size = 500)
+                    beta = 3, mask = nuts3.spdf, cl = 3, size = 500, 
+                    returnclass = "sf")
   )
   identical(s1, s2)
   cat("Elapsed time\n", "stewart:", t1[3], "\n mcStewart:",t2[3])
