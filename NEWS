@@ -1,12 +1,15 @@
-SpatialPosition version 2.0.2 (Release date: 2020-10)
+SpatialPosition version 2.1.0 (Release date: 2020-12)
 ==============
 
 Minor changes:  
   * suppress spatData.RData dataset
   * suprress rasterToContourPoly
+  * deprecate Stewart related functions
+  * modify some examples
+  * suppress warnings around as(x,"Spatial") calls due to proj warnings. 
 
 
-SpatialPosition version 2.0.1 (Release date: 2020-04)
+SpatialPosition version 2.0.1 (Release date: 2020-04-14)
 ==============
 
 Minor changes:  
