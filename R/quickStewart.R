@@ -97,7 +97,7 @@ quickStewart <- function(x, spdf, df, spdfid = NULL, dfid = NULL, var, var2,
   # sp mgmt
   if(is(x, "Spatial")){x <- st_as_sf(x)}
   # pot computation
-  pot <- stewart(knownpts = x, 
+  pot <- suppressWarnings(stewart(knownpts = x, 
                  varname = var, 
                  typefct = typefct, 
                  span = span, 
@@ -105,11 +105,11 @@ quickStewart <- function(x, spdf, df, spdfid = NULL, dfid = NULL, var, var2,
                  resolution = resolution, 
                  mask = mask, 
                  bypassctrl = bypassctrl, 
-                 returnclass = "sf")
+                 returnclass = "sf"))
   
   if(!missing(var2)){
     if(!is.null(var2)){
-      pot2 <- stewart(knownpts = x, 
+      pot2 <- suppressWarnings(stewart(knownpts = x, 
                       varname = var2, 
                       typefct = typefct, 
                       span = span, 
@@ -117,7 +117,7 @@ quickStewart <- function(x, spdf, df, spdfid = NULL, dfid = NULL, var, var2,
                       resolution = resolution, 
                       mask = mask, 
                       bypassctrl = bypassctrl, 
-                      returnclass = "sf")
+                      returnclass = "sf"))
       pot$OUTPUT <- pot$OUTPUT / pot2$OUTPUT
     }
   }
