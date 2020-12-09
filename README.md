@@ -9,12 +9,11 @@
 
 R package for computing spatial position models:  
 
-* Stewart potentials
+* Stewart potentials :warning: 
 * Reilly catchment areas
 * Huff catchment areas
 
-
-
+:warning: **Functions related to Stewart's potential are deprecated. Please use the [`potential`](http://riatelab.github.io/potential/) package instead.**
 
 
 ## Installation
