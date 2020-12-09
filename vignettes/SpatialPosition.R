@@ -30,11 +30,10 @@ mtext(text = "Potential nb. of beds
       side = 1, line = 1)   
 
 ## ---- fig.width=5, fig.height=5-----------------------------------------------
-library(raster)
 row.names(hospital)
 catchReilly <- reilly(knownpts = hospital, varname = "capacity",
                       typefct = "exponential", span = 750, beta = 2,
-                      resolution = 50, mask = paris)
+                      resolution = 50, mask = paris, returnclass = "sf")
 # Create a raster
 rasterCatch <- rasterReilly(x = catchReilly, mask = paris)
 
@@ -50,7 +49,7 @@ mtext(text = "distance function: exponential, span = 0.75 km, beta = 2",
 ## ---- fig.width=5, fig.height=5-----------------------------------------------
 catchHuff <- huff(knownpts = hospital, varname = "capacity",
                   typefct = "exponential", span = 750, beta = 2,
-                  resolution = 50, mask = paris)
+                  resolution = 50, mask = paris, returnclass = "sf")
 
 # Create a raster
 rasterCatch <- rasterHuff(x = catchHuff, mask = paris)
