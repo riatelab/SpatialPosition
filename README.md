@@ -2,7 +2,7 @@
 
 [![Version](http://www.r-pkg.org/badges/version/SpatialPosition)](https://CRAN.R-project.org/package=SpatialPosition)
 ![](http://cranlogs.r-pkg.org/badges/SpatialPosition?color=brightgreen)
-[![R build status](https://github.com/Groupe-ElementR/SpatialPosition/workflows/R-CMD-check/badge.svg)](https://github.com/Groupe-ElementR/SpatialPosition/actions)
+[![R build status](https://github.com/riatelab/SpatialPosition/workflows/R-CMD-check/badge.svg)](https://github.com/riatelab/SpatialPosition/actions)
 
 
 ![Stewart Potentials ](http://rgeomatic.hypotheses.org/files/2015/12/potentials.png)
@@ -27,7 +27,7 @@ install.packages("SpatialPosition")
 Development version / unstable
 ```{r}
 require(remotes)
-remotes::install_github("Groupe-ElementR/SpatialPosition")
+remotes::install_github("riatelab/SpatialPosition")
 ```
 
 ### From Archive
