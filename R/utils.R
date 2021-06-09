@@ -87,20 +87,9 @@ ComputeSmooth<- function(unknownpts, matopport, matdens)
 
 
 projError <- function(x,y){
-  if (is.na(x@proj4string)){
-    stop("Your input does not have a valid coordinate reference system.",
-         call. = F)
-  }
-  if(!missing(y)){
-    if (is.na(y@proj4string)){
-      stop("Your input does not have a valid coordinate reference system.",
-           call. = F)
-    }
-    if(identicalCRS(x,y) == FALSE){
-      stop("Inputs do not use the same coordinate reference system.",
-           call. = FALSE)
-    }
+  if(identicalCRS(x,y) == FALSE){
+    stop("Inputs do not use the same coordinate reference system.",
+         call. = FALSE)
   }
 }
-
 
