@@ -42,7 +42,7 @@
 #' # Create a grid of paris extent and 200 meters
 #' # resolution
 #' data(hospital)
-#' mygrid <- CreateGrid(w = paris, resolution = 200)
+#' mygrid <- CreateGrid(w = paris, resolution = 200, returnclass = "sf")
 #' # Create a distance matrix between known points (hospital) and mygrid
 #' mymat <- CreateDistMatrix(knownpts = hospital, unknownpts = mygrid)
 #' # Compute  distance weighted mean from known points (hospital) on a given

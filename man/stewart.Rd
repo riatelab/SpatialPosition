@@ -75,7 +75,7 @@ This function computes the potentials as defined by J.Q. Stewart (1942).
 # Create a grid of paris extent and 200 meters
 # resolution
 data(hospital)
-mygrid <- CreateGrid(w = paris, resolution = 200)
+mygrid <- CreateGrid(w = paris, resolution = 200, returnclass = "sf")
 # Create a distance matrix between known points (spatPts) and mygrid
 mymat <- CreateDistMatrix(knownpts = hospital, unknownpts = mygrid)
 # Compute Stewart potentials from known points (spatPts) on a given
