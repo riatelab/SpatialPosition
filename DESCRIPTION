@@ -1,11 +1,12 @@
 Package: SpatialPosition
 Title: Spatial Position Models
-Version: 2.1.0
+Version: 2.1.1
 Authors@R: c(
-      person("Timothée", "Giraud", email = "timothee.giraud@cnrs.fr", role = c("cre","aut"),
+      person("Timothée", "Giraud", email = "timothee.giraud@cnrs.fr", 
+             role = c("cre","aut"),
              comment = c(ORCID = "0000-0002-1932-3323")),
-      person("Hadrien", "Commenges", email = "hadrien.commenges@univ-paris1.fr", role = c("aut")), 
-      person("Joël", "Boulier", email = "joel.boulier@univ-paris1.fr", role = c("ctb")))
+      person("Hadrien", "Commenges", role = c("aut")), 
+      person("Joël", "Boulier", role = c("ctb")))
 Description: Computes spatial position models: the potential model as defined
     by Stewart (1941) <doi:10.1126/science.93.2404.89> and catchment areas as
     defined by Reilly (1931) or Huff (1964) <doi:10.2307/1249154>.

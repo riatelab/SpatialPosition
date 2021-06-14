@@ -1,3 +1,10 @@
+SpatialPosition version 2.1.1 (Release date: 2021-06)
+==============
+
+Minor changes:  
+  * ligter proj checks
+  * avoid mixing sp and sf in examples
+
 SpatialPosition version 2.1.0 (Release date: 2020-12)
 ==============
 
