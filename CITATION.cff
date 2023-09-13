@@ -8,7 +8,7 @@ message: 'To cite package "SpatialPosition" in publications use:'
 type: software
 license: GPL-3.0-only
 title: 'SpatialPosition: Spatial Position Models'
-version: 2.1.1
+version: 2.1.2
 abstract: 'Computes spatial position models: the potential model as defined by Stewart
   (1941) <doi:10.1126/science.93.2404.89> and catchment areas as defined by Reilly
   (1931) or Huff (1964) <doi:10.2307/1249154>.'
