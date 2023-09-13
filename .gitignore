@@ -3,4 +3,6 @@
 .RData
 inst/doc
 
+# produced vignettes & R code
 vignettes/*.html
+vignettes/*.R
