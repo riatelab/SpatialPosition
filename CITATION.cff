@@ -1,0 +1,258 @@
+# -----------------------------------------------------------
+# CITATION file created with {cffr} R package, v0.5.0
+# See also: https://docs.ropensci.org/cffr/
+# -----------------------------------------------------------
+ 
+cff-version: 1.2.0
+message: 'To cite package "SpatialPosition" in publications use:'
+type: software
+license: GPL-3.0-only
+title: 'SpatialPosition: Spatial Position Models'
+version: 2.1.1
+abstract: 'Computes spatial position models: the potential model as defined by Stewart
+  (1941) <doi:10.1126/science.93.2404.89> and catchment areas as defined by Reilly
+  (1931) or Huff (1964) <doi:10.2307/1249154>.'
+authors:
+- family-names: Giraud
+  given-names: Timothée
+  email: timothee.giraud@cnrs.fr
+  orcid: https://orcid.org/0000-0002-1932-3323
+- family-names: Commenges
+  given-names: Hadrien
+repository: https://CRAN.R-project.org/package=SpatialPosition
+repository-code: https://github.com/riatelab/SpatialPosition
+url: https://github.com/riatelab/SpatialPosition
+contact:
+- family-names: Giraud
+  given-names: Timothée
+  email: timothee.giraud@cnrs.fr
+  orcid: https://orcid.org/0000-0002-1932-3323
+keywords:
+- accessibility
+- cran
+- potential
+- r
+- r-package
+- spatial-analysis
+- stewart-potentials
+references:
+- type: software
+  title: 'R: A Language and Environment for Statistical Computing'
+  notes: Depends
+  url: https://www.R-project.org/
+  authors:
+  - name: R Core Team
+  location:
+    name: Vienna, Austria
+  year: '2023'
+  institution:
+    name: R Foundation for Statistical Computing
+  version: '>= 3.5.0'
+- type: software
+  title: sf
+  abstract: 'sf: Simple Features for R'
+  notes: Imports
+  url: https://r-spatial.github.io/sf/
+  repository: https://CRAN.R-project.org/package=sf
+  authors:
+  - family-names: Pebesma
+    given-names: Edzer
+    email: edzer.pebesma@uni-muenster.de
+    orcid: https://orcid.org/0000-0001-8049-7069
+  year: '2023'
+- type: software
+  title: sp
+  abstract: 'sp: Classes and Methods for Spatial Data'
+  notes: Imports
+  url: https://github.com/edzer/sp/
+  repository: https://CRAN.R-project.org/package=sp
+  authors:
+  - family-names: Pebesma
+    given-names: Edzer
+    email: edzer.pebesma@uni-muenster.de
+  - family-names: Bivand
+    given-names: Roger
+    email: Roger.Bivand@nhh.no
+  year: '2023'
+- type: software
+  title: grDevices
+  abstract: 'R: A Language and Environment for Statistical Computing'
+  notes: Imports
+  authors:
+  - name: R Core Team
+  location:
+    name: Vienna, Austria
+  year: '2023'
+  institution:
+    name: R Foundation for Statistical Computing
+- type: software
+  title: graphics
+  abstract: 'R: A Language and Environment for Statistical Computing'
+  notes: Imports
+  authors:
+  - name: R Core Team
+  location:
+    name: Vienna, Austria
+  year: '2023'
+  institution:
+    name: R Foundation for Statistical Computing
+- type: software
+  title: methods
+  abstract: 'R: A Language and Environment for Statistical Computing'
+  notes: Imports
+  authors:
+  - name: R Core Team
+  location:
+    name: Vienna, Austria
+  year: '2023'
+  institution:
+    name: R Foundation for Statistical Computing
+- type: software
+  title: isoband
+  abstract: 'isoband: Generate Isolines and Isobands from Regularly Spaced Elevation
+    Grids'
+  notes: Imports
+  url: https://isoband.r-lib.org
+  repository: https://CRAN.R-project.org/package=isoband
+  authors:
+  - family-names: Wickham
+    given-names: Hadley
+    email: hadley@posit.co
+    orcid: https://orcid.org/0000-0003-4757-117X
+  - family-names: Wilke
+    given-names: Claus O.
+    email: wilke@austin.utexas.edu
+    orcid: https://orcid.org/0000-0002-7470-9261
+  - family-names: Pedersen
+    given-names: Thomas Lin
+    email: thomasp85@gmail.com
+    orcid: https://orcid.org/0000-0002-5147-4711
+  year: '2023'
+- type: software
+  title: raster
+  abstract: 'raster: Geographic Data Analysis and Modeling'
+  notes: Imports
+  url: https://rspatial.org/raster
+  repository: https://CRAN.R-project.org/package=raster
+  authors:
+  - family-names: Hijmans
+    given-names: Robert J.
+    email: r.hijmans@gmail.com
+    orcid: https://orcid.org/0000-0001-5872-2872
+  year: '2023'
+- type: software
+  title: lwgeom
+  abstract: 'lwgeom: Bindings to Selected ''liblwgeom'' Functions for Simple Features'
+  notes: Suggests
+  url: https://github.com/r-spatial/lwgeom/
+  repository: https://CRAN.R-project.org/package=lwgeom
+  authors:
+  - family-names: Pebesma
+    given-names: Edzer
+    email: edzer.pebesma@uni-muenster.de
+    orcid: https://orcid.org/0000-0001-8049-7069
+  year: '2023'
+- type: software
+  title: parallel
+  abstract: 'R: A Language and Environment for Statistical Computing'
+  notes: Suggests
+  authors:
+  - name: R Core Team
+  location:
+    name: Vienna, Austria
+  year: '2023'
+  institution:
+    name: R Foundation for Statistical Computing
+- type: software
+  title: doParallel
+  abstract: 'doParallel: Foreach Parallel Adaptor for the ''parallel'' Package'
+  notes: Suggests
+  url: https://github.com/RevolutionAnalytics/doparallel
+  repository: https://CRAN.R-project.org/package=doParallel
+  authors:
+  - family-names: Corporation
+    given-names: Microsoft
+  - family-names: Weston
+    given-names: Steve
+  year: '2023'
+- type: software
+  title: foreach
+  abstract: 'foreach: Provides Foreach Looping Construct'
+  notes: Suggests
+  url: https://github.com/RevolutionAnalytics/foreach
+  repository: https://CRAN.R-project.org/package=foreach
+  authors:
+  - name: Microsoft
+  - family-names: Weston
+    given-names: Steve
+  year: '2023'
+- type: software
+  title: cartography
+  abstract: 'cartography: Thematic Cartography'
+  notes: Suggests
+  url: https://github.com/riatelab/cartography/
+  repository: https://CRAN.R-project.org/package=cartography
+  authors:
+  - family-names: Giraud
+    given-names: Timothée
+    email: timothee.giraud@cnrs.fr
+    orcid: https://orcid.org/0000-0002-1932-3323
+  - family-names: Lambert
+    given-names: Nicolas
+    email: nicolas.lambert@cnrs.fr
+  year: '2023'
+- type: software
+  title: knitr
+  abstract: 'knitr: A General-Purpose Package for Dynamic Report Generation in R'
+  notes: Suggests
+  url: https://yihui.org/knitr/
+  repository: https://CRAN.R-project.org/package=knitr
+  authors:
+  - family-names: Xie
+    given-names: Yihui
+    email: xie@yihui.name
+    orcid: https://orcid.org/0000-0003-0645-5666
+  year: '2023'
+- type: software
+  title: rmarkdown
+  abstract: 'rmarkdown: Dynamic Documents for R'
+  notes: Suggests
+  url: https://pkgs.rstudio.com/rmarkdown/
+  repository: https://CRAN.R-project.org/package=rmarkdown
+  authors:
+  - family-names: Allaire
+    given-names: JJ
+    email: jj@posit.co
+  - family-names: Xie
+    given-names: Yihui
+    email: xie@yihui.name
+    orcid: https://orcid.org/0000-0003-0645-5666
+  - family-names: Dervieux
+    given-names: Christophe
+    email: cderv@posit.co
+    orcid: https://orcid.org/0000-0003-4474-2498
+  - family-names: McPherson
+    given-names: Jonathan
+    email: jonathan@posit.co
+  - family-names: Luraschi
+    given-names: Javier
+  - family-names: Ushey
+    given-names: Kevin
+    email: kevin@posit.co
+  - family-names: Atkins
+    given-names: Aron
+    email: aron@posit.co
+  - family-names: Wickham
+    given-names: Hadley
+    email: hadley@posit.co
+  - family-names: Cheng
+    given-names: Joe
+    email: joe@posit.co
+  - family-names: Chang
+    given-names: Winston
+    email: winston@posit.co
+  - family-names: Iannone
+    given-names: Richard
+    email: rich@posit.co
+    orcid: https://orcid.org/0000-0003-3925-190X
+  year: '2023'

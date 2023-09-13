@@ -4,3 +4,5 @@
 ^inst/test\.R$
 ^inst/test/$
 ^\.github$
+^CITATION\.cff$
+^codemeta\.json$
