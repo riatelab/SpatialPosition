@@ -13,7 +13,7 @@
 #' COMMENGES H., GIRAUD, T., LAMBERT, N. (2016) "ESPON FIT: Functional Indicators for Spatial-Aware Policy-Making", 
 #' Cartographica: The International Journal for Geographic Information and Geovisualization, 51(3): 127-136.
 #' @docType package
-NULL
+"_PACKAGE"
 
 #' @title Public Hospitals
 #' @description An sf POINT data frame of 18 public hospitals with their capacity 

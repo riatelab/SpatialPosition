@@ -3,6 +3,7 @@
 \docType{package}
 \name{SpatialPosition}
 \alias{SpatialPosition}
+\alias{SpatialPosition-package}
 \title{Spatial Position Package}
 \description{
 Computes spatial position models: \itemize{
@@ -18,4 +19,26 @@ A Stewart potentials use case:\cr
 \references{
 COMMENGES H., GIRAUD, T., LAMBERT, N. (2016) "ESPON FIT: Functional Indicators for Spatial-Aware Policy-Making", 
 Cartographica: The International Journal for Geographic Information and Geovisualization, 51(3): 127-136.
+}
+\seealso{
+Useful links:
+\itemize{
+  \item \url{https://github.com/riatelab/SpatialPosition}
+  \item Report bugs at \url{https://github.com/riatelab/SpatialPosition/issues}
+}
+
+}
+\author{
+\strong{Maintainer}: Timothée Giraud \email{timothee.giraud@cnrs.fr} (\href{https://orcid.org/0000-0002-1932-3323}{ORCID})
+
+Authors:
+\itemize{
+  \item Hadrien Commenges
+}
+
+Other contributors:
+\itemize{
+  \item Joël Boulier [contributor]
+}
+
 }
