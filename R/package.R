@@ -28,26 +28,3 @@ NULL
 #' @docType data
 NULL
 
-
-
-#' @title Spatial Units of Paris 
-#' @description A SpatialPolygonsDataFrame of the 20 spatial arrondissements of the Paris.
-#' @details This is a deprecated dataset.
-#' @name spatUnits
-#' @docType data
-NULL
-
-#' @title Public Hospitals
-#' @description A SpatialPointsDataFrame of 18 public hospitals with their capacity 
-#' (Capacite field = number of beds).
-#' @name spatPts
-#' @details This is a deprecated dataset.
-#' @docType data
-NULL
-
-#' @title Paris Perimeter
-#' @description A SpatialPolygonsDataFrame of the Paris perimeter. 
-#' @name spatMask
-#' @details This is a deprecated dataset.
-#' @docType data
-NULL
