@@ -19,7 +19,7 @@ Modeling spatial interactions is used to understand and quantify the level of in
 2. Corresponent **mathematical formalization**: $T_{ij} = S_i D_j / d_{ij}^2$ the trade flow between units *i* and *j* ($T_{ij}$) is proportional to the supply of unit *i* ($S_i$) and the demand of unit *j* ($D_j$) and inversely proportional to the squared distance between both units ($d_{ij}^2$).
 3. **Informatic formalization** of the model: language, algorithms, etc.
 
-The most ancient and common spatial interactions model is of the gravity form (like below). It has roots in the late 19st century (Casey, Ravenstein) and has been used in several fields (geography, economy, demography) to model a high variety of flows (commuting, trade, migrations). A brief presentation can be found in the [Geography of transport systems](https://transportgeography.org/contents/methods/spatial-interactions-gravity-model/). For a detailed one see, among many others, the book of Fotheringham and O'Kelly, *Spatial Interaction Models: Formulations and Applications* (Kluwer Academic Publishers, 1989). 
+The most ancient and common spatial interactions model is of the gravity form (like below). It has roots in the late 19st century (Casey, Ravenstein) and has been used in several fields (geography, economy, demography) to model a high variety of flows (commuting, trade, migrations). A brief presentation can be found in the [Geography of transport systems](https://www.routledge.com/The-Geography-of-Transport-Systems/Rodrigue/p/book/9780367364632). For a detailed one see, among many others, the book of Fotheringham and O'Kelly, *Spatial Interaction Models: Formulations and Applications* (Kluwer Academic Publishers, 1989). 
 
 ### Place-based models: Stewart, Reilly, Huff
 
