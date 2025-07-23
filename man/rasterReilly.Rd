@@ -14,7 +14,7 @@ the raster. (optional)}
 }
 \value{
 Raster of catchment areas values.
-The raster uses a RAT (\code{\link{ratify}}) that contains the 
+The raster uses a RAT (\code{\link[raster]{ratify}}) that contains the 
 correspondance between raster values and catchement areas values. Use \code{
 unique(levels(rasterName)[[1]])} to see the correpondance table.
 }

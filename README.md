@@ -17,25 +17,9 @@ R package for computing spatial position models:
 
 
 ## Installation
-### From CRAN
-Stable version
+
 ```{r}
 install.packages("SpatialPosition")
-```
-
-### From GitHub
-Development version / unstable
-```{r}
-require(remotes)
-remotes::install_github("riatelab/SpatialPosition")
-```
-
-### From Archive
-Version 2.0.0 of the package is a major release that should not break old code.  
-Anyway, in case of problem you can use these lines to get a previous version of the package. 
-```{r}
-packageurl <- "https://cran.r-project.org/src/contrib/Archive/SpatialPosition/SpatialPosition_1.2.0.tar.gz"
-install.packages(packageurl, repos=NULL, type="source")
 ```
 
 ## Demo

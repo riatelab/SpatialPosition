@@ -2,8 +2,8 @@
 % Please edit documentation in R/package.R
 \docType{package}
 \name{SpatialPosition}
-\alias{SpatialPosition}
 \alias{SpatialPosition-package}
+\alias{SpatialPosition}
 \title{Spatial Position Package}
 \description{
 Computes spatial position models: \itemize{
